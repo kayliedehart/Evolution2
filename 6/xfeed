@@ -1,0 +1,25 @@
+#!/usr/bin/env python2.7
+
+import sys
+import json
+from feeding.playerState import *
+from feeding.player import *
+
+testInput = []
+try:
+    testInput = json.load(sys.stdin)
+    if len(testInput) == 3:
+        curState = PlayerState.convertPlayerState(testInput[0])
+        wateringHole = int(testInput[1])
+        otherPlayers = []
+        for player in testInput[2]:
+            if player:
+                otherPlayers.append(PlayerState.convertPlayerState(player))
+        player = Player(curState.num)
+        result = player.feed(curState, wateringHole, otherPlayers)
+        print json.dumps(FeedingAction.toJsonArray(result))
+
+except Exception as e:
+    quit()
+
+

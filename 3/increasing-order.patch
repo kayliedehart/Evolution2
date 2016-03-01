@@ -1,0 +1,15 @@
+diff --git a/3/take5/Player.py b/3/take5/Player.py
+index 6dc07a8..6c74ee6 100644
+--- a/3/take5/Player.py
++++ b/3/take5/Player.py
+@@ -21,8 +21,8 @@ class Player:
+     # chooseCard: GameBoard -> Tuple(Card, Nat)
+     def chooseCard(self, board):
+         self.cards.sort(key=lambda tup: tup.faceValue)
+-        bestCard = self.cards[len(self.cards) - 1]
+-        del self.cards[-1]
++        bestCard = self.cards[0]
++        del self.cards[0]
+         return bestCard
+ 
+     # ADDED: OUR ORIGINAL SPECIFICATIONS LACKED THIS FUNCTION, BUT WE REALIZED THAT IT IS NEEDED FOR THIS PROJECT

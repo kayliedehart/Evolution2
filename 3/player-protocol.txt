@@ -1,0 +1,98 @@
+                   +-------+
+                   |Player1|
+                   +---+---+
+                       |
++-------------+        |
+| Main/server |        |         +--------+
++------+------+        |         |Player2 |
+       |  MyNameIs     |         +----+---+
+       |  (String)     |              |
+       | <-------------+              |
+       |ACK (Boolean)  |              |
+       +-------------> |              |
+       |    MyNameIs   |              |
+       |    (String)   |              |
+       | <----------------------------+
+       |ACK (Boolean)  |              |
+       +----------------------------> |
+       |               |              |
+       | dealToEach (ListOfCards)     |
+       +-------------> |              |
+       +----------------------------> |
+       |               |              |
+       | <-------------+ ACK (Boolean)|
+       + <----------------------------+
+       |               |              |
+       | chooseCard(GameState)        |
+       +-------------> |              |
+       +----------------------------> |
+       |   (Card)      |              |
+       | <----------------------------+
+       +   (Card)      |              |
+       | <-------------|              |
+       | chooseStack(GameState) (*)   |
+       +-------------> |              |
+       | (Stack) (*)                  |
+       | <-------------|              |
+       |               |              |
+       +---------------+--------------+
+       || Similar pattern continues  ||
+       || until someone hits 66      ||
+       || bullpoints...              ||
+       +---------------+--------------+
+       |               |              |
+       | gameOver(GameState) (**)     |
+       +-------------> |              |
+       +----------------------------> |
+       |               |              |
+       |               |              |
+       +               +              +
+
+MyNameIs:
+{
+	"name": String s
+}
+
+ACK:
+{
+	"ack": Boolean True
+}
+
+PlayerState:
+{	
+	"player": Player p,
+	"score": Nat n
+}
+
+Stack: 
+{
+	"index": Nat n,
+	"cards": [Card card1, Card card2, ... Card cardn]
+}
+
+Card:
+{
+	"faceValue": Nat n,
+	"bullPoints": Nat k
+}
+
+GameState:
+{ 
+	"players": [PlayerState ps1, PlayerState ps2, ... PlayerState psn],
+	"stacks": [Stack s1, Stack s2, Stack s3, Stack s4]
+}
+
+*: chooseStack will only be called when a player puts down the smallest card of all top stack cards,
+   so it may be called 0-len(players) times per round.
+**: gameOver will cause players to print out the game state as a leaderboard however they choose to
+    implement it and exit the game.
+
+Timing:
+The registration period (MyNameIs -> ACK) always comes before dealing cards begins, and will only occur once per game.
+Dealing of cards must come before chooseCard and chooseStack; it will be called again at the beginning of every round.
+chooseCard will be sent by the server each turn to each player; it doesn't matter if answers from other players come in 
+before all requests for cards are sent. 
+chooseStack will be sent by the server after all responses to chooseCard have been received if and only if there is the 
+opportunity for a player to choose the stack. Otherwise, the next turn will begin.
+The deal/choose pattern repeats until somebody hits the bullpoint limit, at which time gameOver will by sent by the server.
+It will not respond to any messages from players after this point.

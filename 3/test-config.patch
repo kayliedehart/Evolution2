@@ -1,0 +1,12 @@
+diff --git a/2/take5/Tests.py b/2/take5/Tests.py
+index cdeb54d..c4d64ab 100644
+--- a/2/take5/Tests.py
++++ b/2/take5/Tests.py
+@@ -1,5 +1,7 @@
+ import unittest
+ from Card import *
++import sys
++sys.path.append('../../3/take5')
+ from Player import *
+ from Dealer import *
+ from GameBoard import *

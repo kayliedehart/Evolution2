@@ -1,0 +1,27 @@
+[
+  [
+    [
+      "food",
+      2
+    ],
+    [
+      "body",
+      3
+    ],
+    [
+      "population",
+      7
+    ],
+    [
+      "traits",
+      [
+        "fat-tissue"
+      ]
+    ],
+    [
+      "fat-food",
+      1
+    ]
+  ],
+  2
+]

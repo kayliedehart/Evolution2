@@ -1,0 +1,18 @@
++-------------+       +---------------------------+
+|Player|      |       |PlayerState|               |
++------+      |       +-----------+               |
+|* Nat num    |       |* Nat num                  |
++-------------+       |* Nat foodbag              |
+                 +----+* ListOf(Species) species  |
+                 |    |* ListOf(TraitCard) traits +--------+
+                 |    +---------------------------+        v
+                 |
+                 |    +---------------------------+    +--------------+
+                 +--> |Species|                   |    |TraitCard|    |
+                      +-------+                   |    +---------+    |
+                      |* Nat food                 |    |* String name |
+                      |* Nat body                 |    |* Nat food    |
+                      |* Nat population           |    +--------------+
+                      |* ListOf(TraitCard) traits |
+                      |* Nat fatFood              |
+                      +---------------------------+

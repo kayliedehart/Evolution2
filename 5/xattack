@@ -1,0 +1,16 @@
+#!/usr/bin/env python2.7
+
+import sys
+import json
+sys.path.append('../../6/feeding')
+from attack.species import *
+
+testInput = []
+try:
+    testInput = json.loads(sys.stdin.read())
+
+except:
+    quit()
+
+# if malformed, isAttackable should exit itself
+print json.dumps(Species.isAttackable(testInput))

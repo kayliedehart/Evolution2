@@ -1,0 +1,13 @@
+diff --git a/2/take5/Constants.py b/2/take5/Constants.py
+index 0594648..b6afcd8 100644
+--- a/2/take5/Constants.py
++++ b/2/take5/Constants.py
+@@ -4,7 +4,7 @@ Constants for the 6 Nimmt! game
+ 
+ NUM_PLAYERS = 4
+ PLAYER_ORDER = [0, 1, 2, 3]
+-NUM_CARDS = 104
++NUM_CARDS = 210
+ # 104 bullpoints. Index 0 will be assigned to card 1, etc.
+ # If the list is too short, Deck will generate randomly from that point on
+ """

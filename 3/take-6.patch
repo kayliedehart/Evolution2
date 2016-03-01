@@ -1,0 +1,13 @@
+diff --git a/2/take5/GameBoard.py b/2/take5/GameBoard.py
+index e40c955..5da53ad 100644
+--- a/2/take5/GameBoard.py
++++ b/2/take5/GameBoard.py
+@@ -23,7 +23,7 @@ class GameBoard:
+                 self.clearStack(player, card, idxToClear)
+             else:
+                 stackIdx = self.findClosestTopCard(card)  # Return stack index
+-                if self.stacks[stackIdx].getNumCards() == 5:
++                if self.stacks[stackIdx].getNumCards() == 6:
+                     self.clearStack(player, card, stackIdx)
+                 else:
+                     self.stacks[stackIdx].cards.append(card)

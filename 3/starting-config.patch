@@ -1,0 +1,10 @@
+diff --git a/2/take5/MainProgram.py b/2/take5/MainProgram.py
+index cc0c040..ba12a51 100644
+--- a/2/take5/MainProgram.py
++++ b/2/take5/MainProgram.py
+@@ -1,3 +1,5 @@
++import sys
++sys.path.append('../../3/take5')
+ from Dealer import *
+ from Player import *
+ import Constants

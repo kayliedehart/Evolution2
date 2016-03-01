@@ -1,0 +1,116 @@
+  GameState                                              PlayerState
+  {                                                      {
+     "players": players      // List of PlayerState         "name": name       // String
+     "traitDeck": deck       // List of TraitCard           "foodBag": foodbag // Nat
+     "wateringHole": numFood // Nat                         "species": species // List of SpeciesBoard
+     "placedCards": placed   // List of TraitCard           "traits": traits   // List of TraitCard
+  }                                                      }
+
+
+  SpeciesBoard                                              TraitCard
+  {                                                         {
+     "name": name         // String                            "name": traitName // String
+     "population": pop    // Nat, 0-7 incl.                    "food": food      // Int. -8 to 8/-3 to 3
+     "bodySize": bodySize // Nat, 0-7 incl.                  }
+     "traits": traits     // List of TraitCard, len. <= 3
+  }
+
+
+  Action
+  {
+     "action": action  // Tuple; one of ("trade", "sb" (speciesboard) || "bs"(body size) || "ps" (population size))
+                                     or ("place", Integer: index of species board) 
+  }
+
+  initGame(): shuffle the deck, choose player order, set foodbags
+  initTurn(): hand out cards to each player based on num. species board, species board if player has none
+  endTurn():  totals up score, reduce population size based on remaining food tokens, cleans up cards,
+              adds two cards to each player's state for each extinct species they end the turn with,
+              move all species board food tokens into players' food bags
+
+                           +------+                            +------+
+                           |Dealer|                            |Player|
+                           +--+---+                            +---+--+
+                              |                                    |
+                          initGame()                               |
+                              |                                    |
++-----------------------> initTurn()                               |
+|                             |                                    |
+|                             |                                    |
+|                             |  ask for a TraitCard to place      |
+|                             |  based on player's new State       |
+|                             |  (PlayerState ps)                  |
+|                             +----------------------------------> |
+|                             |                                    |
+|                             |  TraitCard to place on the         |
+|                             |  watering hole                     |
+|                             |  (TraitCard ts)                    |
+|                             | <==================================|
+|                             |                                    |
+|    LOOP until the           |  ask for moves with the player's   |
+|    deck is empty            |  State (PlayerState ps)            |
+|                             +----------------------------------> |
+|                             |                                    |
+|                             |  hands back up to three tuples of  |
+|                             |  card and action                   |
+|                             |  ListOf((TraitCard, Action))       |
+|                             | <==================================|
+|                             |                                    |
+|                             |  validates and performs the moves, |
+|                             |  then asks the player to arrange   |
+|                             |  their species boards              |
+|                             |  (PlayerState ps)                  |
+|                             +----------------------------------> |
+|                             |                                    |
+|                             |  arranges their species boards in  |
+|                             |  the desired order, hands them     |
+|                             |  back (ListOf(SpeciesBoard))       |
+|                             | <==================================|
+|                             |                                    |
+|                             |  turns over the food cards, re-    |
+|                             |  calculates the watering hole,     |
+|                             |  then ask the player to remove a   |
+|                             |  card from an associated species   |
+|                             |  board (PlayerState ps)            |
+|                             +----------------------------------> |
+|                             |                                    |
+|                             |  hands back each card discarded    |
+|                             |  from each species board that had  |
+|                             |  a new TraitCard associated with it|
+|                             |  at the beginning of the turn      |
+|                             |  ListOf((SpeciesBoard, TraitCard)) |
+|                             | <==================================|
+|                             |                                    |
+|                             |  feed vegetarian species 1 token   |
+|                    +------> |  (PlayerState ps)                  |
+|                    |        |                                    |
+|  LOOP until the    |        |  XOR                               |
+|  populations of    |        |                                    |
+|  each player's     |        |  ask a carnivore species who they  |
+|  species boards    |        |  want to attack (GameState gs)     |
+|  has eaten OR      |        |                                    |
+|  the watering hole |        |  (INCLUSIVE) OR                    |
+|  is empty          |        |                                    |
+|                    |        |  perform an induced feeding based  |
+|                    |        |  on a species' traits              |
+|                    |        +----------------------------------> |
+|                    |        |                                    |
+|                    |        |  OPT: if asked, return a species   |
+|                    |        |  that they want to attack          |
+|                    |        |  (SpeciesBoard sb)                 |
+|                    |        | <==================================|
+|                    +--------+                                    |
+|                             |                                    |
+|                             |                                    |
+|                             |                                    |
+|                         endTurn()                                |
+|                             |                                    |
+<-----------------------------+                                    |
+                              |                                    |
+                              |  process the scores and give       |
+                              |  player the scoreboard             |
+                              +----------------------------------> |
+                              |                                    |
+                              |                                    |
+                              |                                    |
+                              v                                    v

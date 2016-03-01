@@ -1,0 +1,100 @@
+'''
+Player interface with dealer for Evolution game
+
+max batty & phaelyn kotuby
+
+
+The Evolution player will carry no state except for its own identifying number, which is used to identify itself when
+passed a list of PlayerState (in the placing and attacking rounds). It's not to a cheater's benefit to misidentify
+themselves, as they will only try to make moves with cards they don't have -- the dealer will reject these.
+
+Any information a player needs to make game decisions will be passed to it by the dealer in the form of a PlayerState
+object. The dealer also maintains a GameState which is exposed for the attacking/placing rounds, though the player is
+never asked to directly modify this. Players will sometimes hand back TraitCards or Actions; the dealer will check that
+these are valid/legal moves. What follows is JSON representations of the Python classes we've mentioned:
+
+  GameState                                              PlayerState
+  {                                                      {
+     "players": players      // List of PlayerState         "num": player's number // Nat
+     "traitDeck": deck       // List of TraitCard           "foodBag": foodbag     // Nat
+     "wateringHole": numFood // Nat                         "species": species     // List of SpeciesBoard
+     "placedCards": placed   // List of TraitCards          "traits": traits       // List of TraitCard
+  }                             that are face-down       }
+                                on the watering hole
+
+  SpeciesBoard                                              TraitCard
+  {                                                         {
+     "population": pop    // Nat, 0-7 incl.                    "name": traitName // String
+     "bodySize": bodySize // Nat, 0-7 incl.                    "food": food      // Int. -8 to 8/-3 to 3
+     "traits": traits     // List of TraitCard, len. <= 3   }
+     "food": numFood      // temporarily held during the feeding round, otherwise 0
+  }
+
+  Action
+  {
+     "action": action  // Tuple; one of (TraitCard card-to-trade, "trade", "sb" (SpeciesBoard)
+                                                                        || "body" (Body size, a Nat)
+                                                                        || "pop" (Population size, a Nat))
+                                    or  (TraitCard card-to-place, "place",
+                                                (Nat index-of-species-to-place-on, Nat index-of-card-to-place-on))
+  }
+
+'''
+
+
+class Player:
+
+    # create a new Player
+    # Nat -> Player
+    def __init__(self, num):
+        self.playerNum = num
+
+    # Choose a card to put face-down on the watering hole
+    # PlayerState -> Nat
+    def discardToWateringHole(self, ps):
+        return wateringHoleCardIndex
+
+    # Add a species to collection at either left or right of current hand
+    # A Direction is a String which is one of "left" or "right"
+    # Called by dealer whenever a player is given a new SpeciesBoard
+    # PlayerState, SpeciesBoard -> Direction
+    def placeSpecies(self, ps, sb):
+        return direction
+
+    # Choose up to three actions to perform with the TraitCards you own
+    # handed states of all players so strategic moves can be made based on neighbors
+    # length of ListOf(Action) <= 3
+    # ListOf(PlayerState) ->  ListOf(Action)
+    def chooseActions(self, all_ps):
+        '''
+        Example -- give player with following attributes the following cards (self being player 0):
+            ps.num = 0
+            ps.food = 0
+            ps.species = [(pop = 3, body = 2, traits = [], food = 0)]
+            ps.traits = [["carnivore", 3], ["ambush", 2], ["warning-call", 3]]
+
+            player may return something like this, dependent on other states handed to it:
+            [
+                action1 = (ps.traits[0], "place", (0, 0))
+                action2 = (ps.traits[1], "trade", "sb"))
+            ]
+
+        The dealer will place "carnivore" on the species it handed over, take "ambush", pass back a new species board,
+        and will maintain "warning-call" in the player's hand for next round
+        '''
+        return actions
+
+    # Choose a species to feed
+    # handed states of all players so strategic moves can be made based on neighbors
+    # returns None if it cannot feed any of its species
+    # ListOf(PlayerState) -> Nat
+    def chooseSpeciesToFeed(self, ps):
+        return speciesIndex
+
+    # Choose an enemy species to attack
+    # Only called by dealer if player chose a carnivore species to feed this turn
+    # handed states of all players so strategic moves can be made based on neighbors
+    # ListOf(PlayerState) -> Tuple(Nat, Nat)
+    def choosePrey(self, all_ps):
+        return (playerNum, preyIndex)
+

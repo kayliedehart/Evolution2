@@ -1,0 +1,13 @@
+diff --git a/2/take5/Deck.py b/2/take5/Deck.py
+index 0077ef7..a9807ed 100644
+--- a/2/take5/Deck.py
++++ b/2/take5/Deck.py
+@@ -15,7 +15,7 @@ class Deck:
+         # allocating the proper number of bullpoints to each
+         if not listOfBullPoints:
+             for i in range(self.numCards):
+-                listOfBullPoints.append(random.randint(2, 7))
++                listOfBullPoints.append(random.randint(3, 7))
+ 
+         for i in range(self.numCards):
+             self.cards.append(Card(i + 1, listOfBullPoints[i]))

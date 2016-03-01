@@ -1,0 +1,100 @@
+#!/usr/bin/env python2.7
+
+import sys
+import socket as socket
+import json
+sys.path.append('../../3/take5')
+from Player import *
+sys.path.append('../../2/take5')
+from Card import *
+from GameBoard import *
+import Constants
+
+
+class remote:
+    # initialize a remote client for a player
+    def __init__(self, player):
+        self.player = player
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect(('localhost', 45678))
+        self.AMOUNT_TO_RECEIVE = 4096
+        self.playGame()
+
+    # loop over the functions to run the game
+    # playGame: Void -> Void
+    def playGame(self):
+        # in case we jump in in the middle of a round, we don't want to try to play without cards
+        takenTurn = False
+        gameOver = False
+
+        while not gameOver:
+            roundStarted = len(self.player.cards) > 0
+            message = json.loads(self.sock.recv(self.AMOUNT_TO_RECEIVE))
+            if message[0] == 'start-round' and not roundStarted:
+                self.startRound(message[1])
+                takenTurn = False
+            elif message[0] == 'take-turn' and roundStarted:
+                self.takeTurn(message[1])
+                takenTurn = True
+            elif message[0] == 'choose' and roundStarted and takenTurn:
+                self.choose(message[1])
+                takenTurn = False  # because we're starting a new turn after this
+            else:
+                if message[0] == 'take-turn' or message[0] == 'choose' or message[0] == 'start-round':
+                    self.sock.sendall(json.dumps(False) + '\n')
+                gameOver = True
+
+        self.closeAndQuit()
+
+    # waits for the start-round message, then acknowledges + waits for next turn
+    # loops in case it tries to start in the middle of a round
+    # startRound: JSON(LCards) -> Void
+    def startRound(self, cards):
+        self.player.cards = self.parseCards(cards)
+        self.sock.sendall(json.dumps(True) + '\n')
+
+    # takes a turn based on the given deck and hands back the card we want to play
+    # takeTurn: JSON(Deck) -> Void
+    def takeTurn(self, deck):
+        stacks = self.parseDeck(deck)
+        if len(self.player.cards) > 0:
+            aCard = self.player.chooseCard(GameBoard(stacks))
+            self.sock.sendall(json.dumps([aCard.faceValue, aCard.bullPoints]) + '\n')
+        else:
+            self.closeAndQuit()
+
+    # chooses a stack based on the given deck, hands back the stack we want to take
+    # choose: JSON(Deck) -> Void
+    def choose(self, deck):
+        stacks = self.parseDeck(deck)
+        bestStack = deck[self.player.chooseStack(stacks)]
+        self.sock.sendall(json.dumps(bestStack) + '\n')
+
+    # turns the list representation of cards to our Card object
+    # parseCards: ListOf(ListOfInteger) -> ListOf(Card)
+    def parseCards(self, cards):
+        returnCards = []
+        for card in cards:
+            returnCards.append(Card(card[0], card[1]))
+        return returnCards
+
+    # turns the list representation of a deck into a list of our Stacks
+    # parseDeck: ListOf(ListOf(ListOfInteger))) -> ListOf(Stack)
+    def parseDeck(self, deck):
+        returnStacks = []
+        for stack in deck:
+            cards = self.parseCards(stack)
+            aStack = Stack(cards[0])
+            aStack.cards.append(cards[i] for i in range(1, len(cards)))
+            returnStacks.append(aStack)
+        return returnStacks
+
+    # sever the connection and quit the program
+    # quitBadInput: Void -> Void
+    def closeAndQuit(self):
+        self.sock.close()
+        quit()
+
+
+if __name__ == "__main__":
+    remote(Player(Constants.DEFAULT_PLAYER_NUM))

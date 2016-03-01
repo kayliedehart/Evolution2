@@ -1,0 +1,33 @@
+diff --git a/2/take5/Dealer.py b/2/take5/Dealer.py
+index f607b86..22e05a1 100644
+--- a/2/take5/Dealer.py
++++ b/2/take5/Dealer.py
+@@ -29,10 +29,10 @@ class Dealer:
+             self.board = GameBoard(stackStarters)
+ 
+             # deal cards
+-            self.dealTenToEach(self.playerOrder)
++            self.dealToEach(self.playerOrder)
+ 
+-            # run all ten turns in a round
+-            for i in range(10):
++            # run all nine turns in a round
++            for i in range(9):
+                 cardsToPlay = []
+                 for player in self.players:
+                     cardsToPlay.append((player, player.chooseCard(self.board)))
+@@ -49,10 +49,10 @@ class Dealer:
+ 
+         return gameOver
+ 
+-    # deck is shuffled at generation time, so just deals first (numPlayers * 10) cards
+-    # dealTenToEach: Void, ListOf(Nat) -> ArrayOfCard
+-    def dealTenToEach(self, playerOrder):
+-        numCardsToDeal = (10 * len(self.players))
++    # deck is shuffled at generation time, so just deals first (numPlayers * 9) cards
++    # dealToEach: Void, ListOf(Nat) -> ArrayOfCard
++    def dealToEach(self, playerOrder):
++        numCardsToDeal = (9 * len(self.players))
+         if len(self.deck.cards) >= numCardsToDeal:
+             cardsToDeal = self.deck.cards[:numCardsToDeal]
+             self.deck.cards = self.deck.cards[numCardsToDeal:]
