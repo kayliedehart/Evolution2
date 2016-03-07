@@ -1,0 +1,1 @@
+# Representation of the dealer in a game of Evolution
