@@ -2,11 +2,20 @@ from species import *
 
 
 class PlayerState:
+    num = 0
+    foodbag = 0
+    species = []
+    hand = []
 
-    # Internal representation of a json player
-    # TODO: fix mutable lists
-    # Opts: Nat, Nat, ListOf(Species), ListOf(TraitCard) -> PlayerState
-    def __init__(self, id=0, bag=0, speciesList=[], cards=[]):
+    """ 
+        Internal representation of a json player
+        num: ID number
+        foodbag: yep
+        species: this player's species boards
+        hand: traitcards in this player's hand (not on boards/haven't been traded in)
+        Nat, Ops: Nat, ListOf(Species), ListOf(TraitCard) -> PlayerState
+    """
+    def __init__(self, id, bag, speciesList, cards):
         self.num = id
         self.foodbag = bag
         self.species = speciesList

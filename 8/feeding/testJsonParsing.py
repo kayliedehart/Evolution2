@@ -7,6 +7,12 @@ from playerState import PlayerState
 
 class testJsonParsing(unittest.TestCase):
 
+    def setUp(self):
+        self.avgSpecies
+
+    def tearDown(self):
+        del self.avgSpecies
+
     def testSpeciesParsing(self):
         avgSpeciesJ = [["food", 3],
                         ["body", 4],
@@ -59,6 +65,8 @@ class testJsonParsing(unittest.TestCase):
 #        self.assertEqual(JsonParsing.speciesFromJson(invalidJ), )
 #        self.assertEqual(JsonParsing.speciesFromJson(validButWrongJ), )
 #        self.assertEqual(JsonParsing.speciesFromJson(fatFoodNoTraitJ), )
+#        with self.assertRaises ValueError:
+#            the test case that fails
 
     
     def testSituationParsing(self):
