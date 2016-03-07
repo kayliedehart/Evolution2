@@ -1,5 +1,6 @@
 from traitCard import TraitCard
 from species import Species
+from playerState import PlayerState
 
 """
 All methods in this class process to and from arrays that can be dumped/loaded in json
@@ -18,7 +19,7 @@ class JsonParsing:
     def speciesToJson(species):	
         if species is False:
             return False
-        
+
         result = [["food", species.food],
                   ["body", species.body],
                   ["population", species.population],
@@ -78,14 +79,14 @@ class JsonParsing:
     """
     @staticmethod
     def situationFromJson(situation):    
-        defend = Species.convertSpecies(situation[0])
-        attack = Species.convertSpecies(situation[1])
+        defend = JsonParsing.speciesFromJson(situation[0])
+        attack = JsonParsing.speciesFromJson(situation[1])
 
         if not attack or not defend:
             quit()
 
-        lNeighbor = Species.convertSpecies(situation[2]) or Species(0, 0, 0, [])
-        rNeighbor = Species.convertSpecies(situation[3]) or Species(0, 0, 0, [])
+        lNeighbor = JsonParsing.speciesFromJson(situation[2]) or Species(0, 0, 0, [])
+        rNeighbor = JsonParsing.speciesFromJson(situation[3]) or Species(0, 0, 0, [])
 
         return defend, attack, lNeighbor, rNeighbor
 
@@ -99,9 +100,9 @@ class JsonParsing:
     """
     @staticmethod
     def playerStateToJson(state):
-       species = []
-       for animal in state.species:
-        species.append(JsonParsing.speciesToJson(animal))
+        species = []
+        for animal in state.species:
+            species.append(JsonParsing.speciesToJson(animal))
 
         return [["id", state.num],
                 ["species", species],

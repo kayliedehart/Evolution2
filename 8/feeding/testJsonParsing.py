@@ -3,6 +3,7 @@ import constants
 from jsonParsing import *
 from species import Species
 from traitCard import TraitCard
+from playerState import PlayerState
 
 class testJsonParsing(unittest.TestCase):
 
@@ -53,28 +54,69 @@ class testJsonParsing(unittest.TestCase):
 
         self.assertEqual(JsonParsing.speciesFromJson(optJ), False)
         self.assertEqual(JsonParsing.speciesToJson(False), optJ)
+
         # TODO: catch exceptions for tests
 #        self.assertEqual(JsonParsing.speciesFromJson(invalidJ), )
 #        self.assertEqual(JsonParsing.speciesFromJson(validButWrongJ), )
 #        self.assertEqual(JsonParsing.speciesFromJson(fatFoodNoTraitJ), )
 
+    
+    def testSituationParsing(self):
+        situation1J = [[["food", 1], ["body", 0], ["population", 1], ["traits", []]],
+                      [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
+                      False,
+                      False]
+        situation1 = (Species(1, 0, 1), Species(1, 0, 1, [TraitCard(constants.CARNIVORE)]), Species(0, 0, 0), Species(0, 0, 0))
 
-"""
-def testPlayerStateParsing(self):
-    species1 = [["food", 3],
-    ["body", 4],
-    ["population", 5],
-    ["traits", ["carnivore"]]]
+        situation2J = [[["food", 1], ["body", 0], ["population", 1], ["traits", []]],
+                      [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
+                      [["food", 1], ["body", 0], ["population", 1], ["traits", []]],
+                      False]
+        situation2 = (Species(1, 0, 1), Species(1, 0, 1, [TraitCard(constants.CARNIVORE)]), Species(1, 0, 1), Species(0, 0, 0))
 
-    onePlayer = [["id", 1],
-    ["species", [species1, species2]],
-    ["bag", 0]]
+        situation3J = [[["food", 1], ["body", 0], ["population", 1], ["traits", []]],
+                      [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
+                      False,
+                      [["food", 1], ["body", 0], ["population", 1], ["traits", []]]]
+        situation3 = (Species(1, 0, 1), Species(1, 0, 1, [TraitCard(constants.CARNIVORE)]), Species(0, 0, 0), Species(1, 0, 1))
 
-    ps = PlayerState.convertPlayerState(onePlayer)
-    self.assertEqual(ps.num, onePlayer[0][1])
-    self.assertEqual(ps.foodbag, onePlayer[2][1])
-    self.assertEqual(ps.traits, [])
-    """
+        situation4J = [[["food", 1], ["body", 0], ["population", 1], ["traits", []]],
+                      [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
+                      [["food", 1], ["body", 0], ["population", 1], ["traits", []]],
+                      [["food", 1], ["body", 0], ["population", 1], ["traits", []]]]
+        situation4 = (Species(1, 0, 1), Species(1, 0, 1, [TraitCard(constants.CARNIVORE)]), Species(1, 0, 1), Species(1, 0, 1))
+
+        badSituation1 = [False, False, [["food", 1], ["body", 0], ["population", 1], ["traits", []]], False]
+
+        self.assertEqual(JsonParsing.situationFromJson(situation1J), situation1)
+        self.assertEqual(JsonParsing.situationFromJson(situation2J), situation2)
+        self.assertEqual(JsonParsing.situationFromJson(situation3J), situation3)
+        self.assertEqual(JsonParsing.situationFromJson(situation4J), situation4)
+        # TODO: check for exiting
+#        self.assertEqual(JsonParsing.situationFromJson(badSituation1), )
+
+
+    def testPlayerStateParsing(self):
+        species1J = [["food", 3],
+                    ["body", 4],
+                    ["population", 5],
+                    ["traits", ["carnivore"]]]
+        species1 = Species(3, 4, 5, [TraitCard(constants.CARNIVORE)])
+        species2J = [["food", 1],
+                    ["body", 3],
+                    ["population", 4],
+                    ["traits", ["warning-call", "fat-tissue"]],
+                    ["fat-food", 1]]
+        species2 = Species(1, 3, 4, [TraitCard(constants.WARNING_CALL), TraitCard(constants.FAT_TISSUE)], 1)
+
+        onePlayerJ = [["id", 1],
+                     ["species", [species1J, species2J]],
+                     ["bag", 0]]
+        onePlayer = PlayerState(1, 0, [species1, species2])
+
+        self.assertEqual(JsonParsing.playerStateFromJson(onePlayerJ), onePlayer)
+        self.assertEqual(JsonParsing.playerStateToJson(onePlayer), onePlayerJ)
+
 
 
 if __name__ == "__main__":

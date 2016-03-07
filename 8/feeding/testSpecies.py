@@ -1,5 +1,6 @@
 import unittest
 import constants
+from jsonParsing import *
 
 
 HW_5_TEST_PATH = "homework_5_tests/"
@@ -44,7 +45,7 @@ class TestSpecies(unittest.TestCase):
                     with open(HW_5_TEST_PATH + outFiles[i], 'r') as output:
                         input = json.load(input)
                         output = json.load(output)
-                        defend, attack, lNeighbor, rNeighbor = Species.jsonToSituation(input)
+                        defend, attack, lNeighbor, rNeighbor = JsonParsing.situationFromJson(input)
                         self.assertEqual(Species.isAttackable(defend, attack, lNeighbor, rNeighbor), output)
 
 if __name__ == "__main__":

@@ -8,6 +8,23 @@ class Player:
     def __init__(self, num):
         self.playerNum = num
 
+    """ 
+        override equality
+        Any -> Boolean
+    """
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
+
+    """ 
+        override inequality
+        Any -> Boolean
+    """
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     # Sorts a list of species from largest to smallest using Species.isLarger
     # The first Nat in the tuple is the original index the species was at when given by the dealer
     # set removeFed to True if you would like to filter out all species that cannot be fed
