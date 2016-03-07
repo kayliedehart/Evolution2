@@ -1,19 +1,36 @@
-README - Assignment 7
+PURPOSE:
 
-__init__.py - necessary for this to be considered a package
-compile - returns an exit code of 0 (can't pre-compile python)
-test_xattack.py - a suite of unit tests for xattack
-test_xfeed.py - a suite of unit tests for xfeed
-xattack - a proxy for the dealer to access species.isAttackable
-xfeed - a proxy for the dealer to access player.feed
+Create an implementation of the Dealer in a game of Evolution that can execute the feeding procedure,
+and test for correctness of implementation. Determine requirements for the Player to implement to 
+interface with the Dealer. 
 
-To run xfeed, run ./xfeed < input-json > out.
-To run xattack, run ./xattack < input-json > out.
+FILES:
 
-To understand xfeed and xattack, you may wish to read the code it calls. 
-Follow the README in /feeding to understand that code, then read the 
-programs themselves.
+8/dealer/dealer.py is the dealer of the Evolution game
 
-NOTE: We worked in the assignment 6 directory for some time before copying
-everything over to 7 and continuing work, so a partially-fixed version of 
-this code exists in 6/. 
+8/dealer/test_dealer.py is the unit tests for the dealer class
+
+8/xstep.py is the test harness for the dealer's feed1 method
+
+8/test_xstep.py is the unit tests for the test harness xstep
+
+8/xstep is the executable for xstep.py
+
+8/compile is an executable that does compiling for the python files in project 8
+
+8/rest.txt is a wishlist of methods for the player class in the Evolution game
+
+8/json-tests contains test cases for the xstep test harness; input is named xstep_in_[n].json,
+	and the corresponding output is named xstep_out_[n].json
+
+
+RUNNING THE CODE:
+
+To run the test harness, run ./compile and then run ./xstep <json-input>
+
+To run the unit tests, run python test_[filename].py 
+
+
+READING THE CODE:
+
+Start reading the code in dealer.py, and read into subsequent files as needed. 
