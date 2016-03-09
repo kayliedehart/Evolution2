@@ -13,7 +13,7 @@ class PlayerState:
         foodbag: yep
         species: this player's species boards
         hand: traitcards in this player's hand (not on boards/haven't been traded in)
-        Nat, Ops: Nat, ListOf(Species), ListOf(TraitCard) -> PlayerState
+        Nat, Nat, ListOf(Species), ListOf(TraitCard) -> PlayerState
     """
     def __init__(self, id, bag, speciesList, cards):
         self.num = id

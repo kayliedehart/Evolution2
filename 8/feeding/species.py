@@ -11,7 +11,13 @@ class Species:
 
     """ 
         creates a Species
-        Opts: Nat, Nat, Nat, ListOf(TraitCard), Nat -> Species
+        food: how much food this species has eaten this turn
+        body: body size
+        population: population size
+        traits: trait cards on this species board (up to 3)
+        fatFood: how much food has been stored on a fat tissue card
+                 can only be non-zero when a fat tissue card is in self.traits
+        Nat, Nat, Nat, ListOf(TraitCard), Nat -> Species
     """
     def __init__(self, food, body, population, traits, fatFood):
         self.food = food

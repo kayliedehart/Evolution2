@@ -42,6 +42,7 @@ class Player:
                 if s.population > s.food or (s.body > s.fatFood and s.hasTrait("fat-tissue")):
                     temp.append((i, s))
             result = temp
+            
         result = sorted(result, key=lambda x: (x[1].population, x[1].food, x[1].body), reverse=True)
         return result
 

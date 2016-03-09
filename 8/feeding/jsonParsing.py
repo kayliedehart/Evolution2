@@ -11,7 +11,7 @@ class JsonParsing:
 
     """
         enumerate all possible trait names
-        used for checking validity of json species
+        used for checking validity of json trait cards
     """
     allTraits = [
                     "carnivore",
