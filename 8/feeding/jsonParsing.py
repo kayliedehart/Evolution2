@@ -27,6 +27,7 @@ class JsonParsing:
                     "fat-tissue"
                 ]
 
+
     ############ FOR SPECIES
 
     """
@@ -91,7 +92,6 @@ class JsonParsing:
         except Exception as e:
             raise e
 
-
     """ 
        convert a json species from spec to a list of species/optspecies
        JsonSituation -> [Species, Species, OptSpecies, OptSpecies]
@@ -123,9 +123,16 @@ class JsonParsing:
         for animal in state.species:
             species.append(JsonParsing.speciesToJson(animal))
 
-        return [["id", state.num],
-                ["species", species],
-                ["bag", state.foodbag]]
+        cards = []
+        for card in state.hand:
+            cards.append(JsonParsing.traitCardToJson(card))
+
+        result = [["id", state.num],
+                  ["species", species],
+                  ["bag", state.foodbag]]
+
+        if cards:
+            results.append(["cards", cards])
 
     """
        creates a PlayerState from a json array
@@ -138,6 +145,7 @@ class JsonParsing:
         id = 0
         bag = -1
         speciesList = []
+        cards = []
 
         try:
             if state[0][0] == "id":
@@ -150,12 +158,71 @@ class JsonParsing:
             if state[2][0] == "bag":
                 bag = state[2][1]
 
+            if len(state) == 4 and state[3][0] == "cards":
+                for card in state[3][1]:
+                    cards.append(JsonParsing.traitCardFromJson(card))
+
             if id > 0 and bag >= 0:
-                return PlayerState(id, bag, speciesList, [])
+                return PlayerState(id, bag, speciesList, cards)
 
         except Exception as e:
             raise e
 
+
+    ########## FOR TRAIT CARDS
+
+    """
+        creates a trait card from a json array
+        JsonArray -> TraitCard
+    """
+    @staticmethod
+    def traitCardFromJson(card):
+        return TraitCard(card[1], card[0])
+
+    """ 
+        creates a json array representing an internal TraitCard
+        TraitCard -> JsonArray
+    """
+    @staticmethod
+    def traitCardToJson(card):
+        return [card.food, card.name]
+
+
+    ########## FOR DEALER
+
+    """
+        creates a Dealer from a json array
+        JsonArray -> Dealer
+    """
+    @staticmethod
+    def dealerFromJson(dealer):
+        players = []
+        wateringHole = -1
+        cards = []
+
+        try:
+            for player in dealer[0]:
+                players.append(JsonParsing.playerStateFromJson(player))
+
+            wateringHole = dealer[1]
+
+            for card in dealer[2]:
+                cards.append(JsonParsing.traitCardFromJson(card))
+
+            return Dealer(players, wateringHole, card)
+
+        except Exception as e:
+            raise e
+
+    """
+        creates a json array describing a given internal Dealer
+        Dealer -> JsonArray
+    """
+    @staticmethod
+    def dealerToJson(dealer):
+        return [[JsonParsing.playerStateToJson(player) for player in dealer.players],
+                dealer.wateringHole,
+                [JsonParsing.traitCardToJson(card) for card in dealer.deck]]
 
     ########## MISCELLANY
 
