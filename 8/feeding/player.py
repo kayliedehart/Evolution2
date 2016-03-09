@@ -3,8 +3,11 @@ from species import *
 
 class Player:
 
-    # create a new Player
-    # Nat -> Player
+    """
+        create a new Player
+        playerNum: this player's id number
+        Nat -> Player
+    """
     def __init__(self, num):
         self.playerNum = num
 
@@ -25,29 +28,33 @@ class Player:
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    # Sorts a list of species from largest to smallest using Species.isLarger
-    # The first Nat in the tuple is the original index the species was at when given by the dealer
-    # set removeFed to True if you would like to filter out all species that cannot be fed
-    # listOf(Tuple(Nat, Species)), Opt: Boolean -> listOf(Tuple(Nat, Species))
+    """
+        Sorts a list of species from largest to smallest using Species.isLarger
+        The first Nat in the tuple is the original index the species was at when given by the dealer
+        set removeFed to True if you would like to filter out all species that cannot be fed
+        listOf(Tuple(Nat, Species)), Opt: Boolean -> listOf(Tuple(Nat, Species))
+    """
     def sortSpecies(self, species, removeFed=False):
         result = species
         if removeFed:
             temp = []
             for i, s in species:
-                if s.population > s.food or (s.body > s.fatFood and s.hasTrait(constants.FAT_TISSUE)):
+                if s.population > s.food or (s.body > s.fatFood and s.hasTrait("fat-tissue")):
                     temp.append((i, s))
             result = temp
         result = sorted(result, key=lambda x: (x[1].population, x[1].food, x[1].body), reverse=True)
         return result
 
-    # Gets a fat tissue species with the greatest need and its current needs
-    # ListOf((Nat, Species)), Nat -> Nat, Nat
+    """
+        Gets a fat tissue species with the greatest need and its current needs
+        ListOf((Nat, Species)), Nat -> Nat, Nat
+    """
     def getFatTissueSpecies(self, species, wateringHole):
         fatTissueSpecies = False
         speciesIndex = -1
         currentNeed = 0
         for i, animal in species:
-            if animal.hasTrait(constants.FAT_TISSUE) and animal.body > animal.fatFood:
+            if animal.hasTrait("fat-tissue") and animal.body > animal.fatFood:
                 if not fatTissueSpecies:
                     fatTissueSpecies = animal
                     speciesIndex = i
@@ -66,25 +73,28 @@ class Player:
 
         return speciesIndex, currentNeed
 
-    # Gets a vegetarian species with the greatest need
-    # ListOf(Tuple(Nat, Species)) -> Nat
+    """
+        Gets a vegetarian species with the greatest need
+        ListOf(Tuple(Nat, Species)) -> Nat
+    """
     def getVegetarian(self, species):
         for index, animal in species:
             # Return the first hungry vegetarian in an already ordered list
-            if not animal.hasTrait(constants.CARNIVORE) and animal.population > animal.food:
+            if not animal.hasTrait("carnivore") and animal.population > animal.food:
                 return index
 
         return -1
 
-    ''' Gets an attacker and a player + species to attack
+    """ 
+        Gets an attacker and a player + species to attack
         ListOf(Tuple(Nat, Species)), ListOf(PlayerState) -> (Nat, Nat, Nat)
-    '''
+    """
     def getCarnivoreAttack(self, species, otherPlayers):
         prey = False
         carnIndex = defPlayerIndex = preyIndex = -1
 
         for i, animal in species:
-            if animal.hasTrait(constants.CARNIVORE):
+            if animal.hasTrait("carnivore"):
                 canAttack = False
                 # get a player with an attackable animal
                 for j in range(len(otherPlayers)):
@@ -115,10 +125,12 @@ class Player:
                 else:
                     return -1, -1, -1
 
-    # Choose a species to feed
-    # handed states of all players so strategic moves can be made based on neighbors
-    # it will return a FeedingAction; see the FeedingAction class for more information
-    # PlayerState, Nat, ListOf(PlayerState) -> FeedingAction
+    """
+        Choose a species to feed
+        handed states of all players so strategic moves can be made based on neighbors
+        it will return a FeedingAction; see the FeedingAction class for more information
+        PlayerState, Nat, ListOf(PlayerState) -> FeedingAction
+    """
     def feed(self, curState, wateringHole, otherPlayers):
         speciesWithIndices = []
 

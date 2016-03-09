@@ -3,11 +3,29 @@ from species import Species
 from playerState import PlayerState
 
 """
-All methods in this class process to and from arrays that can be dumped/loaded in json
-However, actual calls to json.dump/load should be made in proxy classes, as they are
-not done here
+    All methods in this class process to and from arrays that can be dumped/loaded in json
+    However, actual calls to json.dump/load should be made in proxy classes, as they are
+    not done here
 """
 class JsonParsing:
+
+    """
+        enumerate all possible trait names
+        used for checking validity of json species
+    """
+    allTraits = [
+                    "carnivore",
+                    "warning-call",
+                    "ambush",
+                    "burrowing",
+                    "climbing",
+                    "hard-shell",
+                    "pack-hunting",
+                    "horns",
+                    "herding",
+                    "symbiosis",
+                    "fat-tissue"
+                ]
 
     ############ FOR SPECIES
 
@@ -54,10 +72,11 @@ class JsonParsing:
                     traits = []
                     hasFatTissue = False
 
-                    for trait in jsonSpecies[3][1]:
+                    for trait in jsonSpecies[3][1] :
+                        if JsonParsing.checkTrait(trait):
+                            traits.append(TraitCard(trait))
                         if trait == "fat-tissue":
                             hasFatTissue = True
-                        traits.append(TraitCard(trait))
 
                     if len(jsonSpecies) == 5 and hasFatTissue and jsonSpecies[4][0] == "fat-food":
                         fatFood = jsonSpecies[4][1]
@@ -85,8 +104,8 @@ class JsonParsing:
         if not attack or not defend:
             quit()
 
-        lNeighbor = JsonParsing.speciesFromJson(situation[2]) or Species(0, 0, 0, [])
-        rNeighbor = JsonParsing.speciesFromJson(situation[3]) or Species(0, 0, 0, [])
+        lNeighbor = JsonParsing.speciesFromJson(situation[2]) or Species(0, 0, 0, [], 0)
+        rNeighbor = JsonParsing.speciesFromJson(situation[3]) or Species(0, 0, 0, [], 0)
 
         return defend, attack, lNeighbor, rNeighbor
 
@@ -132,8 +151,20 @@ class JsonParsing:
                 bag = state[2][1]
 
             if id > 0 and bag >= 0:
-                return PlayerState(id, bag, speciesList)
+                return PlayerState(id, bag, speciesList, [])
 
         except Exception as e:
             raise e
+
+
+    ########## MISCELLANY
+
+    """
+        checks if a given trait name is valid
+        String -> Boolean
+    """
+    @staticmethod
+    def checkTrait(trait):
+        return trait in JsonParsing.allTraits
+
 

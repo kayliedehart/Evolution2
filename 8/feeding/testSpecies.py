@@ -2,51 +2,29 @@ import unittest
 import constants
 from jsonParsing import *
 
-
-HW_5_TEST_PATH = "homework_5_tests/"
-
 class TestSpecies(unittest.TestCase):
-    def testGetSets(self):
-        someTraits = [TraitCard(constants.CARNIVORE, 3), TraitCard(constants.AMBUSH, 1)]
-        defaultSpecies = Species()
-        defaultSpecies.setBody(3)
-        defaultSpecies.setFoodPoints(3)
-        defaultSpecies.setTraits(someTraits)
+    def setUp(self):        
+        self.someTraits = [TraitCard("carnivore", 3), TraitCard("ambush", 1)]
+        self.defaultSpecies = Species(0, 0, 0, [], 0)
 
-        aSpecies = Species(3, 3, 5, someTraits)
-        anotherSpecies = Species(2, 5, 7, someTraits)
-        yetAnotherSpecies = Species(1, 5, 7, someTraits)
-        yetAnotherYetAnotherSpecies = Species(2, 5, 7, someTraits)
+        self.aSpecies = Species(3, 3, 5, self.someTraits, 0)
+        self.anotherSpecies = Species(2, 5, 7, self.someTraits, 0)
+        self.yetAnotherSpecies = Species(1, 5, 7, self.someTraits, 0)
+        self.yetAnotherYetAnotherSpecies = Species(2, 5, 7, self.someTraits, 0)
 
-        self.assertEqual(defaultSpecies.body, aSpecies.body)
-        self.assertEqual(defaultSpecies.food, aSpecies.food)
-        self.assertEqual(defaultSpecies.traits, aSpecies.traits)
+    def tearDown(self):
+        del self.someTraits 
+        del self.defaultSpecies 
+        del self.aSpecies 
+        del self.anotherSpecies 
+        del self.yetAnotherSpecies 
+        del self.yetAnotherYetAnotherSpecies 
 
     def testComparators(self):
-        self.assertTrue(aSpecies.isLarger(False))
-        self.assertTrue(anotherSpecies.isLarger(aSpecies))
-        self.assertFalse(yetAnotherSpecies.isLarger(anotherSpecies))
+        self.assertTrue(self.aSpecies.isLarger(False))
+        self.assertTrue(self.anotherSpecies.isLarger(self.aSpecies))
+        self.assertFalse(self.yetAnotherSpecies.isLarger(self.anotherSpecies))
 #        self.assertFalse(yetAnotherYetAnotherSpecies.isLarger(anotherSpecies))
-
-
-    def testIsAttackable(self):
-        os.chdir(HW_5_TEST_PATH)
-        inFiles = glob.glob("*-in.json")
-        outFiles = glob.glob("*-out.json")
-        os.chdir("..")
-        # Loop through the files in homework_5_tests directory and make sure inputs match expected outputs
-        for i in range(len(inFiles)):
-            inFileName = inFiles[i].replace("-in.json", "")
-            outFileName = outFiles[i].replace("-out.json", "")
-            # Make sure that these are the same corresponding test files
-            self.assertEquals(inFileName, outFileName)
-            if inFileName == outFileName:
-                with open(HW_5_TEST_PATH + inFiles[i], 'r') as input:
-                    with open(HW_5_TEST_PATH + outFiles[i], 'r') as output:
-                        input = json.load(input)
-                        output = json.load(output)
-                        defend, attack, lNeighbor, rNeighbor = JsonParsing.situationFromJson(input)
-                        self.assertEqual(Species.isAttackable(defend, attack, lNeighbor, rNeighbor), output)
 
 if __name__ == "__main__":
     unittest.main()
