@@ -2,6 +2,7 @@ from species import *
 
 
 class Player:
+    num = 0
 
     """
         create a new Player
@@ -93,7 +94,6 @@ class Player:
     def getCarnivoreAttack(self, species, otherPlayers):
         prey = False
         carnIndex = defPlayerIndex = preyIndex = -1
-
         for i, animal in species:
             if animal.hasTrait("carnivore"):
                 canAttack = False
@@ -107,8 +107,8 @@ class Player:
                         else:
                             lNeighbor = False
 
-                        # -2 b/c last item in a list is len-1
-                        if k < len(defender.species) - 2:
+                        # TODO: changed from -2 3/9/16
+                        if k < len(defender.species) - 1:
                             rNeighbor = defender.species[k+1]
                         else:
                             rNeighbor = False
@@ -138,7 +138,8 @@ class Player:
         for i in range(len(curState.species)):
             speciesWithIndices.append((i, curState.species[i]))
         species = self.sortSpecies(speciesWithIndices, removeFed=True)
-        if not species:
+
+        if not species or wateringHole == 0:
             return False
 
         fatTissueSpecies, currentNeed = self.getFatTissueSpecies(species, wateringHole)
@@ -146,7 +147,7 @@ class Player:
             return [fatTissueSpecies, currentNeed]
 
         vegetarian = self.getVegetarian(species)
-        if vegetarian != -1 and wateringHole > 0:
+        if vegetarian != -1:
             return vegetarian
 
         carnivore, defender, prey = self.getCarnivoreAttack(species, otherPlayers)
