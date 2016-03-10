@@ -86,6 +86,7 @@ class Species:
 
     """
         Given array of [defender, attacker, leftNeighbor, rightNeighbor], is the defender attackable?
+        TODO: restate spec here
         Species, Species, OptSpecies (one of Boolean or Species), OptSpecies -> Boolean
     """
     @staticmethod
