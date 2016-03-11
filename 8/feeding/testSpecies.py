@@ -54,10 +54,12 @@ class TestSpecies(unittest.TestCase):
         del self.herdingHorns
 
     def testComparators(self):
-        self.assertTrue(self.aSpecies.isLarger(False))
-        self.assertTrue(self.anotherSpecies.isLarger(self.aSpecies))
-        self.assertFalse(self.yetAnotherSpecies.isLarger(self.anotherSpecies))
-#        self.assertFalse(yetAnotherYetAnotherSpecies.isLarger(anotherSpecies))
+        self.assertTrue(self.aSpecies.compare(False) > 0)
+        self.assertTrue(self.aSpecies.compare(self.anotherSpecies) < 0)
+        self.assertTrue(self.anotherSpecies.compare(self.aSpecies) > 0)
+        self.assertTrue(self.aSpecies.compare(self.carnivoreAmbush) == 0)
+        self.assertTrue(self.yetAnotherSpecies.compare(self.aSpecies) > 0)
+        self.assertTrue(self.anotherSpecies.compare(self.yetAnotherYetAnotherSpecies) == 0)
 
     def testHasTrait(self):
         self.assertTrue(self.aSpecies.hasTrait("carnivore"))

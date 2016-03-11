@@ -30,7 +30,7 @@ class Player:
         return not self.__eq__(other)
 
     """
-        Sorts a list of species from largest to smallest using Species.isLarger
+        Sorts a list of species from largest to smallest, giving precedence to population, then food eaten, then body size
         The first Nat in the tuple is the original index the species was at when given by the dealer
         set removeFed to True if you would like to filter out all species that cannot be fed
         listOf(Tuple(Nat, Species)), Opt: Boolean -> listOf(Tuple(Nat, Species))
@@ -114,7 +114,7 @@ class Player:
                             rNeighbor = False
 
                         if (Species.isAttackable(defender.species[k], animal, lNeighbor, rNeighbor) and
-                                                                                defender.species[k].isLarger(prey)):
+                                                                                (defender.species[k].compare(prey)) > 0):
                             defPlayerIndex = j
                             prey = defender.species[k]
                             preyIndex = k

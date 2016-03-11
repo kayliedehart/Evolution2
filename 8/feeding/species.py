@@ -54,35 +54,26 @@ class Species:
 
         return False
 
-    """ 
-        Determine if this species is larger than the given one
-        THIS SHOULD BE CALLED ON THE NEW/CANDIDATE SPECIES
-        aka if there are two possible things to attack and you already chose one as a possibility,
-        call newPossibility.isLarger(oldPossibility)
-        this is to enforce the invariant of order of species boards being a tie-breaker
-        OptSpecies (one of Species or Boolean) -> Boolean
     """
-    def isLarger(self, that):
-        if not that:
-            return True
+        comparator for species/OptSpecies (aka False or Species)
+        decides if a species is larger than the given; precedence is decided in the following order:
+            population size, food eaten, body size,
+        output is as follows:
+            if self is larger than given OR given is False, return is positive
+            if self is the same as as given, return is 0
+            if self is smaller than given, return is negative
+        OptSpecies -> Boolean
+    """
+    def compare(self, other):
+        if other is False:
+            return 1
 
-        if self.population == that.population and self.food == that.food:
-            return self.body > that.body
-        elif self.population == that.population:
-            return self.food > that.food
+        if self.population != other.population:
+            return self.population - other.population
+        elif self.food != other.food:
+            return self.food - other.food
         else:
-            return self.population > that.population
-
-    """
-        tells if these two have the same size
-        OptSpecies (one of Species or Boolean) -> Boolean
-    """
-    def isSameSize(self, that):
-        if not that:
-            return False
-        else:
-            return self.population == that.population and self.body == that.body and self.food == that.food
-
+            return self.body - other.body
 
     """
         Given array of [defender, attacker, leftNeighbor, rightNeighbor], is the defender attackable?
