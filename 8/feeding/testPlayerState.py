@@ -17,7 +17,7 @@ class TestPlayerState(unittest.TestCase):
     def testEqAndMutability(self):
         self.assertNotEqual(self.p1, self.p2)
         self.assertEqual(self.p1, self.otherp1)
-        self.p1.hand.append(TraitCard("carnivore"))
+        self.p1.hand.append(TraitCard("carnivore", 1))
         self.assertNotEqual(self.p1.hand, self.p2.hand)
         self.assertNotEqual(self.p1, self.otherp1)
 

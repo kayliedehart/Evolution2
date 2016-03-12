@@ -6,29 +6,29 @@ from jsonParsing import *
 class TestSpecies(unittest.TestCase):
 
     def setUp(self):        
-        self.someTraits = [TraitCard("carnivore", 3), TraitCard("ambush", 1)]
+        self.someTraits = ["carnivore", "ambush"]
         self.defaultSpecies = Species(0, 0, 0, [], 0)
         self.aSpecies = Species(3, 3, 5, self.someTraits, 0)
         self.anotherSpecies = Species(2, 5, 7, self.someTraits, 0)
         self.yetAnotherSpecies = Species(1, 5, 7, self.someTraits, 0)
         self.yetAnotherYetAnotherSpecies = Species(2, 5, 7, self.someTraits, 0)
 
-        self.carnivore = Species(3, 5, 5, [TraitCard("carnivore")], 0)
+        self.carnivore = Species(3, 5, 5, ["carnivore"], 0)
         self.carnivoreAmbush = Species(3, 3, 5, self.someTraits, 0)
-        self.carnivoreClimber = Species(3, 3, 5, [TraitCard("carnivore"), TraitCard("climbing")], 0)
-        self.smallCarnivorePackHunter = Species(3, 1, 5, [TraitCard("carnivore"), TraitCard("pack-hunting")], 0)
-        self.warningCall = Species(1, 1, 2, [TraitCard("warning-call")], 0)
+        self.carnivoreClimber = Species(3, 3, 5, ["carnivore", "climbing"], 0)
+        self.smallCarnivorePackHunter = Species(3, 1, 5, ["carnivore", "pack-hunting"], 0)
+        self.warningCall = Species(1, 1, 2, ["warning-call"], 0)
         self.vulnerable = Species(1, 1, 2, [], 0)
-        self.burrowSuccess = Species(2, 1, 2, [TraitCard("burrowing")], 0)
-        self.burrowFail = Species(0, 1, 2, [TraitCard("burrowing")], 0)
-        self.climbing = Species(1, 1, 2, [TraitCard("climbing")], 0)
-        self.smallHardShell = Species(1, 1, 2, [TraitCard("hard-shell")], 0)
-        self.bigHardShell = Species(1, 4, 2, [TraitCard("hard-shell")], 0)
-        self.smallHerding = Species(1, 1, 3, [TraitCard("herding")], 0)
-        self.bigHerding = Species(1, 5, 5, [TraitCard("herding")], 0)
-        self.herdingHorns = Species(1, 3, 4, [TraitCard("herding"), TraitCard("horns")], 0)
-        self.smallSymbiosis = Species(1, 1, 2, [TraitCard("symbiosis")], 0)
-        self.bigSymbiosis = Species(1, 5, 5, [TraitCard("symbiosis")], 0)
+        self.burrowSuccess = Species(2, 1, 2, ["burrowing"], 0)
+        self.burrowFail = Species(0, 1, 2, ["burrowing"], 0)
+        self.climbing = Species(1, 1, 2, ["climbing"], 0)
+        self.smallHardShell = Species(1, 1, 2, ["hard-shell"], 0)
+        self.bigHardShell = Species(1, 4, 2, ["hard-shell"], 0)
+        self.smallHerding = Species(1, 1, 3, ["herding"], 0)
+        self.bigHerding = Species(1, 5, 5, ["herding"], 0)
+        self.herdingHorns = Species(1, 3, 4, ["herding", "horns"], 0)
+        self.smallSymbiosis = Species(1, 1, 2, ["symbiosis"], 0)
+        self.bigSymbiosis = Species(1, 5, 5, ["symbiosis"], 0)
 
     def tearDown(self):
         del self.someTraits 

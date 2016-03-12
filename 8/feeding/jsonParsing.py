@@ -42,7 +42,7 @@ class JsonParsing:
         result = [["food", species.food],
                   ["body", species.body],
                   ["population", species.population],
-                  ["traits", [trait.name for trait in species.traits]]]
+                  ["traits", species.traits]]
 
         if species.fatFood > 0:
             result.append(["fat-food", species.fatFood])
@@ -75,7 +75,7 @@ class JsonParsing:
 
                     for trait in jsonSpecies[3][1] :
                         if JsonParsing.checkTrait(trait):
-                            traits.append(TraitCard(trait))
+                            traits.append(trait)
                         if trait == "fat-tissue":
                             hasFatTissue = True
 
@@ -133,6 +133,8 @@ class JsonParsing:
 
         if cards:
             results.append(["cards", cards])
+
+        return result
 
     """
        creates a PlayerState from a json array

@@ -14,10 +14,10 @@ class Species:
         food: how much food this species has eaten this turn
         body: body size
         population: population size
-        traits: trait cards on this species board (up to 3)
+        traits: Traits (String) on this species board (up to 3)
         fatFood: how much food has been stored on a fat tissue card
                  can only be non-zero when a fat tissue card is in self.traits
-        Nat, Nat, Nat, ListOf(TraitCard), Nat -> Species
+        Nat, Nat, Nat, ListOf(Trait), Nat -> Species
     """
     def __init__(self, food, body, population, traits, fatFood):
         self.food = food
@@ -48,16 +48,12 @@ class Species:
         String -> Boolean
     """
     def hasTrait(self, name):
-        for trait in self.traits:
-            if trait.name == name:
-                return True
-
-        return False
+        return name in self.traits
 
     """
         comparator for species/OptSpecies (aka False or Species)
         decides if a species is larger than the given; precedence is decided in the following order:
-            population size, food eaten, body size,
+            population size, food eaten, body size
         output is as follows:
             if self is larger than given OR given is False, return is positive
             if self is the same as as given, return is 0
