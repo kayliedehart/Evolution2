@@ -8,8 +8,10 @@ class Dealer:
 	deck = []
 	discard = []
 
-	def __init__(self):
-		pass
+	def __init__(self, playersList, wateringHole, deck):
+		self.wateringHole = wateringHole
+		self.players = playersList
+		self.deck = deck
 
 	def feedFromWateringHole(self, player, species, foodCount):
 		if species.hasTrait("foraging"):

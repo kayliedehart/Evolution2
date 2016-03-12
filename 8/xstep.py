@@ -10,7 +10,7 @@ try:
     testInput = json.load(sys.stdin)
     if len(testInput) == 3:
     	curDealer = dealerFromJson(testInput)
-        curDealer.feed1()
+        curDealer.feed1(curDealer.players)
         result = [curDealer.players, curDealer.wateringHole, curDealer.deck]
         print json.dumps(result)
 
