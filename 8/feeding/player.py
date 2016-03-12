@@ -2,32 +2,6 @@ from species import *
 
 
 class Player:
-    num = 0
-
-    """
-        create a new Player
-        playerNum: this player's id number
-        Nat -> Player
-    """
-    def __init__(self, num):
-        self.playerNum = num
-
-    """ 
-        override equality
-        Any -> Boolean
-    """
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        else:
-            return False
-
-    """ 
-        override inequality
-        Any -> Boolean
-    """
-    def __ne__(self, other):
-        return not self.__eq__(other)
 
     """
         Sorts a list of species from largest to smallest, giving precedence to population, then food eaten, then body size
@@ -35,7 +9,8 @@ class Player:
         set removeFed to True if you would like to filter out all species that cannot be fed
         listOf(Tuple(Nat, Species)), Opt: Boolean -> listOf(Tuple(Nat, Species))
     """
-    def sortSpecies(self, species, removeFed=False):
+    @staticmethod
+    def sortSpecies(species, removeFed=False):
         result = species
         if removeFed:
             temp = []
@@ -51,7 +26,8 @@ class Player:
         Gets a fat tissue species with the greatest need and its current needs
         ListOf((Nat, Species)), Nat -> Nat, Nat
     """
-    def getFatTissueSpecies(self, species, wateringHole):
+    @staticmethod
+    def getFatTissueSpecies(species, wateringHole):
         fatTissueSpecies = False
         speciesIndex = -1
         currentNeed = 0
@@ -79,7 +55,8 @@ class Player:
         Gets a vegetarian species with the greatest need
         ListOf(Tuple(Nat, Species)) -> Nat
     """
-    def getVegetarian(self, species):
+    @staticmethod
+    def getVegetarian(species):
         for index, animal in species:
             # Return the first hungry vegetarian in an already ordered list
             if not animal.hasTrait("carnivore") and animal.population > animal.food:
@@ -91,7 +68,8 @@ class Player:
         Gets an attacker and a player + species to attack
         ListOf(Tuple(Nat, Species)), ListOf(PlayerState) -> (Nat, Nat, Nat)
     """
-    def getCarnivoreAttack(self, species, otherPlayers):
+    @staticmethod
+    def getCarnivoreAttack(species, otherPlayers):
         prey = False
         carnIndex = defPlayerIndex = preyIndex = -1
         for i, animal in species:
@@ -132,25 +110,26 @@ class Player:
         it will return a FeedingAction; see the FeedingAction class for more information
         PlayerState, Nat, ListOf(PlayerState) -> FeedingAction
     """
-    def feed(self, curState, wateringHole, otherPlayers):
+    @staticmethod
+    def feed(curState, wateringHole, otherPlayers):
         speciesWithIndices = []
 
         for i in range(len(curState.species)):
             speciesWithIndices.append((i, curState.species[i]))
-        species = self.sortSpecies(speciesWithIndices, removeFed=True)
+        species = Player.sortSpecies(speciesWithIndices, removeFed=True)
 
         if not species or wateringHole == 0:
             return False
 
-        fatTissueSpecies, currentNeed = self.getFatTissueSpecies(species, wateringHole)
+        fatTissueSpecies, currentNeed = Player.getFatTissueSpecies(species, wateringHole)
         if fatTissueSpecies != -1:
             return [fatTissueSpecies, currentNeed]
 
-        vegetarian = self.getVegetarian(species)
+        vegetarian = Player.getVegetarian(species)
         if vegetarian != -1:
             return vegetarian
 
-        carnivore, defender, prey = self.getCarnivoreAttack(species, otherPlayers)
+        carnivore, defender, prey = Player.getCarnivoreAttack(species, otherPlayers)
         if (carnivore, defender, prey) != (-1, -1, -1):
             return [carnivore, defender, prey]
 

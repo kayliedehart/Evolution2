@@ -24,7 +24,6 @@ class TestPlayer(unittest.TestCase):
         self.noFatTissueIndexed = [(0, self.aCarnivore), (1, self.fedVeg), (2, self.smallerVeg)]
         self.noVeg = [self.big, self.aCarnivore]
         self.noVegIndexed = [(0, self.big), (1, self.aCarnivore)]
-        self.aPlayer = Player(1)
         self.aPlayerState = PlayerState(1, 0, self.ourSpecies, [])
         self.big_json = JsonParsing.speciesToJson(self.big)
         self.aCarnivore_json = JsonParsing.speciesToJson(self.aCarnivore)
@@ -50,7 +49,7 @@ class TestPlayer(unittest.TestCase):
         del self.noFatTissueIndexed
         del self.noVeg
         del self.noVegIndexed
-        del self.aPlayer
+        del self.aPlayerState
         del self.big_json
         del self.aCarnivore_json
         del self.fedVeg_json
@@ -63,46 +62,46 @@ class TestPlayer(unittest.TestCase):
         allSortedSpecies = [(2, self.big), (0, self.aCarnivore), (3, self.fedVeg), (4, self.smallerVeg), (1, self.smallerFatTissue), (5, self.fedFatTissue)]
         unfedSortedSpecies = [(2, self.big), (0, self.aCarnivore), (4, self.smallerVeg), (1, self.smallerFatTissue)]
 
-        self.assertEqual(self.aPlayer.sortSpecies(self.ourIndexedSpecies, removeFed=False), allSortedSpecies)
+        self.assertEqual(Player.sortSpecies(self.ourIndexedSpecies, removeFed=False), allSortedSpecies)
         # TODO: why does this fail...why...
-        #self.assertEqual(self.aPlayer.sortSpecies(self.ourSpecies, removeFed=True), unfedSortedSpecies)
+        #self.assertEqual(Player.sortSpecies(self.ourSpecies, removeFed=True), unfedSortedSpecies)
 
     def testGetFatTissueSpecies(self):
-        self.assertEqual(self.aPlayer.getFatTissueSpecies(self.ourIndexedSpecies, 5), (4, 4))
-        self.assertEqual(self.aPlayer.getFatTissueSpecies(self.ourIndexedSpecies, 3), (4, 3))
-        self.assertEqual(self.aPlayer.getFatTissueSpecies(self.noFatTissueIndexed, 5), (-1, 0))
+        self.assertEqual(Player.getFatTissueSpecies(self.ourIndexedSpecies, 5), (4, 4))
+        self.assertEqual(Player.getFatTissueSpecies(self.ourIndexedSpecies, 3), (4, 3))
+        self.assertEqual(Player.getFatTissueSpecies(self.noFatTissueIndexed, 5), (-1, 0))
 
     def testGetVegetarian(self):
-        self.assertEqual(self.aPlayer.getVegetarian(self.ourIndexedSpecies), 3)
-        self.assertEqual(self.aPlayer.getVegetarian(self.noVegIndexed), -1)
+        self.assertEqual(Player.getVegetarian(self.ourIndexedSpecies), 3)
+        self.assertEqual(Player.getVegetarian(self.noVegIndexed), -1)
 
     def testGetCarnivoreAttack(self):
-        carn, play, prey = self.aPlayer.getCarnivoreAttack(self.ourIndexedSpecies, otherPlayers=[self.bPlayerState, self.cPlayerState])
+        carn, play, prey = Player.getCarnivoreAttack(self.ourIndexedSpecies, otherPlayers=[self.bPlayerState, self.cPlayerState])
         self.assertEqual(carn, 0)
         self.assertEqual(play, 1)
         self.assertEqual(prey, 0)
-        carn, play, prey = self.aPlayer.getCarnivoreAttack(self.ourIndexedSpecies, otherPlayers=[self.bPlayerState])
+        carn, play, prey = Player.getCarnivoreAttack(self.ourIndexedSpecies, otherPlayers=[self.bPlayerState])
         self.assertEqual(carn, 0)
         self.assertEqual(play, 0)
         self.assertEqual(prey, 0)
-        carn, play, prey = self.aPlayer.getCarnivoreAttack(self.ourIndexedSpecies, 
+        carn, play, prey = Player.getCarnivoreAttack(self.ourIndexedSpecies, 
             otherPlayers=[PlayerState(4, 0, [Species(1, 1, 1, ["warning-call"], 0), Species(1, 1, 1, ["warning-call"], 0)], [])])
         self.assertEqual(carn, -1)
         self.assertEqual(play, -1)
         self.assertEqual(prey, -1)
 
     def testFeed(self):
-        self.assertEqual(self.aPlayer.feed(self.aPlayerState, 5, [self.bPlayerState, self.cPlayerState]), [4, 4])
-        self.assertEqual(self.aPlayer.feed(self.aPlayerState, 1, [self.bPlayerState, self.cPlayerState]), [4, 1])
-        self.assertEqual(self.aPlayer.feed(self.aPlayerState, 0, [self.bPlayerState, self.cPlayerState]), False)
-        self.assertEqual(self.aPlayer.feed(PlayerState(1, 0, [Species(0, 1, 2, [], 0)], []), 5, [self.bPlayerState, self.cPlayerState]), 0)
-        self.assertEqual(self.aPlayer.feed(PlayerState(1, 0, [Species(0, 1, 2, ["fat-tissue", "carnivore"], 1), 
+        self.assertEqual(Player.feed(self.aPlayerState, 5, [self.bPlayerState, self.cPlayerState]), [4, 4])
+        self.assertEqual(Player.feed(self.aPlayerState, 1, [self.bPlayerState, self.cPlayerState]), [4, 1])
+        self.assertEqual(Player.feed(self.aPlayerState, 0, [self.bPlayerState, self.cPlayerState]), False)
+        self.assertEqual(Player.feed(PlayerState(1, 0, [Species(0, 1, 2, [], 0)], []), 5, [self.bPlayerState, self.cPlayerState]), 0)
+        self.assertEqual(Player.feed(PlayerState(1, 0, [Species(0, 1, 2, ["fat-tissue", "carnivore"], 1), 
                                                                     Species(0, 1, 2, [], 0)], []), 5, [self.bPlayerState, self.cPlayerState]), 1)
         # TODO: should the vegetarian fat-tissue haver be fed?
-        self.assertEqual(self.aPlayer.feed(PlayerState(1, 0, [Species(0, 1, 2, ["fat-tissue"], 1), 
+        self.assertEqual(Player.feed(PlayerState(1, 0, [Species(0, 1, 2, ["fat-tissue"], 1), 
                                                                     Species(0, 1, 2, [], 0)], []), 5, [self.bPlayerState, self.cPlayerState]), 0)
-        self.assertEqual(self.aPlayer.feed(PlayerState(1, 0, [self.aCarnivore], []), 5, [self.bPlayerState, self.cPlayerState]), [0, 1, 0])
-        self.assertEqual(self.aPlayer.feed(PlayerState(1, 0, [self.fedVeg, self.aCarnivore], []), 5, [self.bPlayerState]), [1, 0, 0])
+        self.assertEqual(Player.feed(PlayerState(1, 0, [self.aCarnivore], []), 5, [self.bPlayerState, self.cPlayerState]), [0, 1, 0])
+        self.assertEqual(Player.feed(PlayerState(1, 0, [self.fedVeg, self.aCarnivore], []), 5, [self.bPlayerState]), [1, 0, 0])
 
 
 
