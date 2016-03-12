@@ -2,9 +2,9 @@ class TraitCard():
 
     # create a new trait card
     # String, Opt: Nat -> TraitCard
-    def __init__(self, name, food=0):
+    def __init__(self, name, food):
         self.name = name
-        self.food = food
+        self.food = food or 0
 
     # check if two trait cards are equal
     # Any -> Boolean
