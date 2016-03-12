@@ -111,8 +111,14 @@ class Player:
         PlayerState, Nat, ListOf(PlayerState) -> FeedingAction
     """
     @staticmethod
-    def feed(curState, wateringHole, otherPlayers):
+    def feed(curState, wateringHole, players):
         speciesWithIndices = []
+        otherPlayers = []
+        
+        # ensure that we are not in other players
+        for player in players:
+            if player.num != curState.num:
+                otherPlayers.append(player)
 
         for i in range(len(curState.species)):
             speciesWithIndices.append((i, curState.species[i]))
