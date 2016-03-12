@@ -64,6 +64,24 @@ class Player:
 
         return -1
 
+    """
+        Gets the neighbors of the given species index
+        PlayerState, Nat -> [OptSpecies, OptSpecies]
+    """
+    @staticmethod
+    def getNeighbors(player, speciesIdx):
+        if speciesIdx > 0:
+            lNeighbor = player.species[speciesIdx-1]
+        else:
+            lNeighbor = False
+
+        if speciesIdx < len(player.species) - 1:
+            rNeighbor = player.species[speciesIdx+1]
+        else:
+            rNeighbor = False
+
+        return [lNeighbor, rNeighbor]
+
     """ 
         Gets an attacker and a player + species to attack
         ListOf(Tuple(Nat, Species)), ListOf(PlayerState) -> (Nat, Nat, Nat)
@@ -80,17 +98,7 @@ class Player:
                     defender = otherPlayers[j]
                     # get an attackable animal; range so that we can check bounds before getting neighbors
                     for k in range(len(defender.species)):
-                        if k > 0:
-                            lNeighbor = defender.species[k-1]
-                        else:
-                            lNeighbor = False
-
-                        # TODO: changed from -2 3/9/16
-                        if k < len(defender.species) - 1:
-                            rNeighbor = defender.species[k+1]
-                        else:
-                            rNeighbor = False
-
+                        lNeighbor, rNeighbor = Player.getNeighbors(defender, k)
                         if (Species.isAttackable(defender.species[k], animal, lNeighbor, rNeighbor) and
                                                                                 (defender.species[k].compare(prey)) > 0):
                             defPlayerIndex = j
@@ -114,7 +122,7 @@ class Player:
     def feed(curState, wateringHole, players):
         speciesWithIndices = []
         otherPlayers = []
-        
+
         # ensure that we are not in other players
         for player in players:
             if player.num != curState.num:
