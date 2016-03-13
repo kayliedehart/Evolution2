@@ -1,16 +1,25 @@
 # Representation of the dealer in a game of Evolution
-import species
-import player
+from species import *
+from player import *
 
 class Dealer:
 	wateringHole = 0
 	players = []
+	currentlyFeeding = []
 	deck = []
 	discard = []
 
+	"""
+		Create a Dealer
+		@param playersList: list of all players still in the game
+		@param currentlyFeeding: list of all players who are still being fed this turn
+		@param wateringHole: the number of food tokens remaining in the watering hole
+		@param deck: the cards in the deck that have not yet been dealt to players
+	"""
 	def __init__(self, playersList, wateringHole, deck):
 		self.wateringHole = wateringHole
 		self.players = playersList
+		self.currentlyFeeding = playersList
 		self.deck = deck	
 
 	""" 
@@ -38,7 +47,7 @@ class Dealer:
 		@param foodCount: how much food species should be fed 
 		PlayerState, Species, Nat -> Void
 	"""
-	def feedFromWateringHole(self, curPlayer, spec, foodCount):
+	def feedFromWateringHole(self, curPlayer, spec, foodCount=1):
 		if spec.hasTrait("foraging"):
 			foodCount += 1
 		if (self.wateringHole >= foodCount) and (spec.food + foodCount <= spec.population):
@@ -48,26 +57,31 @@ class Dealer:
 			spec.food += self.wateringHole
 			self.wateringHole = 0
 
-		left, right = Player.getNeighbors(curPlayer, spec)
+		left, right = Player.getNeighbors(curPlayer, curPlayer.species.index(spec))
 
-		if species.hasTrait("cooperation"):
+		if spec.hasTrait("cooperation") and right:
 			self.feedFromWateringHole(curPlayer, right, 1)
 
 	"""
 		Execute a carnivore attack, including feeding
 		@param attPlayer: the player who owns the attacking species
+		@param defPlayer: the player who owns the defending species
 		@param defend: the species that's being attacked
 		@param att: the species that's attacking
-		Player, Species, Species -> Void 
-		TODO: remove a species if its population drops to 0?
+		Player, Player, Species, Species -> Void 
 	"""
-	def executeAttack(self, attPlayer, defend, att):
-		defend.population -= 1
+	def executeAttack(self, attPlayer, defPlayer, att, defend):
 		if defend.hasTrait("horns"):
 			att.population -= 1
+		defend.population -= 1
+
+		if defend.population <= 0:
+			del defPlayer.species[defPlayer.species.index(defend)]
+			if not defPlayer.species:
+				del self.currentlyFeeding[self.currentlyFeeding.index(defPlayer)]
+
 		if att.population > att.food:
 			self.feedFromWateringHole(attPlayer, att, 1)
-
 
 	"""
 		Try to automatically feed a species of the given player. If there is only one remaining
@@ -79,7 +93,7 @@ class Dealer:
 	def autoFeed(self, player):
 		hungry = []
 		for s in player.species:
-			if not (s.population > s.food or (s.body > s.fatFood and s.hasTrait("fat-tissue"))):
+			if s.population > s.food or (s.body > s.fatFood and s.hasTrait("fat-tissue")):
 				hungry.append(s)
 
 		if (len(hungry) == 1) and not (hungry[0].hasTrait("carnivore")):
@@ -117,7 +131,7 @@ class Dealer:
 				prey = defender.species[decision[2]]
 				left, right = Player.getNeighbors(defender, prey)
 				if Species.isAttackable(defender, attacker, left, right):
-					self.executeAttack(player, defender, attacker)
+					self.executeAttack(player, defender, attacker, prey)
 					return True
 		else:
 			return False

@@ -13,7 +13,7 @@ class TestDealer(unittest.TestCase):
 		self.carnCoop = Species(3, 4, 5, ["carnivore", "cooperation"], 0)
 		self.carnForage = Species(3, 4, 5, ["carnivore", "foraging"], 0)
 		self.p1 = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], [])
-		self.p2 = PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carn], [])
+		self.p2 = PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], [])
 		self.p3 = PlayerState(3, 0, [self.vegCoop, self.carnCoop, self.carnForage], [])
 		self.p4 = PlayerState(4, 0, [self.vegCoop], [])
 		self.dealer = Dealer([self.p1, self.p2, self.p3], 3, [])
@@ -52,13 +52,13 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.vegCoop.population, 3)
 		self.assertEqual(self.carnCoop.food, 3)
 
-		self.dealer.executeAttack(self.p3, self.vegCoop, self.carnCoop)
+		self.dealer.executeAttack(self.p3, self.p1, self.carnCoop, self.vegCoop)
 		self.assertEqual(self.carnCoop.population, 5)
 		self.assertEqual(self.vegCoop.population, 2)
-		self.assertEqual(self.carCoop.food, 4)
-		self.assertEqual(self.dealer.wateringHole, 2)
+		self.assertEqual(self.carnCoop.food, 4)
+		self.assertEqual(self.dealer.wateringHole, 0)
 
-		self.dealer.executeAttack(self.p3, self.vegHorns, self.carnCoop)
+		self.dealer.executeAttack(self.p3, self.p2, self.carnCoop, self.vegHorns)
 		self.assertEqual(self.carnCoop.population, 4)
 		self.assertEqual(self.vegHorns.population, 2)
 
