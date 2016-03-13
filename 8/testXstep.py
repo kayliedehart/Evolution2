@@ -21,11 +21,26 @@ def xstep(testName, fileName):
     print printing
 
 
-with open(TEST_PATH + "/xstep_in_1.json", "r") as one:
+with open(TEST_PATH + "/xstep-1-in.json", "r") as one:
     xstep("regular configuration; expected output: one configuration", one)
 
-with open(TEST_PATH + "/xstep_invalid.json", "r") as invalid:
+with open(TEST_PATH + "/xstep-2-in.json", "r") as two:
+    xstep("regular configuration; expected output: two configuration", two)
+
+with open(TEST_PATH + "/xstep-3-in.json", "r") as three:
+    xstep("regular configuration; expected output: three configuration", three)
+
+with open(TEST_PATH + "/xstep-4-in.json", "r") as four:
+    xstep("regular configuration; expected output: four configuration", four)
+
+with open(TEST_PATH + "/xstep-5-in.json", "r") as five:
+    xstep("regular configuration; expected output: five configuration", five)
+
+with open(TEST_PATH + "/xstep-6-in.json", "r") as six:
+    xstep("regular configuration; expected output: six configuration", six)
+
+with open(TEST_PATH + "/xstep-invalid.json", "r") as invalid:
     xstep("bad json; expected output: none", invalid)	
 
-with open(TEST_PATH + "/xstep_invalid_players.json", "r") as invalidPlayers:
+with open(TEST_PATH + "/xstep-invalid-players.json", "r") as invalidPlayers:
     xstep("invalid json players; expected output: none", invalidPlayers)	

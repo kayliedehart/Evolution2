@@ -5,7 +5,7 @@
   [["id", 5], ["species", []], ["bag", 4]],
   [["id", 6], ["species", []], ["bag", 4]],
   [["id", 7], ["species", []], ["bag", 4]],
-  [["id", 8], ["species", []], ["bag", 4]],
+  [["id", 8], ["species", []], ["bag", 4]]
  ],
  5,
  [[-8, "carnivore"],
