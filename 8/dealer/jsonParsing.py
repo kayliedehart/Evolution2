@@ -25,8 +25,13 @@ class JsonParsing:
 					"horns",
 					"herding",
 					"symbiosis",
-					"fat-tissue"
-				]
+					"fat-tissue",
+					"foraging",
+					"cooperation",
+					"scavenger",
+					"fertile",
+					"long-neck"
+		    ]
 
 
 	############ FOR SPECIES
