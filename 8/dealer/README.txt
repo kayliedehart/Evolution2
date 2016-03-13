@@ -1,4 +1,4 @@
-README - Assignment 7
+README - Assignment 8
 
 __init__.py - makes this folder into a Python package
 constants.py - a container for constant values in evolution
