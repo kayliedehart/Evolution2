@@ -9,7 +9,7 @@
             ["traits",["foraging", "carnivore"]]]]], 
    ["bag", 4]],
   [["id", 2], ["species", 
-         [[["food",1],
+         [[["food",2],
             ["body",2],
             ["population",1],
             ["traits",["scavenger", "foraging", "cooperation"]]],
@@ -24,7 +24,7 @@
             ["population",1],
             ["traits",["scavenger"]]]]], 
    ["bag", 4]]],
- 1,
+ 0,
  [[-8, "carnivore"],
   [0, "herding"],
   [3, "fat-tissue"]

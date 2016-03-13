@@ -44,6 +44,19 @@ class TestDealer(unittest.TestCase):
 
 		self.x4d = Dealer([self.x4p1, self.x4p2, self.x4p3], 10, [])
 
+		self.x61 = Species(0, 5, 3, ["carnivore", "cooperation", "foraging"], 0)
+		self.x62 = Species(0, 5, 2, ["foraging", "carnivore"], 0)
+		self.x6p1 = PlayerState(1, 0, [self.x61, self.x62], [])
+
+		self.x63 = Species(0, 2, 1, ["scavenger", "foraging", "cooperation"], 0)
+		self.x64 = Species(0, 5, 2, ["carnivore", "cooperation"], 0)
+		self.x6p2 = PlayerState(2, 0, [self.x63, self.x64], [])
+
+		self.x65 = Species(0, 4, 2, ["scavenger"], 0)
+		self.x6p3 = PlayerState(3, 0, [self.x65], [])
+
+		self.x6deal = Dealer([self.x6p1, self.x6p2, self.x6p3], 8, [])
+
 	def tearDown(self):
 		del self.vegHorns 
 		del self.vegCoop
@@ -79,6 +92,14 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.x43.food, 2)
 		self.assertEqual(self.x44.food, 1)
 		self.assertEqual(self.x4d.wateringHole, 5)
+
+		self.x6deal.feed1(self.x6deal.players)
+		self.assertEqual(self.x61.food, 2)
+		self.assertEqual(self.x62.food, 2)
+		self.assertEqual(self.x63.food, 2)
+		self.assertEqual(self.x64.food, 1)
+		self.assertEqual(self.x65.food, 1)
+		self.assertEqual(self.x6deal.wateringHole, 0)
 
 
 	def testFeedFromWateringHole(self):
