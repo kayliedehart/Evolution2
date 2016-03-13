@@ -6,15 +6,15 @@ import json
 from dealer.dealer import *
 from dealer.jsonParsing import *
 
-#try:
-testInput = json.load(sys.stdin)
-if len(testInput) == 3:
-	curDealer = JsonParsing.dealerFromJson(testInput)
-	print curDealer
-	print "dealer"
-	curDealer.feed1(curDealer.players)
-	result = [curDealer.players, curDealer.wateringHole, curDealer.deck]
-	print json.dumps(result)
+try:
+	testInput = json.load(sys.stdin)
+	if len(testInput) == 3:
+		curDealer = JsonParsing.dealerFromJson(testInput)
+		print curDealer
+		print "dealer"
+		curDealer.feed1(curDealer.players)
+		result = [curDealer.players, curDealer.wateringHole, curDealer.deck]
+		print json.dumps(result)
 
-#except Exception as e:
-#    quit()
+except Exception as e:
+   quit()
