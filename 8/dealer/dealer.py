@@ -117,7 +117,7 @@ class Dealer:
 			nextPlayer = self.players[self.players.index(curPlayer)+1]
 			self.scavengeFeed(nextPlayer)
 		except:
-			# no need to keep going 
+			# There are no more players to be fed after the current player 
 			pass
 
 

@@ -1,0 +1,41 @@
+"""
+Returns a Trait Card to be donated to the WateringHole
+@return traitCard: TraitCard
+Void -> TraitCard
+"""
+def wateringHoleDiscard():
+	return traitCard
+
+
+"""
+Populate the Player's hand with TraitCards from the Dealer
+@param traitCards: a list of TraitCards
+List of TraitCards -> Void
+"""
+def takeCards(traitcards):
+
+
+"""
+Place a TraitCard on one of this Player's SpeciesBoards. If the given index
+is occupied by another Trait already, replace that Trait with the given TraitCard.
+@param card: the TraitCard the player wants to assign
+@param index: the index [between 0-2, inclusive] the trait is to be assigned / replaced
+@param species: the species the TraitCard is being assigned to [must be this player's species]
+TraitCard, Int, SpeciesBoard -> Void
+"""
+def placeTraitCard(card, index, species):
+
+
+"""
+Exchange a TraitCard with the Dealer in exchange for one new SpeciesBoard, Population size, 
+or body size.
+@return request: A Request is one of:
+			false - The player doesn't want to exchange anymore at this time
+			[TraitCard, "species"] - the player is exchanging the given TraitCard for a new SpeciesBoard
+			[TraitCard, SpeciesBoard, "population"] - the player is exchanging the given TraitCard for one 												more population size on the given SpeciesBoard
+			[TraitCard, SpeciesBoard, "body-size"] - the player is exchanging the given TraitCard for one
+														more body size on the given SpeciesBoard
+Void -> Request
+"""
+def exchange():
+	return request

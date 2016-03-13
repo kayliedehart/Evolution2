@@ -8,11 +8,13 @@ FILES:
 
 8/dealer/dealer.py is the dealer of the Evolution game
 
-8/dealer/test_dealer.py is the unit tests for the dealer class
+8/dealer/testDealer.py is the unit tests for the dealer class
+
+8/dealer/feeding/ contains all the necessary game components from previous projects
 
 8/xstep.py is the test harness for the dealer's feed1 method
 
-8/test_xstep.py is the unit tests for the test harness xstep
+8/testXstep.py is the unit tests for the test harness xstep
 
 8/xstep is the executable for xstep.py
 
@@ -20,15 +22,15 @@ FILES:
 
 8/rest.txt is a wishlist of methods for the player class in the Evolution game
 
-8/json-tests contains test cases for the xstep test harness; input is named xstep_in_[n].json,
-	and the corresponding output is named xstep_out_[n].json
+8/json-tests contains unit test cases for the xstep test harness; input is named xstep-[n]-in.json,
+	and the corresponding output is named xstep-[n]-out.json
 
 
 RUNNING THE CODE:
 
 To run the test harness, run ./compile and then run ./xstep <json-input>
 
-To run the unit tests, run python test_[filename].py 
+To run the unit tests, run python test[Filename].py 
 
 
 READING THE CODE:
