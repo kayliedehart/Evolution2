@@ -1,7 +1,9 @@
 import unittest
 from dealer import *
-from ..feeding.species import Species
-from ..feeding.playerState import PlayerState
+import sys
+sys.path.append("../feeding")
+from species import Species
+from playerState import PlayerState
 
 class TestDealer(unittest.TestCase):
 

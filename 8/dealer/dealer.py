@@ -1,4 +1,6 @@
 # Representation of the dealer in a game of Evolution
+import sys
+sys.path.append("../feeding")
 import species
 import player
 
