@@ -48,7 +48,7 @@ class Dealer:
 		PlayerState, Species, Nat -> Void
 	"""
 	def feedFromWateringHole(self, curPlayer, spec, foodCount=1, fatFood=False):
-
+		
 		if fatFood is False:
 			if (self.wateringHole >= foodCount) and (spec.food + foodCount <= spec.population):
 				spec.food += foodCount
@@ -141,7 +141,7 @@ class Dealer:
 					self.executeAttack(player, defender, attacker, prey)
 					return True
 		else:
-			del self.currentlyFeeding[self.currentlyFeeding.index(defPlayer)]
+			del self.currentlyFeeding[self.currentlyFeeding.index(player)]
 			return False
 
 	"""

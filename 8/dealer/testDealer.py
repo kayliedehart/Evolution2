@@ -25,6 +25,11 @@ class TestDealer(unittest.TestCase):
 		self.p2dealer = Dealer([self.p6, self.p5], 3, [])
 		self.p3dealer = Dealer([self.p8], 3, [])
 
+
+		self.xstep3spec = Species(0, 5, 2, ["foraging"], 0)
+		self.xstep3p = PlayerState(1, 0, [self.xstep3spec], [])
+		self.xstep3deal = Dealer([self.xstep3p], 5, [])
+
 	def tearDown(self):
 		del self.vegHorns 
 		del self.vegCoop
@@ -43,6 +48,16 @@ class TestDealer(unittest.TestCase):
 		del self.dealer
 		del self.p2dealer
 		del self.p3dealer
+
+		del self.xstep3spec
+		del self.xstep3p
+		del self.xstep3deal
+
+	def testXstep(self):
+		self.assertEqual(self.xstep3spec.food, 0)
+		self.xstep3deal.feed1(self.xstep3deal.players)
+		self.assertEqual(self.xstep3spec.food, 2)
+		self.assertEqual(self.xstep3deal.wateringHole, 3)
 
 	def testFeedFromWateringHole(self):
 		self.assertEqual(self.dealer.wateringHole, 3)
