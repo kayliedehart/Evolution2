@@ -15,6 +15,7 @@ class Dealer:
 
     """
         Actually feed a species based on its traits and decrement the watering hole as needed
+        Fat tissue species should NOT be fed here -- they are fed elsewhere
         @param player: the player who owns the species to be fed
         @param species: the species who's being fed
         @param foodCount: how much food species should be fed 
@@ -41,6 +42,7 @@ class Dealer:
         @param defend: the species that's being attacked
         @param att: the species that's attacking
         Player, Species, Species -> Void 
+        TODO: remove a species if its population drops to 0?
 	"""
 	def executeAttack(self, attPlayer, defend, att):
 		defend.population -= 1
