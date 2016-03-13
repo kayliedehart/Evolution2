@@ -20,7 +20,7 @@ class TestDealer(unittest.TestCase):
 		self.p6 = PlayerState(6, 0, [self.carnCoop], [])
 		self.p7 = PlayerState(7, 0, [self.fatScav], [])
 		self.dealer = Dealer([self.p1, self.p2, self.p3], 3, [])
-		self.p2dealer = Dealer([self.p5, self.p6], 3, [])
+		self.p2dealer = Dealer([self.p6, self.p5], 3, [])
 
 	def tearDown(self):
 		del self.vegHorns 
@@ -72,11 +72,10 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.vegHorns.population, 2)
 
 	def testAutoFeed(self):
-		# unfed carnivore/fed but not completely fat tissue'd species
 		self.assertFalse(self.dealer.autoFeed(self.p1))
-		# hungry fat tissue
+
 		self.assertFalse(self.dealer.autoFeed(self.p2))
-		# just hungry veg
+		
 		self.assertEqual(self.vegCoop.food, 1)
 		self.assertTrue(self.dealer.autoFeed(self.p4))
 		self.assertEqual(self.vegCoop.food, 2)
@@ -100,10 +99,41 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.vegHorns.population, 2)
 
 	def testScavengeFeed(self):
-		pass
+		self.assertEqual(self.fatScav.food, 2)
+		self.assertEqual(self.dealer.wateringHole, 3)
+		self.dealer.scavengeFeed(self.p1)
+		self.assertEqual(self.fatScav.food, 3)
+		self.assertEqual(self.dealer.wateringHole, 2)
+
+		self.dealer.scavengeFeed(self.p1)
+		self.dealer.scavengeFeed(self.p1)
+		self.dealer.scavengeFeed(self.p1)
+		self.assertEqual(self.fatScav.food, 4)
+		self.assertEqual(self.dealer.wateringHole, 1)
+
+		self.carnCoop.traits.append("scavenging")
+		self.vegCoop.traits.append("scavenging")
+		self.assertEqual(self.vegCoop.food, 1)
+		self.assertEqual(self.carnCoop.food, 3)
+		self.dealer.scavengeFeed(self.p1)
+		self.assertEqual(self.vegCoop.food, 2)
+		self.assertEqual(self.carnCoop.food, 3)
+		self.assertEqual(self.dealer.wateringHole, 0)
+
 
 	def testFeed1(self):
-		pass
+		self.assertEqual(self.vegCoop.food, 1)
+		self.dealer.feed1(self.dealer.players)
+		self.assertEqual(self.vegCoop.food, 2)
+		self.assertEqual(self.dealer.wateringHole, 2)
+
+		self.assertEqual(self.carnCoop.population, 5)
+		self.assertEqual(self.carnCoop.food, 3)
+		self.assertEqual(self.vegHorns.population, 3)
+		self.p2dealer.feed1(self.p2dealer.players)
+		self.assertEqual(self.carnCoop.population, 4)
+		self.assertEqual(self.carnCoop.food, 4)
+		self.assertEqual(self.vegHorns.population, 2)
 
 if __name__ == "__main__":
 	unittest.main()

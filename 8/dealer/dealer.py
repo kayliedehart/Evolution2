@@ -73,6 +73,7 @@ class Dealer:
 	def executeAttack(self, attPlayer, defPlayer, att, defend):
 		if defend.hasTrait("horns"):
 			att.population -= 1
+
 		defend.population -= 1
 
 		if defend.population <= 0:
@@ -113,6 +114,8 @@ class Dealer:
 	"""
 	def queryFeed(self, player):
 		decision = Player.feed(player, self.wateringHole, self.players)
+		print self.players
+		print decision
 		if decision is not False:
 			if type(decision) == int:
 				self.feedFromWateringHole(player, player.species[decision], 1)
@@ -161,7 +164,7 @@ class Dealer:
 	"""
 	def feed1(self, configuration):
 		curPlayer = configuration[0]
-		if wateringHole > 0:
+		if self.wateringHole > 0:
 			if not self.autoFeed(curPlayer):
 				attack = self.queryFeed(curPlayer)
 				if attack:
