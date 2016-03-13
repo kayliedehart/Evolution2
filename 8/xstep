@@ -10,11 +10,10 @@ try:
 	testInput = json.load(sys.stdin)
 	if len(testInput) == 3:
 		curDealer = JsonParsing.dealerFromJson(testInput)
-		print curDealer
-		print "dealer"
 		curDealer.feed1(curDealer.players)
-		result = [curDealer.players, curDealer.wateringHole, curDealer.deck]
+		result = JsonParsing.dealerToJson(curDealer)
 		print json.dumps(result)
 
+
 except Exception as e:
-   quit()
+	quit()
