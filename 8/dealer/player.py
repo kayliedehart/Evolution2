@@ -122,11 +122,14 @@ class Player:
 	def feed(curState, wateringHole, players):
 		speciesWithIndices = []
 		otherPlayers = []
+		myIndex = -1
 
 		# ensure that we are not in other players
-		for player in players:
-			if player.num != curState.num:
-				otherPlayers.append(player)
+		for i in range(len(players)):
+			if players[i].num != curState.num:
+				otherPlayers.append(players[i])
+			else:
+				myIndex = i
 
 		for i in range(len(curState.species)):
 			speciesWithIndices.append((i, curState.species[i]))
@@ -145,6 +148,8 @@ class Player:
 
 		carnivore, defender, prey = Player.getCarnivoreAttack(species, otherPlayers)
 		if (carnivore, defender, prey) != (-1, -1, -1):
+			if defender >= myIndex and myIndex > -1:
+				defender += 1
 			return [carnivore, defender, prey]
 
 		# none can be fed

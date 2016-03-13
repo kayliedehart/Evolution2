@@ -47,15 +47,26 @@ class Dealer:
 		@param foodCount: how much food species should be fed 
 		PlayerState, Species, Nat -> Void
 	"""
-	def feedFromWateringHole(self, curPlayer, spec, foodCount=1):
-		if spec.hasTrait("foraging"):
-			foodCount += 1
-		if (self.wateringHole >= foodCount) and (spec.food + foodCount <= spec.population):
-			spec.food += foodCount
-			self.wateringHole -= foodCount
-		elif (spec.food + foodCount <= spec.population):
-			spec.food += self.wateringHole
-			self.wateringHole = 0
+	def feedFromWateringHole(self, curPlayer, spec, foodCount=1, fatFood=False):
+
+		if fatFood is False:
+			if (self.wateringHole >= foodCount) and (spec.food + foodCount <= spec.population):
+				spec.food += foodCount
+				self.wateringHole -= foodCount
+			elif (spec.food + foodCount <= spec.population):
+				spec.food += self.wateringHole
+				self.wateringHole = 0
+		else:
+			if (self.wateringHole >= foodCount) and (spec.fatFood + foodCount <= spec.body):
+				spec.fatFood += foodCount
+				self.wateringHole -= foodCount
+			elif (spec.fatFood + foodCount <= spec.body):
+				spec.fatFood += self.wateringHole
+				self.wateringHole = 0
+
+		if spec.hasTrait("foraging") and self.wateringHole > 0:
+			spec.food += 1
+			self.wateringHole -= 1 
 
 		left, right = Player.getNeighbors(curPlayer, curPlayer.species.index(spec))
 
@@ -114,19 +125,12 @@ class Dealer:
 	"""
 	def queryFeed(self, player):
 		decision = Player.feed(player, self.wateringHole, self.players)
-		print self.players
-		print decision
 		if decision is not False:
 			if type(decision) == int:
 				self.feedFromWateringHole(player, player.species[decision], 1)
 				return False
 			if len(decision) == 2:
-				if self.wateringHole >= decision[1]:
-					player.species[decision[0]].fatFood += decision[1]
-					self.wateringHole -= decision[1]
-				else:
-					player.species[decision[0]].fatFood += self.wateringHole
-					self.wateringHole = 0
+				self.feedFromWateringHole(player, player.species[decision[0]], foodCount=decision[1], fatFood=True)
 				return False
 			if len(decision) == 3:
 				attacker = player.species[decision[0]]
