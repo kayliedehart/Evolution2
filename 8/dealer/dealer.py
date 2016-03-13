@@ -21,20 +21,20 @@ class Dealer:
         @param foodCount: how much food species should be fed 
         PlayerState, Species, Nat -> Void
     """
-	def feedFromWateringHole(self, player, species, foodCount):
-		if species.hasTrait("foraging"):
+	def feedFromWateringHole(self, curPlayer, spec, foodCount):
+		if spec.hasTrait("foraging"):
 			foodCount += 1
-		if self.wateringHole >= foodCount:
-			species.food += foodCount
+		if (self.wateringHole >= foodCount) and (spec.food + foodCount <= spec.population):
+			spec.food += foodCount
 			self.wateringHole -= foodCount
-		else:
-			species.food += self.wateringHole
+		elif (spec.food + foodCount <= spec.population):
+			spec.food += self.wateringHole
 			self.wateringHole = 0
 
-		left, right = Player.getNeighbors(player, species)
+		left, right = Player.getNeighbors(curPlayer, spec)
 
 		if species.hasTrait("cooperation"):
-			self.feedFromWateringHole(player, right, 1)
+			self.feedFromWateringHole(curPlayer, right, 1)
 
 	"""
 	    Execute a carnivore attack, including feeding
@@ -109,11 +109,13 @@ class Dealer:
 	Execute automatic feedings triggered by scavenging traits.
 	@param player: current PlayerState
 	"""
-	def scavengeFeed(self, player):
-		while self.wateringHole > 0:
-			for spec in player.species:
-				if spec.hasTrait("cooperation")
-				# if attack, scavenging
+	def scavengeFeed(self, curPlayer):
+		for spec in curPlayer.species:
+			if spec.hasTrait("scavenging"):
+				self.feedFromWateringHole(curPlayer, spec, 1)
+		try:
+			nextPlayer = self.players[self.players.index(curPlayer)+1]
+			self.scavengeFeed(nextPlayer)
 
 
 	"""
