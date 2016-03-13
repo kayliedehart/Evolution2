@@ -7,26 +7,72 @@ from playerState import PlayerState
 
 class testJsonParsing(unittest.TestCase):
 
-	def testSpeciesParsing(self):        
-		avgSpeciesJ = [["food", 3],
+	def setUp(self):
+		self.species1J = [["food", 3],
+					["body", 4],
+					["population", 5],
+					["traits", ["carnivore"]]]
+		self.species1 = Species(3, 4, 5, ["carnivore"], 0)
+		self.species2J = [["food", 1],
+					["body", 3],
+					["population", 4],
+					["traits", ["warning-call", "fat-tissue"]],
+					["fat-food", 1]]
+		self.species2 = Species(1, 3, 4, ["warning-call", "fat-tissue"], 1)
+
+		self.avgSpeciesJ = [["food", 3],
 					   ["body", 4],
 					   ["population", 5],
 					   ["traits", ["carnivore"]]]
-		avgSpecies = Species(3, 4, 5, ["carnivore"], 0)
+		self.avgSpecies = Species(3, 4, 5, ["carnivore"], 0)
 
-		fatTissueSpeciesJ = [["food", 1],
+		self.fatTissueSpeciesJ = [["food", 1],
 							 ["body", 3],
 							 ["population", 4],
 							 ["traits", ["warning-call", "fat-tissue"]],
 							 ["fat-food", 1]]
-		fatTissueSpecies = Species(1, 3, 4, ["warning-call", "fat-tissue"], 1)
+		self.fatTissueSpecies = Species(1, 3, 4, ["warning-call", "fat-tissue"], 1)
 
-		fatTraitNoFoodJ = [["food", 1],
+		self.fatTraitNoFoodJ = [["food", 1],
 							["body", 3],
 							["population", 4],
 							["traits", ["warning-call", "fat-tissue"]]]
-		fatTraitNoFood = Species(1, 3, 4, ["warning-call", "fat-tissue"], 0)
+		self.fatTraitNoFood = Species(1, 3, 4, ["warning-call", "fat-tissue"], 0)		
 
+		self.onePlayerJ = [["id", 1],
+					 ["species", [self.species1J, self.species2J]],
+					 ["bag", 0]]
+		self.onePlayer = PlayerState(1, 0, [self.species1, self.species2], [])
+
+		self.twoPlayerJ = [["id", 2],
+						   ["species", [self.avgSpeciesJ, self.fatTissueSpeciesJ]],
+						   ["bag", 0]]
+		self.twoPlayer = PlayerState(2, 0, [self.avgSpecies, self.fatTissueSpecies], [])
+
+		self.threePlayerJ = [["id", 3],
+							 ["species", [self.fatTraitNoFoodJ]],
+							 ["bag", 0]]
+		self.threePlayer = PlayerState(3, 0, [self.fatTraitNoFood], [])
+
+	def tearDown(self):
+		del self.species1J
+		del self.species1
+		del self.species2J
+		del self.species2
+		del self.avgSpeciesJ
+		del self.avgSpecies
+		del self.fatTissueSpeciesJ
+		del self.fatTissueSpecies
+		del self.fatTraitNoFoodJ
+		del self.fatTraitNoFood
+		del self.onePlayerJ
+		del self.onePlayer
+		del self.twoPlayerJ
+		del self.twoPlayer
+		del self.threePlayerJ
+		del self.threePlayer
+
+	def testSpeciesParsing(self):        
 		invalidJ = ["no"]
 
 		validButWrongJ = [["wrong thing", 3],
@@ -43,14 +89,14 @@ class testJsonParsing(unittest.TestCase):
 		optJ = False
 
 
-		self.assertEqual(JsonParsing.speciesFromJson(avgSpeciesJ), avgSpecies)
-		self.assertEqual(JsonParsing.speciesToJson(avgSpecies), avgSpeciesJ)
+		self.assertEqual(JsonParsing.speciesFromJson(self.avgSpeciesJ), self.avgSpecies)
+		self.assertEqual(JsonParsing.speciesToJson(self.avgSpecies), self.avgSpeciesJ)
 
-		self.assertEqual(JsonParsing.speciesFromJson(fatTissueSpeciesJ), fatTissueSpecies)
-		self.assertEqual(JsonParsing.speciesToJson(fatTissueSpecies), fatTissueSpeciesJ)
+		self.assertEqual(JsonParsing.speciesFromJson(self.fatTissueSpeciesJ), self.fatTissueSpecies)
+		self.assertEqual(JsonParsing.speciesToJson(self.fatTissueSpecies), self.fatTissueSpeciesJ)
 
-		self.assertEqual(JsonParsing.speciesFromJson(fatTraitNoFoodJ), fatTraitNoFood)
-		self.assertEqual(JsonParsing.speciesToJson(fatTraitNoFood), fatTraitNoFoodJ)
+		self.assertEqual(JsonParsing.speciesFromJson(self.fatTraitNoFoodJ), self.fatTraitNoFood)
+		self.assertEqual(JsonParsing.speciesToJson(self.fatTraitNoFood), self.fatTraitNoFoodJ)
 
 		self.assertEqual(JsonParsing.speciesFromJson(optJ), False)
 		self.assertEqual(JsonParsing.speciesToJson(False), optJ)
@@ -99,26 +145,17 @@ class testJsonParsing(unittest.TestCase):
 
 
 	def testPlayerStateParsing(self):
-		species1J = [["food", 3],
-					["body", 4],
-					["population", 5],
-					["traits", ["carnivore"]]]
-		species1 = Species(3, 4, 5, ["carnivore"], 0)
-		species2J = [["food", 1],
-					["body", 3],
-					["population", 4],
-					["traits", ["warning-call", "fat-tissue"]],
-					["fat-food", 1]]
-		species2 = Species(1, 3, 4, ["warning-call", "fat-tissue"], 1)
+		self.assertEqual(JsonParsing.playerStateFromJson(self.onePlayerJ), self.onePlayer)
+		self.assertEqual(JsonParsing.playerStateToJson(self.onePlayer), self.onePlayerJ)
+		self.assertEqual(JsonParsing.playerStateFromJson(self.twoPlayerJ), self.twoPlayer)
+		self.assertEqual(JsonParsing.playerStateToJson(self.twoPlayer), self.twoPlayerJ)
 
-		onePlayerJ = [["id", 1],
-					 ["species", [species1J, species2J]],
-					 ["bag", 0]]
-		onePlayer = PlayerState(1, 0, [species1, species2], [])
+	def testDealerParsing(self):
+		config = [[self.onePlayerJ, self.twoPlayerJ, self.threePlayerJ], 5, []]
+		deal = Dealer([self.onePlayer, self.twoPlayer, self.threePlayer], 5, [])
 
-		self.assertEqual(JsonParsing.playerStateFromJson(onePlayerJ), onePlayer)
-		self.assertEqual(JsonParsing.playerStateToJson(onePlayer), onePlayerJ)
-
+		self.assertEqual(JsonParsing.dealerFromJson(config), deal)
+		self.assertEqual(JsonParsing.dealerToJson(deal), config)
 
 	def testCheckTrait(self):
 		goodTrait = "fat-tissue"

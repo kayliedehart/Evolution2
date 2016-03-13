@@ -11,7 +11,24 @@ class Dealer:
 	def __init__(self, playersList, wateringHole, deck):
 		self.wateringHole = wateringHole
 		self.players = playersList
-		self.deck = deck
+		self.deck = deck	
+
+	""" 
+		override equality
+		Any -> Boolean
+	"""
+	def __eq__(self, other):
+		if isinstance(other, self.__class__):
+			return self.__dict__ == other.__dict__
+		else:
+			return False
+
+	""" 
+		override inequality
+		Any -> Boolean
+	"""
+	def __ne__(self, other):
+		return not self.__eq__(other)
 
 	"""
 		Actually feed a species based on its traits and decrement the watering hole as needed

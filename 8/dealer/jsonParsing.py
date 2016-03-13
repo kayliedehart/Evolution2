@@ -39,7 +39,6 @@ class JsonParsing:
 	def speciesToJson(species):	
 		if species is False:
 			return False
-
 		result = [["food", species.food],
 				  ["body", species.body],
 				  ["population", species.population],
@@ -67,28 +66,28 @@ class JsonParsing:
 			if jsonSpecies is False:
 				return False
 
-				if jsonSpecies[0][0] == "food" and jsonSpecies[1][0] == "body" and jsonSpecies[2][0] == "population" and jsonSpecies[3][0] == "traits":
-					food = jsonSpecies[0][1]
-					body = jsonSpecies[1][1]
-					population = jsonSpecies[2][1]
-					traits = []
-					hasFatTissue = False
+			if jsonSpecies[0][0] == "food" and jsonSpecies[1][0] == "body" and jsonSpecies[2][0] == "population" and jsonSpecies[3][0] == "traits":
+				food = jsonSpecies[0][1]
+				body = jsonSpecies[1][1]
+				population = jsonSpecies[2][1]
+				traits = []
+				hasFatTissue = False
 
-					for trait in jsonSpecies[3][1] :
-						if JsonParsing.checkTrait(trait):
-							traits.append(trait)
-						if trait == "fat-tissue":
-							hasFatTissue = True
+				for trait in jsonSpecies[3][1] :
+					if JsonParsing.checkTrait(trait):
+						traits.append(trait)
+					if trait == "fat-tissue":
+						hasFatTissue = True
 
-					if len(jsonSpecies) == 5 and hasFatTissue and jsonSpecies[4][0] == "fat-food":
-						fatFood = jsonSpecies[4][1]
-					else:
-						fatFood = 0
-
-					return Species(food, body, population, traits, fatFood)
+				if len(jsonSpecies) == 5 and hasFatTissue and jsonSpecies[4][0] == "fat-food":
+					fatFood = jsonSpecies[4][1]
 				else:
-					pass
-					# TODO: what should actually happen when the labels for an array are wrong?
+					fatFood = 0
+
+				return Species(food, body, population, traits, fatFood)
+			else:
+				pass
+				# TODO: what should actually happen when the labels for an array are wrong?
 
 		except Exception as e:
 			raise e
@@ -212,7 +211,7 @@ class JsonParsing:
 			for card in dealer[2]:
 				cards.append(JsonParsing.traitCardFromJson(card))
 
-			return Dealer(players, wateringHole, card)
+			return Dealer(players, wateringHole, cards)
 
 		except Exception as e:
 			raise e
