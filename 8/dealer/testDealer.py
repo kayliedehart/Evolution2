@@ -1,7 +1,5 @@
 import unittest
 from dealer import *
-import sys
-sys.path.append("../feeding")
 from species import Species
 from playerState import PlayerState
 

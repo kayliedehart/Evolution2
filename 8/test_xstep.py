@@ -3,7 +3,7 @@
 import sys
 import subprocess
 
-TEST_PATH = "json_tests/"
+TEST_PATH = "json-tests"
 PYTHON2_PATH = "python2.7"
 
 

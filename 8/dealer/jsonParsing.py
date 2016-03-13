@@ -1,6 +1,7 @@
 from traitCard import TraitCard
 from species import Species
 from playerState import PlayerState
+from dealer import Dealer
 
 """
 	All methods in this class process to and from arrays that can be dumped/loaded in json
