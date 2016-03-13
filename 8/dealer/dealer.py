@@ -109,11 +109,11 @@ class Dealer:
 		Query the given player for what species to feed next, and feed according to 
 		response. Return whether the query resulted in a successful attack. 
 		@param player: the current PlayerState
-		@return Boolean: if feeding took place
+		@return Boolean: if a carnivore attack took place
 	"""
 	def queryFeed(self, player):
 		decision = Player.feed(player, self.wateringHole, self.players)
-		if decision:
+		if decision is not False:
 			if type(decision) == int:
 				self.feedFromWateringHole(player, player.species[decision], 1)
 				return False
@@ -129,8 +129,8 @@ class Dealer:
 				attacker = player.species[decision[0]]
 				defender = self.players[decision[1]]
 				prey = defender.species[decision[2]]
-				left, right = Player.getNeighbors(defender, prey)
-				if Species.isAttackable(defender, attacker, left, right):
+				left, right = Player.getNeighbors(defender, decision[2])
+				if Species.isAttackable(prey, attacker, left, right):
 					self.executeAttack(player, defender, attacker, prey)
 					return True
 		else:

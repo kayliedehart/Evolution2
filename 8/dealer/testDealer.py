@@ -16,7 +16,11 @@ class TestDealer(unittest.TestCase):
 		self.p2 = PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], [])
 		self.p3 = PlayerState(3, 0, [self.vegCoop, self.carnCoop, self.carnForage], [])
 		self.p4 = PlayerState(4, 0, [self.vegCoop], [])
+		self.p5 = PlayerState(5, 0, [self.vegHorns], [])
+		self.p6 = PlayerState(6, 0, [self.carnCoop], [])
+		self.p7 = PlayerState(7, 0, [self.fatScav], [])
 		self.dealer = Dealer([self.p1, self.p2, self.p3], 3, [])
+		self.p2dealer = Dealer([self.p5, self.p6], 3, [])
 
 	def tearDown(self):
 		del self.vegHorns 
@@ -28,7 +32,12 @@ class TestDealer(unittest.TestCase):
 		del self.p1 
 		del self.p2
 		del self.p3
+		del self.p4
+		del self.p5
+		del self.p6
+		del self.p7
 		del self.dealer
+		del self.p2dealer
 
 	def testFeedFromWateringHole(self):
 		self.assertEqual(self.dealer.wateringHole, 3)
@@ -63,12 +72,32 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.vegHorns.population, 2)
 
 	def testAutoFeed(self):
+		# unfed carnivore/fed but not completely fat tissue'd species
 		self.assertFalse(self.dealer.autoFeed(self.p1))
+		# hungry fat tissue
+		self.assertFalse(self.dealer.autoFeed(self.p2))
+		# just hungry veg
+		self.assertEqual(self.vegCoop.food, 1)
 		self.assertTrue(self.dealer.autoFeed(self.p4))
-		# TODO
-
+		self.assertEqual(self.vegCoop.food, 2)
+		
 	def testQueryFeed(self):
-		pass
+		self.assertEqual(self.vegCoop.food, 1)
+		self.assertFalse(self.dealer.queryFeed(self.p4))
+		self.assertEqual(self.vegCoop.food, 2)
+
+		self.assertEqual(self.fatScav.fatFood, 1)
+		self.assertFalse(self.dealer.queryFeed(self.p7))
+		self.assertEqual(self.fatScav.fatFood, 3)
+		self.assertEqual(self.dealer.wateringHole, 0)
+
+		self.assertEqual(self.carnCoop.population, 5)
+		self.assertEqual(self.carnCoop.food, 3)
+		self.assertEqual(self.vegHorns.population, 3)
+		self.assertTrue(self.p2dealer.queryFeed(self.p6))
+		self.assertEqual(self.carnCoop.population, 4)
+		self.assertEqual(self.carnCoop.food, 4)
+		self.assertEqual(self.vegHorns.population, 2)
 
 	def testScavengeFeed(self):
 		pass
