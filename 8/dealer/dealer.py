@@ -141,7 +141,7 @@ class Dealer:
 					self.executeAttack(player, defender, attacker, prey)
 					return True
 		else:
-			del self.currentlyFeeding[self.currentlyFeeding.index(defPlayer)]
+			del self.currentlyFeeding[self.currentlyFeeding.index(player)]
 			return False
 
 	"""
