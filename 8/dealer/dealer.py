@@ -13,6 +13,13 @@ class Dealer:
 		self.players = playersList
 		self.deck = deck
 
+    """
+        Actually feed a species based on its traits and decrement the watering hole as needed
+        @param player: the player who owns the species to be fed
+        @param species: the species who's being fed
+        @param foodCount: how much food species should be fed 
+        PlayerState, Species, Nat -> Void
+    """
 	def feedFromWateringHole(self, player, species, foodCount):
 		if species.hasTrait("foraging"):
 			foodCount += 1
@@ -29,7 +36,11 @@ class Dealer:
 			self.feedFromWateringHole(player, right, 1)
 
 	"""
-	Execute a carnivore attack, including feeding
+	    Execute a carnivore attack, including feeding
+        @param attPlayer: the player who owns the attacking species
+        @param defend: the species that's being attacked
+        @param att: the species that's attacking
+        Player, Species, Species -> Void 
 	"""
 	def executeAttack(self, attPlayer, defend, att):
 		defend.population -= 1
@@ -40,10 +51,11 @@ class Dealer:
 
 
 	"""
-	Try to automatically feed a species of the given player. If there is only one remaining
-	hungry species, and it's a herbivore, it can be automatically fed.
-	Return True on success.
-	@param player: the current PlayerState
+    	Try to automatically feed a species of the given player. If there is only one remaining
+    	hungry species, and it's a herbivore, it can be automatically fed.
+    	Return True on success.
+    	@param player: the current PlayerState
+        Player -> Boolean
 	"""
 	def autoFeed(self, player):
 		hungry = []
@@ -61,10 +73,10 @@ class Dealer:
 		return False
 
 	"""
-	Query the given player for what species to feed next, and feed according to 
-	response. Return whether the query resulted in a successful attack. 
-	@param player: the current PlayerState
-	@return Boolean: if feeding took place
+    	Query the given player for what species to feed next, and feed according to 
+    	response. Return whether the query resulted in a successful attack. 
+    	@param player: the current PlayerState
+    	@return Boolean: if feeding took place
 	"""
 	def queryFeed(self, player):
 		decision = Player.feed(player, self.wateringHole, self.players)

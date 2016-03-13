@@ -1,7 +1,5 @@
 import unittest
 import json
-import glob
-import os
 from player import *
 from jsonParsing import *
 from playerState import PlayerState
