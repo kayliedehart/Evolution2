@@ -2,6 +2,7 @@ import unittest
 from dealer import *
 from species import Species
 from playerState import PlayerState
+from jsonParsing import *
 
 class TestDealer(unittest.TestCase):
 
@@ -9,7 +10,7 @@ class TestDealer(unittest.TestCase):
 		self.vegHorns = Species(1, 2, 3, ["horns"], 0)
 		self.vegCoop = Species(1, 2, 3, ["cooperation"], 0)
 		self.fat = Species(4, 3, 4, ["fat-tissue"], 3)
-		self.fatScav = Species(2, 3, 4, ["fat-tissue", "scavenging"], 1)
+		self.fatScav = Species(2, 3, 4, ["fat-tissue", "scavenger"], 1)
 		self.fatFor = Species(2, 3, 4, ["fat-tissue", "foraging"], 1)
 		self.carnCoop = Species(3, 4, 5, ["carnivore", "cooperation"], 0)
 		self.carnForage = Species(3, 4, 5, ["carnivore", "foraging"], 0)
@@ -131,8 +132,8 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.fatScav.food, 4)
 		self.assertEqual(self.dealer.wateringHole, 1)
 
-		self.carnCoop.traits.append("scavenging")
-		self.vegCoop.traits.append("scavenging")
+		self.carnCoop.traits.append("scavenger")
+		self.vegCoop.traits.append("scavenger")
 		self.assertEqual(self.vegCoop.food, 1)
 		self.assertEqual(self.carnCoop.food, 3)
 		self.dealer.scavengeFeed(self.p1)

@@ -12,7 +12,7 @@
          [[["food",2],
             ["body",2],
             ["population",2],
-            ["traits",["scavenging", "foraging", "cooperation"]]],
+            ["traits",["scavenger", "foraging", "cooperation"]]],
           [["food",0],
             ["body",5],
             ["population",2],

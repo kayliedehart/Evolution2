@@ -145,12 +145,12 @@ class Dealer:
 			return False
 
 	"""
-	Execute automatic feedings triggered by scavenging traits.
+	Execute automatic feedings triggered by scavenger traits.
 	@param player: current PlayerState
 	"""
 	def scavengeFeed(self, curPlayer):
 		for spec in curPlayer.species:
-			if spec.hasTrait("scavenging"):
+			if spec.hasTrait("scavenger"):
 				self.feedFromWateringHole(curPlayer, spec, 1)
 		try:
 			nextPlayer = self.players[self.players.index(curPlayer)+1]
