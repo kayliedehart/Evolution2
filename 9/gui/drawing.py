@@ -14,8 +14,9 @@ class Drawing:
 		self.exTrait2 = TraitCard("fat-tissue", 3)
 		self.exSpecies = Species(2, 3, 4, ["fat-tissue", "foraging"], 0)
 		self.exPlayer = PlayerState(1, 3, [self.exSpecies], [self.exTrait])
-		#self.exDealer= Dealer([self.exPlayer], 10, [self.exTrait, self.exTrait])
+		self.exDealer= Dealer([self.exPlayer], 10, [self.exTrait, self.exTrait])
 		player = self.exPlayer
+		dealer = self.exDealer
 		if dealer is not None:
 			master = self.drawDealer(root, dealer)
 			master.grid(row=0, column=0)
@@ -26,15 +27,27 @@ class Drawing:
 			raise ValueError("Must give a dealer XOR a player")
 
 
+	def drawDealer(self, master, dealer, row=0, column=0):
+		dealerFrame = LabelFrame(master, text="Dealer", padx=10, pady=10)
+		dealerFrame.grid(row=row, column=column)
+
+		for i in range(len(dealer.players)):
+			self.drawPlayer(dealerFrame, dealer.players[i], row=row+i, column=column)
+
+		self.makeLabelFrame(dealerFrame, "Watering Hole", dealer.wateringHole, row=row, column=column+1)
+
+		deckText = str(len(dealer.deck)) + " cards left"
+		self.makeLabelFrame(dealerFrame, "Deck", deckText, row=row+1, column=column+1)
+
+		return dealerFrame
+
+
 	def drawPlayer(self, master, player, row=0, column=0):
 		ptext = "Player " + str(player.num)
 		playerFrame = LabelFrame(master, text=ptext, padx=10, pady=10)
 		playerFrame.grid(row=row, column=column)
 
-		foodBagFrame = LabelFrame(playerFrame, text="Food Bag", padx=10, pady=10)
-		foodBagFrame.grid(row=row, column=column)
-		foodBagLabel = Label(master=foodBagFrame, text=str(player.foodbag))
-		foodBagLabel.grid(row=row, column=column)
+		self.makeLabelFrame(playerFrame, "Food Bag", player.foodbag, row=row, column=column)
 		
 		speciesFrame = LabelFrame(playerFrame, text="Species", padx=10, pady=10)
 		speciesFrame.grid(row=row, column=column+1)
