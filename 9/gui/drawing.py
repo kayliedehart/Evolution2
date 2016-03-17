@@ -25,13 +25,13 @@ class Drawing:
 		dealer = self.exDealer
 
 		if dealer is not None:
-			master = self.drawDealer(root, dealer)
-			master.grid(row=0, column=0)
-		elif player is not None:
-			master = self.drawPlayer(root, player)
-			master.grid(row=0, column=0)
-		else:
-			raise ValueError("Must give a dealer XOR a player")
+			dealerMaster = self.drawDealer(root, dealer)
+			dealerMaster.grid(row=0, column=0)
+		if player is not None:
+			playerMaster = self.drawPlayer(root, player)
+			playerMaster.grid(row=0, column=0)
+		if dealer is None and player is None:
+			raise ValueError("Must give a dealer or a player")
 
 
 	def drawDealer(self, master, dealer, row=0, column=0):
