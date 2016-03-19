@@ -8,6 +8,8 @@ class Drawing:
 
 	"""
 		Only pass in dealer OR player -- not both
+		or don't
+		i'm a comment, not a cop
 	"""
 	def __init__(self, root, dealer=None, player=None):	
 		self.exTrait = TraitCard("carnivore", 5)
@@ -21,41 +23,49 @@ class Drawing:
 		self.exPlayer = PlayerState(1, 3, [self.exSpecies], [self.exTrait])
 		self.exPlayer2 = PlayerState(2, 5, [self.exSpecies2, self.exSpecies3], [self.exTrait2, self.exTrait3])
 		self.exDealer= Dealer([self.exPlayer, self.exPlayer2], 10, [self.exTrait, self.exTrait2, self.exTrait3, self.exTrait4, self.exTrait5])
-		player = self.exPlayer
+		#player = self.exPlayer
 		dealer = self.exDealer
 
+		# real constructor starts here
+		self.canvas = Canvas(root, width=800, height=600)
+
 		if dealer is not None:
-			dealerMaster = self.drawDealer(root, dealer)
-			dealerMaster.grid(row=0, column=0)
+			self.dealerMaster = self.drawDealer(self.canvas, dealer)
+			self.dealerMaster.grid(row=0, column=0)
 		if player is not None:
-			playerMaster = self.drawPlayer(root, player)
-			playerMaster.grid(row=0, column=0)
+			self.playerMaster = self.drawPlayer(self.canvas, player)
+			self.playerMaster.grid(row=0, column=0)
 		if dealer is None and player is None:
 			raise ValueError("Must give a dealer or a player")
 
+		self.vertiscroll = Scrollbar(root, orient="vertical", command=self.canvas.yview)
+		self.horizscroll = Scrollbar(root, orient="horizontal", command=self.canvas.xview)
+		self.canvas.configure(yscrollcommand=self.vertiscroll.set, xscrollcommand=self.horizscroll.set)
+		self.vertiscroll.pack(side="right", fill="y")
+		self.horizscroll.pack(side="bottom", fill="x")
+		self.canvas.pack()
+		self.canvas.create_window((0, 0,), window=self.dealerMaster, anchor="nw")
+		self.dealerMaster.bind("<Configure>", self.rootFrameConfigure)
+
+	def rootFrameConfigure(self, event):
+		self.canvas.configure(scrollregion=self.canvas.bbox("all"))		
 
 	def drawDealer(self, master, dealer, row=0, column=0):
 		dealerFrame = LabelFrame(master, text="Dealer", padx=10, pady=10)
 		dealerFrame.grid(row=row, column=column)
 
+		self.makeLabelFrame(dealerFrame, "Watering Hole", dealer.wateringHole, row=row, column=column)
+
+		deckText = str(len(dealer.deck)) + " cards left"
+		self.makeLabelFrame(dealerFrame, "Deck", deckText, row=row+1, column=column)
+
+		column += 1
+
 		playersFrame = LabelFrame(dealerFrame, text="Players", padx=10, pady=10)
-		"""
-		# bind a vertical scrollbar to the list of players
-		vertscroll = Scrollbar(playersFrame, orient="vertical")
-		vertscroll.grid(row=row, column=column+2, sticky="NS", rowspan=len(dealer.players))
-		canv = Canvas(playersFrame, yscrollcommand=vertscroll.set, scrollregion=(0, 0, 800, 800))
-		canv.grid(row=row, column=column, sticky="NEWS")
-		vertscroll.config(command=canv.yview)
-		"""
-		playersFrame.grid(row=row, column=column)
+		playersFrame.grid(row=row, column=column, rowspan=len(dealer.players))
 
 		for i in range(len(dealer.players)):
 			self.drawPlayer(playersFrame, dealer.players[i], row=row+i, column=column)
-
-		self.makeLabelFrame(dealerFrame, "Watering Hole", dealer.wateringHole, row=row, column=column+1)
-
-		deckText = str(len(dealer.deck)) + " cards left"
-		self.makeLabelFrame(dealerFrame, "Deck", deckText, row=row+1, column=column+1)
 
 		return dealerFrame
 
@@ -63,16 +73,9 @@ class Drawing:
 	def drawPlayer(self, master, player, row=0, column=0):
 		ptext = "Player " + str(player.num)
 		playerFrame = LabelFrame(master, text=ptext, padx=10, pady=10)
-		# bind a horizontal scrollbar to this player
-		"""
-		horiscroll = Scrollbar(playerFrame, orient="horizontal")
-		horiscroll.grid(row=row+2, column=column, sticky="WE", columnspan=len(player.species)+1)
-		canv = Canvas(playerFrame, xscrollcommand=horiscroll.set, scrollregion=(0, 0, 500, 300))
-		canv.grid(row=row, column=column, sticky="NEWS")
-		horiscroll.config(command=canv.xview)
-		"""
-		playerFrame.grid(row=row, column=column)
+		playerFrame.grid(row=row, column=column, sticky="nw")
 
+		playerCanvas = Canvas(master, width=300, height=400)
 
 		self.makeLabelFrame(playerFrame, "Food Bag", player.foodbag, row=row, column=column)
 		
