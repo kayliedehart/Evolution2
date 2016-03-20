@@ -54,6 +54,12 @@ class TestPlayer(unittest.TestCase):
 		del self.smallerVeg_json
 		del self.bPlayerState
 		del self.cPlayerState
+
+	def test0067_6(self):
+		p1 = PlayerState(1, 0, [Species(0, 1, 1, ["carnivore"], 0), Species(1, 1, 1, ["horns", "cooperation"], 0), Species(1, 1, 1, [], 0)], [])
+		p2 = PlayerState(2, 0, [Species(0, 1, 1, [], 0)], [])
+		p3 = PlayerState(3, 0, [Species(0, 1, 1, ["cooperation", "scavenger", "climbing"], 0), Species(0, 1, 2, ["scavenger", "cooperation", "climbing"], 0), Species(0, 1, 4, ["foraging", "climbing"], 0)], [])
+		self.assertEqual(Player.feed(p1, 10, [p1, p2, p3]), [0, 1, 0])
 	
 	def testSortSpecies(self):
 		self.ourIndexedSpecies = [(0, self.aCarnivore), (1, self.smallerFatTissue), (2, self.big), (3, self.fedVeg), (4, self.smallerVeg), (5, self.fedFatTissue)]

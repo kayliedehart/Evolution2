@@ -71,12 +71,12 @@ class Player:
 	@staticmethod
 	def getNeighbors(player, speciesIdx):
 		if speciesIdx > 0:
-			lNeighbor = player.species[speciesIdx-1]
+			lNeighbor = speciesIdx-1
 		else:
 			lNeighbor = False
 
 		if speciesIdx < len(player.species) - 1:
-			rNeighbor = player.species[speciesIdx+1]
+			rNeighbor = speciesIdx+1
 		else:
 			rNeighbor = False
 
@@ -98,7 +98,9 @@ class Player:
 					defender = otherPlayers[j]
 					# get an attackable animal; range so that we can check bounds before getting neighbors
 					for k in range(len(defender.species)):
-						lNeighbor, rNeighbor = Player.getNeighbors(defender, k)
+						lNeighborIdx, rNeighborIdx = Player.getNeighbors(defender, k)
+						lNeighbor = defender.species[lNeighborIdx]
+						rNeighbor = defender.species[rNeighborIdx]
 						if (Species.isAttackable(defender.species[k], animal, lNeighbor, rNeighbor) and
 																				(defender.species[k].compare(prey)) > 0):
 							defPlayerIndex = j

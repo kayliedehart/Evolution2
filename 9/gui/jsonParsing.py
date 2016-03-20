@@ -137,7 +137,7 @@ class JsonParsing:
 				  ["bag", state.foodbag]]
 
 		if cards:
-			results.append(["cards", cards])
+			result.append(["cards", cards])
 
 		return result
 
@@ -227,7 +227,7 @@ class JsonParsing:
 	"""
 	@staticmethod
 	def dealerToJson(dealer):
-		return [[JsonParsing.playerStateToJson(player) for player in dealer.currentlyFeeding],
+		return [[JsonParsing.playerStateToJson(player) for player in dealer.currentlyFeeding], 
 				dealer.wateringHole,
 				[JsonParsing.traitCardToJson(card) for card in dealer.deck]]
 
