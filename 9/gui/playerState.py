@@ -1,5 +1,5 @@
 from species import *
-from drawing import Drawing
+from drawing import Drawing 
 
 
 class PlayerState:
@@ -44,4 +44,4 @@ class PlayerState:
 		Void -> Void
 	"""
 	def display(self):
-		Display(player=self)
+		Drawing(player=self)

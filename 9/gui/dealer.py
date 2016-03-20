@@ -47,7 +47,7 @@ class Dealer:
 		Void -> Void
 	"""
 	def display(self):
-		Display(dealer=self)
+		Drawing(dealer=self)
 
 	"""
 		Actually feed a species based on its traits and decrement the watering hole as needed

@@ -1,8 +1,4 @@
 from Tkinter import *
-from traitCard import TraitCard
-from species import *
-from playerState import PlayerState
-from dealer import Dealer
 
 class Drawing:
 
