@@ -1,4 +1,5 @@
 from species import *
+from drawing import Drawing
 
 
 class PlayerState:
@@ -37,3 +38,10 @@ class PlayerState:
 	"""
 	def __ne__(self, other):
 		return not self.__eq__(other)
+
+	"""
+		Display the essence of a player
+		Void -> Void
+	"""
+	def display(self):
+		Display(player=self)

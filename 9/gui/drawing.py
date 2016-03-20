@@ -12,21 +12,6 @@ class Drawing:
 		i'm a comment, not a cop
 	"""
 	def __init__(self, dealer=None, player=None):	
-		self.exTrait = TraitCard("carnivore", 5)
-		self.exTrait2 = TraitCard("fat-tissue", 3)
-		self.exTrait3 = TraitCard("long-neck", 1)
-		self.exTrait4 = TraitCard("scavenging", 3)
-		self.exTrait5 = TraitCard("climbing", 3)
-		self.exSpecies = Species(2, 3, 4, [], 0)
-		self.exSpecies2 = Species(1, 2, 3, ["fat-tissue", "carnivore"], 1)
-		self.exSpecies3 = Species(0, 1, 2, ["long-neck", "cooperation", "scavenging"], 0)
-		self.exPlayer = PlayerState(1, 3, [self.exSpecies], [self.exTrait])
-		self.exPlayer2 = PlayerState(2, 5, [self.exSpecies2, self.exSpecies3], [self.exTrait2, self.exTrait3])
-		self.exDealer= Dealer([self.exPlayer, self.exPlayer2], 10, [self.exTrait, self.exTrait2, self.exTrait3, self.exTrait4, self.exTrait5])
-		player = self.exPlayer
-		dealer = self.exDealer
-
-		# real constructor starts here
 		root = Tk()
 		self.canvas = Canvas(root, width=800, height=600)
 		self.dealerMaster = self.playerMaster = None

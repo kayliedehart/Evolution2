@@ -4,7 +4,7 @@
 import sys
 import json
 from gui.dealer import *
-from gui.player import *
+from gui.playerState import *
 from gui.jsonParsing import *
 
 try:

@@ -1,6 +1,8 @@
 # Representation of the dealer in a game of Evolution
 from species import *
 from player import *
+from drawing import Drawing
+
 
 class Dealer:
 	wateringHole = 0
@@ -39,6 +41,13 @@ class Dealer:
 	"""
 	def __ne__(self, other):
 		return not self.__eq__(other)
+
+	"""
+		Display the essence of a dealer
+		Void -> Void
+	"""
+	def display(self):
+		Display(dealer=self)
 
 	"""
 		Actually feed a species based on its traits and decrement the watering hole as needed
