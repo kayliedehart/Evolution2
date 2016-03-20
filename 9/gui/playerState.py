@@ -1,5 +1,5 @@
 from species import *
-from drawing import * 
+from drawing import Drawing 
 
 
 class PlayerState:

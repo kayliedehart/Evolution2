@@ -1,7 +1,7 @@
 # Representation of the dealer in a game of Evolution
 from species import *
 from player import *
-from drawing import *
+from drawing import Drawing
 
 
 class Dealer:
