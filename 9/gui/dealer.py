@@ -51,16 +51,10 @@ class Dealer:
 	def feedFromWateringHole(self, curPlayer, specIdx, foodCount=1, fatFood=False):
 		spec = curPlayer.species[specIdx]
 		wasFed = False
+		cooperateAmount = 1
 
 		if fatFood is False:
-			if (self.wateringHole >= foodCount) and (spec.food + foodCount <= spec.population):
-				spec.food += foodCount
-				self.wateringHole -= foodCount
-				wasFed = True
-			elif (spec.food + foodCount <= spec.population):
-				spec.food += self.wateringHole
-				self.wateringHole = 0
-				wasFed = True
+			wasFed, foodEaten = self.feedMaximum(spec, foodCount)
 		else:
 			if (self.wateringHole >= foodCount) and (spec.fatFood + foodCount <= spec.body):
 				spec.fatFood += foodCount
@@ -69,14 +63,37 @@ class Dealer:
 				spec.fatFood += self.wateringHole
 				self.wateringHole = 0
 
-		if wasFed and spec.hasTrait("foraging") and self.wateringHole > 0 and (spec.food+1 <= spec.population):
-			spec.food += 1
-			self.wateringHole -= 1 
+		if wasFed and spec.hasTrait("foraging"):
+			wasForaging, foodForaged = self.feedMaximum(spec, foodEaten)
+			cooperateAmount = (foodForaged + foodEaten)
 
 		left, right = Player.getNeighbors(curPlayer, specIdx)
 
 		if wasFed and right is not False and spec.hasTrait("cooperation"):
-			self.feedFromWateringHole(curPlayer, right, 1)
+			self.feedFromWateringHole(curPlayer, right, cooperateAmount)
+
+	"""
+		Feed as much from the watering hole as possible and report amount fed
+		@param spec is the species to feed
+		@param foodCount is the requested amount
+	"""
+	def feedMaximum(self, spec, foodCount):
+		maxFood = spec.population - spec.food
+
+		if foodCount < maxFood:
+			maxFood = foodCount
+
+		if (self.wateringHole >= maxFood) and maxFood > 0:
+			spec.food += maxFood
+			self.wateringHole -= maxFood
+			return True, foodCount
+		elif self.wateringHole > 0 and maxFood > 0:
+				foodCount = self.wateringHole
+				spec.food += self.wateringHole
+				self.wateringHole = 0			
+				return True, foodCount
+		else:
+			return False, 0
 
 	"""
 		Execute a carnivore attack, including feeding
@@ -94,7 +111,6 @@ class Dealer:
 			att.population -= 1
 			if att.population <= 0:
 				self.extinctSpecies(attPlayer, attIdx)
-				return None
 
 		defend.population -= 1
 		if defend.population <= 0:
