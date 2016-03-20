@@ -65,6 +65,7 @@ class testFest(unittest.TestCase):
 							print "assertionerror"
 							print inFileName
 							print JsonParsing.dealerToJson(input)
+							raise e
 							
 
 	"""
