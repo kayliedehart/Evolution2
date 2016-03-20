@@ -1,23 +1,37 @@
-README - Assignment 8
+PURPOSE:
 
-__init__.py - makes this folder into a Python package
-constants.py - a container for constant values in evolution
-diagram.txt - a top-level UML diagram of our classes
-player.py - a player of evolution, including the feed method
-playerState.py - information necessary to a player (split to prevent cheating)
-species.py - representation of an evolution species
-tests.py - Internal unit tests for these classes
-traitCard.py - a trait card with a name and food value
+Create a GUI to display the current Dealer and a single Player to moniter the progress of a game of Evolution.
+Create a test harness to act as a controller between the view components and the underlying game logic.  
 
-To use species.py, you'll want to use xattack in the containing folder. 
-See that README for how to run it.
-To use player.py, you'll want to use xfeed the same way.
-To run tests, run python2.7 tests.py from command line.
+FILES:
 
-To understand the code, we recommend you read through in the following order:
-- diagram.txt
-- playerState.py
-- traitCard.py (since it's very short)
-- species.py, the init and isAttackable functions
-- player.py, especially the feed function
-- tests.py
+9/xgui is the test harness for the GUI
+
+9/xgui-[n]-in.json is a json Dealer configuration to be run with xgui
+
+9/gui/dealer.py is the dealer of the Evolution game
+
+9/gui/drawing.py is the view component of the GUI
+
+9/gui/ham.gif is an image resource used in the GUI
+
+9/gui/jsonParsing.py handles parsing from a JSON configuration to Evolution game objects
+
+9/gui/player.py is a player implementation with the current silly player strategy
+
+9/gui/playerState.py is the player data representation
+
+9/gui/species.py represents a Species Board
+
+9/gui/traitCard.py represents a TraitCard
+
+9/gui/test[fileName].py are the unit tests for the given fileName
+
+RUNNING THE CODE:
+
+To run the test harness, run ./xgui <json-input>
+
+READING THE CODE:
+
+Start by reading the code in dealer.py and playerState.py for a broad overview and context, and then read the code in drawing.py to understand the view representation. Read into subsequent files as needed. 
+
