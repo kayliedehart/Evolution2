@@ -1,7 +1,7 @@
 # Representation of the dealer in a game of Evolution
 from species import *
 from player import *
-from drawing import Drawing
+from drawing import *
 
 
 class Dealer:
@@ -47,7 +47,7 @@ class Dealer:
 		Void -> Void
 	"""
 	def display(self):
-		Display(dealer=self)
+		Drawing(dealer=self)
 
 	"""
 		Actually feed a species based on its traits and decrement the watering hole as needed
