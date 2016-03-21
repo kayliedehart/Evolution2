@@ -38,7 +38,7 @@ class Drawing:
 		self.canvas.configure(yscrollcommand=vertiscroll.set, xscrollcommand=horizscroll.set)
 		vertiscroll.pack(side="right", fill="y")
 		horizscroll.pack(side="bottom", fill="x")
-		self.canvas.pack()
+		self.canvas.pack(fill="both", expand="yes")
 		self.canvas.create_window((0, 0,), window=master, anchor="nw")
 		master.bind("<Configure>", self.rootFrameConfigure)
 
