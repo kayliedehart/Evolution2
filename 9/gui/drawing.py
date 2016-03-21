@@ -1,4 +1,6 @@
 from Tkinter import *
+import os
+CUR_PATH = os.path.dirname(os.path.abspath(__file__))
 
 class Drawing:
 
@@ -24,7 +26,7 @@ class Drawing:
 			raise ValueError("Must give a dealer or a player")
 
 		root.mainloop()
-
+		root.destroy
 
 	"""
 		Create scrollbars for the window
@@ -36,7 +38,7 @@ class Drawing:
 		self.canvas.configure(yscrollcommand=vertiscroll.set, xscrollcommand=horizscroll.set)
 		vertiscroll.pack(side="right", fill="y")
 		horizscroll.pack(side="bottom", fill="x")
-		self.canvas.pack()
+		self.canvas.pack(fill="both", expand="yes")
 		self.canvas.create_window((0, 0,), window=master, anchor="nw")
 		master.bind("<Configure>", self.rootFrameConfigure)
 
@@ -127,7 +129,7 @@ class Drawing:
 		foodFrame = LabelFrame(master, text="Food", padx=10, pady=10)
 		foodFrame.grid(row=row, column=column)
 
-		photo = PhotoImage(file="ham.gif")
+		photo = PhotoImage(file=CUR_PATH+"/ham.gif")
 		ham = Label(master=foodFrame, image=photo)
 		ham.image = photo # save a reference
 		ham.grid(row=row, column=column)
