@@ -14,9 +14,10 @@ class TestDealer(unittest.TestCase):
 		self.fatFor = Species(2, 3, 4, ["fat-tissue", "foraging"], 1)
 		self.carnCoop = Species(3, 4, 5, ["carnivore", "cooperation"], 0)
 		self.carnForage = Species(3, 4, 5, ["carnivore", "foraging"], 0)
+		self.carnForage1 = Species(3, 4, 5, ["carnivore", "foraging"], 0)
 		self.p1 = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], [])
 		self.p2 = PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], [])
-		self.p3 = PlayerState(3, 0, [self.vegCoop, self.carnCoop, self.carnForage], [])
+		self.p3 = PlayerState(3, 0, [self.vegCoop, self.carnCoop, self.carnForage1], [])
 		self.p4 = PlayerState(4, 0, [self.vegCoop], [])
 		self.p5 = PlayerState(5, 0, [self.vegHorns], [])
 		self.p6 = PlayerState(6, 0, [self.carnCoop], [])
@@ -64,6 +65,7 @@ class TestDealer(unittest.TestCase):
 		del self.fatScav 
 		del self.carnCoop
 		del self.carnForage
+		del self.carnForage1
 		del self.p1 
 		del self.p2
 		del self.p3
@@ -90,8 +92,8 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.x41.food, 1)
 		self.assertEqual(self.x42.food, 1)
 		self.assertEqual(self.x43.food, 2)
-		self.assertEqual(self.x44.food, 1)
-		self.assertEqual(self.x4d.wateringHole, 5)
+		self.assertEqual(self.x44.food, 2)
+		self.assertEqual(self.x4d.wateringHole, 4)
 
 		self.x6deal.feed1(self.x6deal.players)
 		self.assertEqual(self.x61.food, 2)
@@ -104,33 +106,38 @@ class TestDealer(unittest.TestCase):
 
 	def testFeedFromWateringHole(self):
 		self.assertEqual(self.dealer.wateringHole, 3)
-		self.dealer.feedFromWateringHole(self.p1, self.carnForage)
+		self.dealer.feedFromWateringHole(self.p1, 2)
 		self.assertEqual(self.dealer.wateringHole, 1)
 		self.assertEqual(self.carnForage.food, 5)
 
-		self.dealer.feedFromWateringHole(self.p3, self.vegCoop)
+		self.assertEqual(self.dealer.wateringHole, 1)
+		self.assertEqual(self.vegCoop.food, 1)
+		self.assertEqual(self.carnCoop.food, 3)
+		self.dealer.feedFromWateringHole(self.p3, 0)
 		self.assertEqual(self.dealer.wateringHole, 0)
 		self.assertEqual(self.vegCoop.food, 2)
 		self.assertEqual(self.carnCoop.food, 3)
 
 		self.dealer.wateringHole = 3
-		self.dealer.feedFromWateringHole(self.p3, self.vegCoop)
-		self.assertEqual(self.dealer.wateringHole, 0)
+		self.assertEqual(self.carnForage1.food, 3)
+		self.dealer.feedFromWateringHole(self.p3, 0)
 		self.assertEqual(self.vegCoop.food, 3)
 		self.assertEqual(self.carnCoop.food, 4)
+		self.assertEqual(self.carnForage1.food, 4)
+		self.assertEqual(self.dealer.wateringHole, 0)
 
 	def testExecuteAttack(self):
 		self.assertEqual(self.carnCoop.population, 5)
 		self.assertEqual(self.vegCoop.population, 3)
 		self.assertEqual(self.carnCoop.food, 3)
 
-		self.dealer.executeAttack(self.p3, self.p1, self.carnCoop, self.vegCoop)
+		self.dealer.executeAttack(self.p3, self.p1, 1, 0)
 		self.assertEqual(self.carnCoop.population, 5)
 		self.assertEqual(self.vegCoop.population, 2)
 		self.assertEqual(self.carnCoop.food, 4)
 		self.assertEqual(self.dealer.wateringHole, 0)
 
-		self.dealer.executeAttack(self.p3, self.p2, self.carnCoop, self.vegHorns)
+		self.dealer.executeAttack(self.p3, self.p2, 1, 0)
 		self.assertEqual(self.carnCoop.population, 4)
 		self.assertEqual(self.vegHorns.population, 2)
 
@@ -202,8 +209,11 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.fatFor.food, 2)
 		self.p3dealer.feed1(self.p3dealer.players)
 		self.assertEqual(self.fatFor.fatFood, 3)
-		self.assertEqual(self.fatFor.food, 3)
-		self.assertEqual(self.p3dealer.wateringHole, 0)
+		self.assertEqual(self.fatFor.food, 2)
+		self.assertEqual(self.p3dealer.wateringHole, 1)
+
+		# a user without any species should not be deleted 
+		#pNoSpecies1 = PlayerState(1, )
 
 if __name__ == "__main__":
 	unittest.main()
