@@ -125,8 +125,8 @@ class Dealer:
 		if defend.population <= 0:
 			self.extinctSpecies(defPlayer, defendIdx)
 
-			if not defPlayer.species:
-				del self.currentlyFeeding[self.currentlyFeeding.index(defPlayer)]
+			if not defPlayer.species:		
+				self.currentlyFeeding.remove(defPlayer)
 
 		if att.population > att.food:
 			self.feedFromWateringHole(attPlayer, attIdx, 1)
@@ -183,27 +183,27 @@ class Dealer:
 		@param player: the current PlayerState
 		@return Boolean: if a carnivore attack took place
 	"""
-	def queryFeed(self, player):
-		decision = Player.feed(player, self.wateringHole, self.players)
+	def queryFeed(self, queryPlayer):
+		decision = Player.feed(queryPlayer, self.wateringHole, self.players)
 		if decision is not False:
 			if type(decision) == int:
-				self.feedFromWateringHole(player, decision, 1)
+				self.feedFromWateringHole(queryPlayer, decision, 1)
 				return False
 			if len(decision) == 2:
-				self.feedFromWateringHole(player, decision[0], foodCount=decision[1], fatFood=True)
+				self.feedFromWateringHole(queryPlayer, decision[0], foodCount=decision[1], fatFood=True)
 				return False
 			if len(decision) == 3:
-				attacker = player.species[decision[0]]
+				attacker = queryPlayer.species[decision[0]]
 				defender = self.players[decision[1]]
 				prey = defender.species[decision[2]]
 				leftIdx, rightIdx = Player.getNeighbors(defender, decision[2])
 				left = defender.species[leftIdx]
 				right = defender.species[rightIdx]
 				if Species.isAttackable(prey, attacker, left, right):
-					self.executeAttack(player, defender, decision[0], decision[2])
+					self.executeAttack(queryPlayer, defender, decision[0], decision[2])
 					return True
 		else:
-			del self.currentlyFeeding[self.currentlyFeeding.index(player)]
+			self.currentlyFeeding.remove(queryPlayer)
 			return False
 
 	"""

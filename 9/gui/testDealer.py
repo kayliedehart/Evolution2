@@ -2,6 +2,7 @@ import unittest
 from dealer import *
 from species import Species
 from playerState import PlayerState
+from traitCard import TraitCard
 from jsonParsing import *
 
 class TestDealer(unittest.TestCase):
@@ -212,8 +213,70 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.fatFor.food, 2)
 		self.assertEqual(self.p3dealer.wateringHole, 1)
 
-		# a user without any species should not be deleted 
-		#pNoSpecies1 = PlayerState(1, )
+		# a user without any species should not be deleted from players
+		# but should be deleted from currentlyFeeding 
+		# 0067-2657-1
+		pNoSpecies1 = PlayerState(1, 0, [], [])
+		pNoSpecies2 = PlayerState(2, 0, [], [])
+		pNoSpecies3 = PlayerState(3, 0, [], [])
+		dNoSpecies = Dealer([pNoSpecies1, pNoSpecies2, pNoSpecies3], 5, [])
+		self.assertEqual(len(dNoSpecies.players), 3)
+		self.assertEqual(len(dNoSpecies.currentlyFeeding), 3)
+		dNoSpecies.feed1(dNoSpecies.players)
+		self.assertEqual(len(dNoSpecies.players), 3)
+		self.assertEqual(len(dNoSpecies.currentlyFeeding), 2)
+		self.assertFalse(pNoSpecies1 in dNoSpecies.currentlyFeeding)
+
+		# a user who can no longer attack/feed should not be deleted from players
+		# but should be deleted from currentlyFeeding 
+		# 0067-2657-7
+		pNoAtkSpecies1 = PlayerState(1, 0, [Species(0, 1, 1, ["carnivore"], 0), 
+					Species(1, 1, 1, ["horns", "cooperation"], 0), 
+					Species(1, 1, 1, [], 0)], [])
+		pNoAtkSpecies2 = PlayerState(2, 0, [Species(0, 1, 1, ["hard-shell"], 0)], [])
+		pNoAtkSpecies3 = PlayerState(3, 0, [Species(0, 1, 1, ["cooperation", "scavenger", "climbing"], 0), 
+					Species(0, 1, 2, ["cooperation", "scavenger", "climbing"], 0), 
+					Species(0, 1, 4, ["foraging", "hard-shell"], 0)], [])
+		dNoAtkSpecies = Dealer([pNoAtkSpecies1, pNoAtkSpecies2, pNoAtkSpecies3], 5, [])
+		self.assertEqual(len(dNoAtkSpecies.players), 3)
+		self.assertEqual(len(dNoAtkSpecies.currentlyFeeding), 3)
+		dNoAtkSpecies.feed1(dNoAtkSpecies.players)
+		self.assertEqual(len(dNoAtkSpecies.players), 3)
+		self.assertEqual(len(dNoAtkSpecies.currentlyFeeding), 2)
+		self.assertFalse(pNoAtkSpecies1 in dNoAtkSpecies.currentlyFeeding)
+
+		# successfully extincting someone else's species should give two cards to loser
+		# 2598-3830-8
+		pExtinction1 = PlayerState(3, 2, [Species(3, 4, 4, ["carnivore"], 0)], [TraitCard("burrowing", -3)])
+		pExtinction2 = PlayerState(2, 42, [Species(0, 3, 4, ["climbing"], 0),
+					Species(4, 2, 4, ["climbing"], 0),
+					Species(4, 1, 4, ["climbing"], 0)], [TraitCard("climbing", 3)])
+		pExtinction3 = PlayerState(4, 100, [Species(0, 7, 1, [], 0)], [])
+		dExtinction = Dealer([pExtinction1, pExtinction2, pExtinction3], 9, [TraitCard("burrowing", 3), TraitCard("horns", 3), TraitCard("climbing", 1)])
+
+		self.assertEqual(len(dExtinction.deck), 3)
+		dExtinction.feed1(dExtinction.players)
+		self.assertEqual(len(dExtinction.deck), 1)
+		self.assertEqual(pExtinction3.hand, [TraitCard("burrowing", 3), TraitCard("horns", 3)])
+		self.assertEqual(len(pExtinction3.species), 0)
+		self.assertEqual(pExtinction1.species[0].food, 4)
+		self.assertEqual(dExtinction.wateringHole, 8)
+
+		# cooperation + foraging + scavenging
+		# 8949-0357-4
+		pCFS1 = PlayerState(1, 3, [Species(4, 2, 5, ["carnivore", "cooperation"], 0), 
+			Species(1, 3, 4, ["foraging", "carnivore", "scavenger"], 0)], [])
+		pCFS2 = PlayerState(2, 4, [Species(2, 3, 3, ["burrowing"], 0)], [])
+		pCFS3 = PlayerState(3, 5, [], [])
+		dCFS = Dealer([pCFS1, pCFS2, pCFS3], 10, [])
+
+		dCFS.feed1(dCFS.players)
+		self.assertEqual(pCFS1.species[0].food, 5)
+		self.assertEqual(pCFS1.species[1].food, 4)
+		self.assertEqual(pCFS2.species[0].population, 2)
+		self.assertEqual(dCFS.wateringHole, 6)
+
+
 
 if __name__ == "__main__":
 	unittest.main()
