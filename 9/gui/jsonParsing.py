@@ -227,7 +227,7 @@ class JsonParsing:
 	"""
 	@staticmethod
 	def dealerToJson(dealer):
-		return [[JsonParsing.playerStateToJson(player) for player in dealer.currentlyFeeding], 
+		return [[JsonParsing.playerStateToJson(player) for player in dealer.players], 
 				dealer.wateringHole,
 				[JsonParsing.traitCardToJson(card) for card in dealer.deck]]
 

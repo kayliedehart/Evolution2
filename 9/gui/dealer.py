@@ -125,8 +125,8 @@ class Dealer:
 		if defend.population <= 0:
 			self.extinctSpecies(defPlayer, defendIdx)
 
-			#if not defPlayer.species:
-			#	del self.currentlyFeeding[self.currentlyFeeding.index(defPlayer)]
+			if not defPlayer.species:
+				del self.currentlyFeeding[self.currentlyFeeding.index(defPlayer)]
 
 		if att.population > att.food:
 			self.feedFromWateringHole(attPlayer, attIdx, 1)
@@ -203,7 +203,7 @@ class Dealer:
 					self.executeAttack(player, defender, decision[0], decision[2])
 					return True
 		else:
-			#del self.currentlyFeeding[self.currentlyFeeding.index(player)]
+			del self.currentlyFeeding[self.currentlyFeeding.index(player)]
 			return False
 
 	"""
