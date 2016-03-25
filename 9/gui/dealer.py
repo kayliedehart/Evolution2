@@ -153,28 +153,30 @@ class Dealer:
 
 
 	"""
-		Try to automatically feed a species of the given player. If there is only one remaining
-		hungry species, and it's a herbivore, it can be automatically fed.
-		Return True on success.
+		Try to automatically feed a species of the given player.
+		- If the given player has no species, autofeed will remove it from the list of players
+		  being fed this turn
+		Otherwise, will automatically feed:
+		- a lone hungry herbivore 
+		- a lone fat tissue herbivore with room for fat food and no room for regular food
 		@param player: the current PlayerState
+		@return True if a feeding, fat-tissue feeding, or player removal occurs.
 		PlayerState -> Boolean
 	"""
 	def autoFeed(self, player):
-		hungry = []
-		for i in range(len(player.species)):
-			s = player.species[i]
-			if s.population > s.food or (s.body > s.fatFood and s.hasTrait("fat-tissue")):
-				hungry.append((i, s))
+		hungry = player.getHungrySpecies()
 
-		if (len(hungry) == 1):
-			hungrySpec = player.species[hungry[0][0]]
-			if not (hungrySpec.hasTrait("carnivore")):
-				# if the only species is a herbivore but has unfilled fat-tissue, must query
-				if hungrySpec.hasTrait("fat-tissue") and hungrySpec.body > hungrySpec.fatFood:
-					return False
-				else:
-					self.feedFromWateringHole(player, hungry[0][0], 1)
-					return True
+		if len(hungry) == 0:
+			self.currentlyFeeding.remove(player)
+			return True
+		elif (len(hungry) == 1) and not hungry[0][1].hasTrait("carnivore"):
+			hungryIdx, hungrySpec = hungry[0]
+			if hungrySpec.fatFood < hungrySpec.body and hungrySpec.hasTrait("fat-tissue"):
+				self.feedFromWateringHole(player, hungryIdx, hungrySpec.body - hungrySpec.fatFood, fatFood=True)
+			else:
+				self.feedFromWateringHole(player, hungryIdx, 1)
+			return True
+
 		return False
 
 	"""
@@ -182,6 +184,7 @@ class Dealer:
 		response. Return whether the query resulted in a successful attack. 
 		@param player: the current PlayerState
 		@return Boolean: if a carnivore attack took place
+		PlayerState -> Boolean
 	"""
 	def queryFeed(self, queryPlayer):
 		decision = Player.feed(queryPlayer, self.wateringHole, self.players)

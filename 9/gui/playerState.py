@@ -45,3 +45,17 @@ class PlayerState:
 	"""
 	def display(self):
 		Drawing(player=self)
+
+	"""
+		Filter out all fed species to get a list of species that can be fed
+		@return a list of (Species' index, Species) for hungry species this player has
+		Void -> ListOf((Nat, Species))
+	"""
+	def getHungrySpecies(self):
+		hungry = []
+		for i in range(len(self.species)):
+			s = self.species[i]
+			if s.population > s.food or (s.body > s.fatFood and s.hasTrait("fat-tissue")):
+				hungry.append((i, s))
+
+		return hungry

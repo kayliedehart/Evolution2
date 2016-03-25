@@ -12,7 +12,7 @@ class TestDealer(unittest.TestCase):
 		self.vegCoop = Species(1, 2, 3, ["cooperation"], 0)
 		self.fat = Species(4, 3, 4, ["fat-tissue"], 3)
 		self.fatScav = Species(2, 3, 4, ["fat-tissue", "scavenger"], 1)
-		self.fatFor = Species(2, 3, 4, ["fat-tissue", "foraging"], 1)
+		self.fatFor = Species(4, 3, 4, ["fat-tissue", "foraging"], 1)
 		self.carnCoop = Species(3, 4, 5, ["carnivore", "cooperation"], 0)
 		self.carnForage = Species(3, 4, 5, ["carnivore", "foraging"], 0)
 		self.carnForage1 = Species(3, 4, 5, ["carnivore", "foraging"], 0)
@@ -207,10 +207,10 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.vegHorns.population, 2)
 
 		self.assertEqual(self.fatFor.fatFood, 1)
-		self.assertEqual(self.fatFor.food, 2)
+		self.assertEqual(self.fatFor.food, 4)
 		self.p3dealer.feed1(self.p3dealer.players)
 		self.assertEqual(self.fatFor.fatFood, 3)
-		self.assertEqual(self.fatFor.food, 2)
+		self.assertEqual(self.fatFor.food, 4)
 		self.assertEqual(self.p3dealer.wateringHole, 1)
 
 		# a user without any species should not be deleted from players
