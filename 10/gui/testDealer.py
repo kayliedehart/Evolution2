@@ -8,6 +8,11 @@ from jsonParsing import *
 class TestDealer(unittest.TestCase):
 
 	def setUp(self):
+		self.t1 = TraitCard("horns", 3)
+		self.t2 = TraitCard("ambush", 1)
+		self.t3 = TraitCard("carnivore", 2)
+		self.t4 = TraitCard("fat-tissue", 0)
+		self.t5 = TraitCard("foraging", 3)
 		self.vegHorns = Species(1, 2, 3, ["horns"], 0)
 		self.vegCoop = Species(1, 2, 3, ["cooperation"], 0)
 		self.fat = Species(4, 3, 4, ["fat-tissue"], 3)
@@ -16,6 +21,7 @@ class TestDealer(unittest.TestCase):
 		self.carnCoop = Species(3, 4, 5, ["carnivore", "cooperation"], 0)
 		self.carnForage = Species(3, 4, 5, ["carnivore", "foraging"], 0)
 		self.carnForage1 = Species(3, 4, 5, ["carnivore", "foraging"], 0)
+		self.extinct = Species(0, 0, 0, [], 0)
 		self.p1 = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], [])
 		self.p2 = PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], [])
 		self.p3 = PlayerState(3, 0, [self.vegCoop, self.carnCoop, self.carnForage1], [])
@@ -23,10 +29,10 @@ class TestDealer(unittest.TestCase):
 		self.p5 = PlayerState(5, 0, [self.vegHorns], [])
 		self.p6 = PlayerState(6, 0, [self.carnCoop], [])
 		self.p7 = PlayerState(7, 0, [self.fatScav], [])
-		self.p8 = PlayerState(8, 0, [self.fatFor], [])
-		self.dealer = Dealer([self.p1, self.p2, self.p3], 3, [])
+		self.p8 = PlayerState(8, 0, [self.fatFor, self.extinct], [])
+		self.dealer = Dealer([self.p1, self.p2, self.p3], 3, [self.t1, self.t2, self.t3, self.t4, self.t5])
 		self.p2dealer = Dealer([self.p6, self.p5], 3, [])
-		self.p3dealer = Dealer([self.p8], 3, [])
+		self.p3dealer = Dealer([self.p8], 3, [self.t1, self.t2, self.t3, self.t4, self.t5])
 
 
 		self.xstep3spec = Species(0, 5, 2, ["foraging"], 0)
@@ -49,6 +55,11 @@ class TestDealer(unittest.TestCase):
 		del self.p6
 		del self.p7
 		del self.p8
+		del self.t1 
+		del self.t2
+		del self.t3
+		del self.t4
+		del self.t5
 		del self.dealer
 		del self.p2dealer
 		del self.p3dealer
@@ -113,11 +124,47 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.carnCoop.population, 4)
 		self.assertEqual(self.vegHorns.population, 2)
 
+	def testExtinctSpecies(self):
+		# nothing changes if non-extinct
+		self.assertEqual(self.carnCoop.population, 5)
+		self.assertEqual(len(self.p3.hand), 0)
+		self.assertEqual(len(self.dealer.deck), 5)
+		self.dealer.extinctSpecies(self.p3, 1)
+		self.assertEqual(self.carnCoop.population, 5)
+		self.assertEqual(len(self.p3.hand), 0)
+		self.assertEqual(len(self.dealer.deck), 5)
+
+		self.assertEqual(self.extinct.population, 0)
+		self.assertEqual(len(self.p8.hand), 0)
+		self.assertEqual(len(self.p3dealer.deck), 5)
+		self.p3dealer.extinctSpecies(self.p8, 1)
+		self.assertEqual(len(self.p8.hand), 2)
+		self.assertEqual(self.p8.hand, [self.t1, self.t2])
+		self.assertEqual(len(self.p3dealer.deck), 3)
+		self.assertEqual(self.p3dealer.deck, [self.t3, self.t4, self.t5])
+
+	def testDistributeCards(self):
+		self.assertEqual(len(self.p3.hand), 0)
+		self.assertEqual(len(self.dealer.deck), 5)
+		self.dealer.distributeCards(self.p3, 2)
+		self.assertEqual(self.p3.hand, [self.t1, self.t2])
+		self.assertEqual(self.dealer.deck, [self.t3, self.t4, self.t5])
+
+		self.assertEqual(len(self.p3.hand), 2)
+		self.assertEqual(len(self.dealer.deck), 3)
+		self.dealer.distributeCards(self.p3, 2)
+		self.assertEqual(self.p3.hand, [self.t1, self.t2, self.t3, self.t4])
+		self.assertEqual(self.dealer.deck, [self.t5])
+
+		self.assertEqual(len(self.p3.hand), 4)
+		self.assertEqual(len(self.dealer.deck), 1)
+		self.dealer.distributeCards(self.p3, 2)
+		self.assertEqual(self.p3.hand, [self.t1, self.t2, self.t3, self.t4, self.t5])
+		self.assertEqual(self.dealer.deck, [])
+
 	def testAutoFeed(self):
 		self.assertFalse(self.dealer.autoFeed(self.p1))
-
 		self.assertFalse(self.dealer.autoFeed(self.p2))
-		
 		self.assertEqual(self.vegCoop.food, 1)
 		self.assertTrue(self.dealer.autoFeed(self.p4))
 		self.assertEqual(self.vegCoop.food, 2)
