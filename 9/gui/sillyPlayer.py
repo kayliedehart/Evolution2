@@ -1,7 +1,7 @@
 from species import *
 
 
-class Player:
+class SillyPlayer:
 
 	"""
 		Sorts a list of species from largest to smallest, giving precedence to population, then food eaten, then body size
@@ -63,24 +63,6 @@ class Player:
 				return index
 
 		return -1
-
-	"""
-		Gets the neighbors of the given species index
-		PlayerState, Nat -> [OptSpecies, OptSpecies]
-	"""
-	@staticmethod
-	def getNeighbors(player, speciesIdx):
-		if speciesIdx > 0:
-			lNeighbor = speciesIdx-1
-		else:
-			lNeighbor = False
-
-		if speciesIdx < len(player.species) - 1:
-			rNeighbor = speciesIdx+1
-		else:
-			rNeighbor = False
-
-		return [lNeighbor, rNeighbor]
 
 	""" 
 		Gets an attacker and a player + species to attack

@@ -3,7 +3,7 @@ import glob
 import json
 import unittest
 from jsonParsing import *
-from player import *
+from sillyPlayer import *
 from dealer import *
 
 CUR_DIR = os.getcwd()
@@ -92,7 +92,7 @@ class testFest(unittest.TestCase):
 	# 					others = []
 	# 					for player in input[2]:
 	# 						others.append(JsonParsing.playerStateFromJson(player))
-	# 					self.assertEqual(Player.feed(curState, wateringHole, others), output)
+	# 					self.assertEqual(SillyPlayer.feed(curState, wateringHole, others), output)
 
 	# def testHw7(self):
 	# 	os.chdir(HW_7_TEST_PATH)
@@ -118,7 +118,7 @@ class testFest(unittest.TestCase):
 	# 					others = []
 	# 					for player in input[2]:
 	# 						others.append(JsonParsing.playerStateFromJson(player))
-	# 					self.assertEqual(Player.feed(curState, wateringHole, others), output)
+	# 					self.assertEqual(SillyPlayer.feed(curState, wateringHole, others), output)
 
 
 

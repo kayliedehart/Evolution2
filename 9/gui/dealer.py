@@ -1,6 +1,6 @@
 # Representation of the dealer in a game of Evolution
 from species import *
-from player import *
+from sillyPlayer import *
 from drawing import Drawing
 
 
@@ -59,50 +59,14 @@ class Dealer:
 	"""
 	def feedFromWateringHole(self, curPlayer, specIdx, foodCount=1, fatFood=False):
 		spec = curPlayer.species[specIdx]
-		wasFed = False
-		cooperateAmount = 1
+		amountFed = 0
 
-		if fatFood is False:
-			wasFed, foodEaten = self.feedMaximum(spec, foodCount)
+		if fatFood:
+			amountFed = curPlayer.feedFatFood(specIdx, min(foodCount, self.wateringHole))
+			self.wateringHole -= amountFed
 		else:
-			if (self.wateringHole >= foodCount) and (spec.fatFood + foodCount <= spec.body):
-				spec.fatFood += foodCount
-				self.wateringHole -= foodCount
-			elif (spec.fatFood + foodCount <= spec.body):
-				spec.fatFood += self.wateringHole
-				self.wateringHole = 0
-
-		if wasFed and spec.hasTrait("foraging"):
-			wasForaging, foodForaged = self.feedMaximum(spec, foodEaten)
-			cooperateAmount = (foodForaged + foodEaten)
-
-		left, right = Player.getNeighbors(curPlayer, specIdx)
-
-		if wasFed and right is not False and spec.hasTrait("cooperation"):
-			self.feedFromWateringHole(curPlayer, right, cooperateAmount)
-
-	"""
-		Feed as much from the watering hole as possible and report amount fed
-		@param spec is the species to feed
-		@param foodCount is the requested amount
-	"""
-	def feedMaximum(self, spec, foodCount):
-		maxFood = spec.population - spec.food
-
-		if foodCount < maxFood:
-			maxFood = foodCount
-
-		if (self.wateringHole >= maxFood) and maxFood > 0:
-			spec.food += maxFood
-			self.wateringHole -= maxFood
-			return True, foodCount
-		elif self.wateringHole > 0 and maxFood > 0:
-				foodCount = self.wateringHole
-				spec.food += self.wateringHole
-				self.wateringHole = 0			
-				return True, foodCount
-		else:
-			return False, 0
+			amountFed = curPlayer.feedSpecies(specIdx, foodCount, self.wateringHole)
+			self.wateringHole -= amountFed
 
 	"""
 		Execute a carnivore attack, including feeding
@@ -116,41 +80,42 @@ class Dealer:
 		att = attPlayer.species[attIdx]
 		defend = defPlayer.species[defendIdx]
 
+		defend.population -= 1
+		self.extinctSpecies(defPlayer, defendIdx)
+
 		if defend.hasTrait("horns"):
 			att.population -= 1
-			if att.population <= 0:
-				self.extinctSpecies(attPlayer, attIdx)
-
-		defend.population -= 1
-		if defend.population <= 0:
-			self.extinctSpecies(defPlayer, defendIdx)
-
-			if not defPlayer.species:
-				del self.currentlyFeeding[self.currentlyFeeding.index(defPlayer)]
+			self.extinctSpecies(attPlayer, attIdx)
 
 		if att.population > att.food:
 			self.feedFromWateringHole(attPlayer, attIdx, 1)
 
 	"""
 		Clear a now-extinct species and give pity cards to the species' owner
+		If the species owner's last remaining species dies, remove that player from the players being fed this round
 		@param player: the player whose species just went the way of the dodo
 		@param speciesIdx: the species to Clear
 		PlayerState, Nat -> Void
 	"""
 	def extinctSpecies(self, player, speciesIdx):
 		if player.species[speciesIdx].population <= 0:
+			self.distributeCards(player, 2)
 			del player.species[speciesIdx]
-			handoutIdx = 2
-			if len(self.deck) < 2:
-				handoutIdx = len(self.deck)
-
-			for i in range(handoutIdx):
-				player.hand.append(self.deck[i])
-				
-			self.deck = self.deck[handoutIdx:]
+			if not player.species:
+				del self.currentlyFeeding[self.currentlyFeeding.index(player)]
 		else:
 			raise ValueError("Tried to remove a non-extinct species")
 
+	"""
+		Distribute cards to a player
+		Cards are given from the head of the deck
+		@param player: player who is being given cards
+		@param numCards: the number of cards to give to the player
+		PlayerState, Nat -> Void
+	"""
+	def distributeCards(self, player, numCards):
+		for i in range(min(numCards, len(self.deck))):
+			player.hand.append(self.deck.pop(i))
 
 	"""
 		Try to automatically feed a species of the given player.
@@ -158,9 +123,8 @@ class Dealer:
 		  being fed this turn
 		Otherwise, will automatically feed:
 		- a lone hungry herbivore 
-		- a lone fat tissue herbivore with room for fat food and no room for regular food
 		@param player: the current PlayerState
-		@return True if a feeding, fat-tissue feeding, or player removal occurs.
+		@return True if a herbivore feeding or player removal occurs.
 		PlayerState -> Boolean
 	"""
 	def autoFeed(self, player):
@@ -169,12 +133,8 @@ class Dealer:
 		if len(hungry) == 0:
 			self.currentlyFeeding.remove(player)
 			return True
-		elif (len(hungry) == 1) and not hungry[0][1].hasTrait("carnivore"):
-			hungryIdx, hungrySpec = hungry[0]
-			if hungrySpec.fatFood < hungrySpec.body and hungrySpec.hasTrait("fat-tissue"):
-				self.feedFromWateringHole(player, hungryIdx, hungrySpec.body - hungrySpec.fatFood, fatFood=True)
-			else:
-				self.feedFromWateringHole(player, hungryIdx, 1)
+		elif (len(hungry) == 1) and not hungry[0][1].hasTrait("carnivore") and not hungry[0][1].hasTrait("fat-tissue"):
+			self.feedFromWateringHole(player, hungry[0], 1)
 			return True
 
 		return False
@@ -187,7 +147,7 @@ class Dealer:
 		PlayerState -> Boolean
 	"""
 	def queryFeed(self, queryPlayer):
-		decision = Player.feed(queryPlayer, self.wateringHole, self.players)
+		decision = SillyPlayer.feed(queryPlayer, self.wateringHole, self.players)
 		if decision is not False:
 			if type(decision) == int:
 				self.feedFromWateringHole(queryPlayer, decision, 1)
@@ -196,13 +156,8 @@ class Dealer:
 				self.feedFromWateringHole(queryPlayer, decision[0], foodCount=decision[1], fatFood=True)
 				return False
 			if len(decision) == 3:
-				attacker = queryPlayer.species[decision[0]]
 				defender = self.players[decision[1]]
-				prey = defender.species[decision[2]]
-				leftIdx, rightIdx = Player.getNeighbors(defender, decision[2])
-				left = defender.species[leftIdx]
-				right = defender.species[rightIdx]
-				if Species.isAttackable(prey, attacker, left, right):
+				if queryPlayer.verifyAttack(defender, decision[0], decision[2]):
 					self.executeAttack(queryPlayer, defender, decision[0], decision[2])
 					return True
 		else:
@@ -231,10 +186,10 @@ class Dealer:
 	or querying the player for their feeding decision, and completing subsequent triggered feedings
 
 	#Invariants: wateringHole must be greater than 0
-	@param configuration: a list of PlayerStates
+	Void -> Void
 	"""
-	def feed1(self, configuration):
-		curPlayer = configuration[0]
+	def feed1(self):
+		curPlayer = self.players[0]
 		if self.wateringHole > 0:
 			if not self.autoFeed(curPlayer):
 				attack = self.queryFeed(curPlayer)
@@ -242,4 +197,3 @@ class Dealer:
 					self.scavengeFeed(curPlayer)
 
 	#TODO: iterate through Players and call helper feed1
-	# remove Players from list if they have no hungry species
