@@ -153,12 +153,11 @@ class PlayerState:
 	def cooperate(self, specIdx, foodCount, wateringHole):
 		spec = self.species[specIdx]
 		amountFed = 0
-		if spec.hasTrait("cooperation"):
+		left, right = self.getNeighbors(specIdx)
+		if spec.hasTrait("cooperation") and right is not False:
 			for i in range(foodCount):
-				left, right = self.getNeighbors(specIdx)
-				if right is not False and wateringHole > 0:
-					specIdx += 1
-					fedThisSpecies = self.feedSpecies(specIdx, 1, wateringHole)
+				if wateringHole > 0:
+					fedThisSpecies = self.feedSpecies(specIdx+1, 1, wateringHole)
 					amountFed += fedThisSpecies
 					wateringHole -= fedThisSpecies
 

@@ -5,7 +5,7 @@ from traitCard import TraitCard
 class TestPlayerState(unittest.TestCase):
 
 	def setUp(self):
-		self.noTraits = Species(0, 1, 2, [], 0)
+		self.noTraits = Species(0, 1, 3, [], 0)
 		self.vegHorns = Species(1, 2, 3, ["horns"], 0)
 		self.vegCoop = Species(1, 2, 3, ["cooperation"], 0)
 		self.fat = Species(4, 3, 4, ["fat-tissue"], 3)
@@ -14,10 +14,11 @@ class TestPlayerState(unittest.TestCase):
 		self.carnCoop = Species(3, 4, 5, ["carnivore", "cooperation"], 0)
 		self.carnForage = Species(3, 4, 5, ["carnivore", "foraging"], 0)
 		self.carnForage1 = Species(3, 4, 5, ["carnivore", "foraging"], 0)
+		self.forCoop = Species(1, 3, 5, ["foraging", "cooperation"], 0)
 		self.p1 = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], [])
 		self.p2 = PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], [])
 		self.p3 = PlayerState(3, 0, [self.vegCoop, self.carnCoop, self.carnForage1], [])
-		self.p4 = PlayerState(4, 0, [self.noTraits], [])
+		self.p4 = PlayerState(4, 0, [self.forCoop, self.noTraits], [])
 
 	def tearDown(self):
 		del self.noTraits
@@ -28,6 +29,7 @@ class TestPlayerState(unittest.TestCase):
 		del self.carnCoop
 		del self.carnForage
 		del self.carnForage1
+		del self.forCoop
 		del self.p1 
 		del self.p2
 		del self.p3
@@ -35,7 +37,7 @@ class TestPlayerState(unittest.TestCase):
 
 	def testFeedSpecies(self):
 		self.assertEqual(self.noTraits.food, 0)
-		self.p4.feedSpecies(specIdx=0, foodCount=1, wateringHole=3)
+		self.p4.feedSpecies(specIdx=1, foodCount=1, wateringHole=3)
 		self.assertEqual(self.noTraits.food, 1)
 
 		self.assertEqual(self.carnForage.food, 3)
@@ -48,7 +50,12 @@ class TestPlayerState(unittest.TestCase):
 		self.assertEqual(self.carnForage.food, 4)
 
 	def testCooperate(self):
-		pass
+		self.assertEqual(self.forCoop.food, 1)
+		self.assertEqual(self.noTraits.food, 0)
+		self.p4.cooperate(0, 2, 5)
+		self.assertEqual(self.forCoop.food, 1)
+		self.assertEqual(self.noTraits.food, 2)
+
 
 	def testGetHungrySpecies(self):
 		pass
