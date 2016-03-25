@@ -59,6 +59,7 @@ class TestDealer(unittest.TestCase):
 
 		self.x6deal = Dealer([self.x6p1, self.x6p2, self.x6p3], 8, [])
 
+
 	def tearDown(self):
 		del self.vegHorns 
 		del self.vegCoop
@@ -82,6 +83,7 @@ class TestDealer(unittest.TestCase):
 		del self.xstep3spec
 		del self.xstep3p
 		del self.xstep3deal
+
 
 	def testXstep(self):
 		self.assertEqual(self.xstep3spec.food, 0)
@@ -277,6 +279,10 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(dCFS.wateringHole, 6)
 
 
+
+
+	def testMatthias(self):
+		pass
 
 if __name__ == "__main__":
 	unittest.main()
