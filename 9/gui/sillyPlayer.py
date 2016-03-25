@@ -80,9 +80,7 @@ class SillyPlayer:
 					defender = otherPlayers[j]
 					# get an attackable animal; range so that we can check bounds before getting neighbors
 					for k in range(len(defender.species)):
-						lNeighborIdx, rNeighborIdx = Player.getNeighbors(defender, k)
-						lNeighbor = defender.species[lNeighborIdx]
-						rNeighbor = defender.species[rNeighborIdx]
+						lNeighbor, rNeighbor = defender.getNeighbors(k)
 						if (Species.isAttackable(defender.species[k], animal, lNeighbor, rNeighbor) and
 																				(defender.species[k].compare(prey)) > 0):
 							defPlayerIndex = j
@@ -117,20 +115,20 @@ class SillyPlayer:
 
 		for i in range(len(curState.species)):
 			speciesWithIndices.append((i, curState.species[i]))
-		species = Player.sortSpecies(speciesWithIndices, removeFed=True)
+		species = SillyPlayer.sortSpecies(speciesWithIndices, removeFed=True)
 
 		if not species or wateringHole == 0:
 			return False
 
-		fatTissueSpecies, currentNeed = Player.getFatTissueSpecies(species, wateringHole)
+		fatTissueSpecies, currentNeed = SillyPlayer.getFatTissueSpecies(species, wateringHole)
 		if fatTissueSpecies != -1:
 			return [fatTissueSpecies, currentNeed]
 
-		vegetarian = Player.getVegetarian(species)
+		vegetarian = SillyPlayer.getVegetarian(species)
 		if vegetarian != -1:
 			return vegetarian
 
-		carnivore, defender, prey = Player.getCarnivoreAttack(species, otherPlayers)
+		carnivore, defender, prey = SillyPlayer.getCarnivoreAttack(species, otherPlayers)
 		if (carnivore, defender, prey) != (-1, -1, -1):
 			if defender >= myIndex and myIndex > -1:
 				defender += 1

@@ -58,7 +58,7 @@ class testFest(unittest.TestCase):
 						output = json.load(output)
 						input = JsonParsing.dealerFromJson(input)
 						output = JsonParsing.dealerFromJson(output)
-						input.feed1(input.players)
+						input.feed1()
 						try:
 							self.assertEqual(JsonParsing.dealerToJson(input), JsonParsing.dealerToJson(output))
 						except AssertionError as e:

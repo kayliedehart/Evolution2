@@ -71,7 +71,7 @@ class PlayerState:
 		else:
 			lNeighbor = False
 
-		if speciesIdx < len(player.species) - 1:
+		if speciesIdx < len(self.species) - 1:
 			rNeighbor = self.species[speciesIdx + 1]
 		else:
 			rNeighbor = False
@@ -85,7 +85,7 @@ class PlayerState:
 		@param attIdx: index of the attacking species: should be one of our own
 		PlayerState, Nat, Nat -> Boolean
 	"""
-	def verifyAttack(defPlayer, defIdx, attIdx):
+	def verifyAttack(self, defPlayer, attIdx, defIdx):
 		left, right = defPlayer.getNeighbors(defIdx)
 		return Species.isAttackable(defPlayer.species[defIdx], self.species[attIdx], left, right)
 
@@ -96,7 +96,7 @@ class PlayerState:
 		@return the amount of food this species was given
 		Nat, Nat -> Nat
 	"""
-	def feedFatFood(specIdx, foodCount):
+	def feedFatFood(self, specIdx, foodCount):
 		spec = self.species[specIdx]
 		if spec.hasTrait("fat-tissue"):
 			foodCount = min(foodCount, spec.body - spec.fatFood)
@@ -113,7 +113,7 @@ class PlayerState:
 		@return the total amount of food eaten during this feeding
 		Nat, Nat, Nat -> Nat
 	"""
-	def feedSpecies(specIdx, foodCount, wateringHole):
+	def feedSpecies(self, specIdx, foodCount, wateringHole):
 		spec = self.species[specIdx]
 		foodCount = min(wateringHole, foodCount, spec.population - spec.food)
 		spec.food += foodCount
@@ -133,10 +133,10 @@ class PlayerState:
 		@param wateringHole: the amount of food in the dealer's watering hole
 		@return the amount of food this species ate
 	"""
-	def forage(specIdx, wateringHole):
+	def forage(self, specIdx, wateringHole):
 		spec = self.species[specIdx]
 		amountFed = 0
-		if wateringHole > 0 and spec.hasTrait("foraging") and spec.population < spec.food:
+		if wateringHole > 0 and spec.hasTrait("foraging") and spec.population > spec.food:
 			spec.food += 1
 			amountFed += 1
 
@@ -150,7 +150,7 @@ class PlayerState:
 		@return the amount of food all species in the cooperation chain ate
 		Nat, Nat, Nat -> Nat
 	"""
-	def cooperate(specIdx, foodCount, wateringHole):
+	def cooperate(self, specIdx, foodCount, wateringHole):
 		spec = self.species[specIdx]
 		amountFed = 0
 		if spec.hasTrait("cooperation"):

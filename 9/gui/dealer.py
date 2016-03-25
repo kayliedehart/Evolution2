@@ -103,8 +103,6 @@ class Dealer:
 			del player.species[speciesIdx]
 			if not player.species:
 				del self.currentlyFeeding[self.currentlyFeeding.index(player)]
-		else:
-			raise ValueError("Tried to remove a non-extinct species")
 
 	"""
 		Distribute cards to a player
@@ -115,7 +113,7 @@ class Dealer:
 	"""
 	def distributeCards(self, player, numCards):
 		for i in range(min(numCards, len(self.deck))):
-			player.hand.append(self.deck.pop(i))
+			player.hand.append(self.deck.pop(0))
 
 	"""
 		Try to automatically feed a species of the given player.
@@ -134,7 +132,7 @@ class Dealer:
 			self.currentlyFeeding.remove(player)
 			return True
 		elif (len(hungry) == 1) and not hungry[0][1].hasTrait("carnivore") and not hungry[0][1].hasTrait("fat-tissue"):
-			self.feedFromWateringHole(player, hungry[0], 1)
+			self.feedFromWateringHole(player, hungry[0][0], 1)
 			return True
 
 		return False
@@ -161,7 +159,7 @@ class Dealer:
 					self.executeAttack(queryPlayer, defender, decision[0], decision[2])
 					return True
 		else:
-			del self.currentlyFeeding[self.currentlyFeeding.index(player)]
+			del self.currentlyFeeding[self.currentlyFeeding.index(queryPlayer)]
 			return False
 
 	"""

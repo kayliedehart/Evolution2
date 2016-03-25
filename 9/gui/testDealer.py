@@ -87,18 +87,18 @@ class TestDealer(unittest.TestCase):
 
 	def testXstep(self):
 		self.assertEqual(self.xstep3spec.food, 0)
-		self.xstep3deal.feed1(self.xstep3deal.players)
+		self.xstep3deal.feed1()
 		self.assertEqual(self.xstep3spec.food, 2)
 		self.assertEqual(self.xstep3deal.wateringHole, 3)
 
-		self.x4d.feed1(self.x4d.players)
+		self.x4d.feed1()
 		self.assertEqual(self.x41.food, 1)
 		self.assertEqual(self.x42.food, 1)
 		self.assertEqual(self.x43.food, 2)
 		self.assertEqual(self.x44.food, 2)
 		self.assertEqual(self.x4d.wateringHole, 4)
 
-		self.x6deal.feed1(self.x6deal.players)
+		self.x6deal.feed1()
 		self.assertEqual(self.x61.food, 2)
 		self.assertEqual(self.x62.food, 2)
 		self.assertEqual(self.x63.food, 2)
@@ -196,21 +196,21 @@ class TestDealer(unittest.TestCase):
 
 	def testFeed1(self):
 		self.assertEqual(self.vegCoop.food, 1)
-		self.dealer.feed1(self.dealer.players)
+		self.dealer.feed1()
 		self.assertEqual(self.vegCoop.food, 2)
 		self.assertEqual(self.dealer.wateringHole, 2)
 
 		self.assertEqual(self.carnCoop.population, 5)
 		self.assertEqual(self.carnCoop.food, 3)
 		self.assertEqual(self.vegHorns.population, 3)
-		self.p2dealer.feed1(self.p2dealer.players)
+		self.p2dealer.feed1()
 		self.assertEqual(self.carnCoop.population, 4)
 		self.assertEqual(self.carnCoop.food, 4)
 		self.assertEqual(self.vegHorns.population, 2)
 
 		self.assertEqual(self.fatFor.fatFood, 1)
 		self.assertEqual(self.fatFor.food, 4)
-		self.p3dealer.feed1(self.p3dealer.players)
+		self.p3dealer.feed1()
 		self.assertEqual(self.fatFor.fatFood, 3)
 		self.assertEqual(self.fatFor.food, 4)
 		self.assertEqual(self.p3dealer.wateringHole, 1)
@@ -224,7 +224,7 @@ class TestDealer(unittest.TestCase):
 		dNoSpecies = Dealer([pNoSpecies1, pNoSpecies2, pNoSpecies3], 5, [])
 		self.assertEqual(len(dNoSpecies.players), 3)
 		self.assertEqual(len(dNoSpecies.currentlyFeeding), 3)
-		dNoSpecies.feed1(dNoSpecies.players)
+		dNoSpecies.feed1()
 		self.assertEqual(len(dNoSpecies.players), 3)
 		self.assertEqual(len(dNoSpecies.currentlyFeeding), 2)
 		self.assertFalse(pNoSpecies1 in dNoSpecies.currentlyFeeding)
@@ -242,7 +242,7 @@ class TestDealer(unittest.TestCase):
 		dNoAtkSpecies = Dealer([pNoAtkSpecies1, pNoAtkSpecies2, pNoAtkSpecies3], 5, [])
 		self.assertEqual(len(dNoAtkSpecies.players), 3)
 		self.assertEqual(len(dNoAtkSpecies.currentlyFeeding), 3)
-		dNoAtkSpecies.feed1(dNoAtkSpecies.players)
+		dNoAtkSpecies.feed1()
 		self.assertEqual(len(dNoAtkSpecies.players), 3)
 		self.assertEqual(len(dNoAtkSpecies.currentlyFeeding), 2)
 		self.assertFalse(pNoAtkSpecies1 in dNoAtkSpecies.currentlyFeeding)
@@ -257,7 +257,7 @@ class TestDealer(unittest.TestCase):
 		dExtinction = Dealer([pExtinction1, pExtinction2, pExtinction3], 9, [TraitCard("burrowing", 3), TraitCard("horns", 3), TraitCard("climbing", 1)])
 
 		self.assertEqual(len(dExtinction.deck), 3)
-		dExtinction.feed1(dExtinction.players)
+		dExtinction.feed1()
 		self.assertEqual(len(dExtinction.deck), 1)
 		self.assertEqual(pExtinction3.hand, [TraitCard("burrowing", 3), TraitCard("horns", 3)])
 		self.assertEqual(len(pExtinction3.species), 0)
@@ -272,13 +272,11 @@ class TestDealer(unittest.TestCase):
 		pCFS3 = PlayerState(3, 5, [], [])
 		dCFS = Dealer([pCFS1, pCFS2, pCFS3], 10, [])
 
-		dCFS.feed1(dCFS.players)
+		dCFS.feed1()
 		self.assertEqual(pCFS1.species[0].food, 5)
 		self.assertEqual(pCFS1.species[1].food, 4)
 		self.assertEqual(pCFS2.species[0].population, 2)
 		self.assertEqual(dCFS.wateringHole, 6)
-
-
 
 
 	def testMatthias(self):
