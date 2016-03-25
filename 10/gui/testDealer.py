@@ -33,33 +33,6 @@ class TestDealer(unittest.TestCase):
 		self.xstep3p = PlayerState(1, 0, [self.xstep3spec], [])
 		self.xstep3deal = Dealer([self.xstep3p], 5, [])
 
-		self.x41 = Species(0, 5, 2, ["carnivore", "cooperation"], 0)
-		self.x42 = Species(0, 5, 2, ["carnivore"], 0)
-		self.x4p1 = PlayerState(1, 0, [self.x41, self.x42], [])
-
-		self.x43 = Species(0, 2, 2, ["scavenger", "foraging", "cooperation"], 0)
-		self.x44 = Species(0, 5, 1, ["carnivore", "cooperation"], 0)
-		self.x4p2 = PlayerState(2, 0, [self.x43, self.x44], [])
-
-		self.x45 = Species(0, 4, 1, [], 0)
-		self.x4p3 = PlayerState(3, 0, [self.x45], [])
-
-		self.x4d = Dealer([self.x4p1, self.x4p2, self.x4p3], 10, [])
-
-		self.x61 = Species(0, 5, 3, ["carnivore", "cooperation", "foraging"], 0)
-		self.x62 = Species(0, 5, 2, ["foraging", "carnivore"], 0)
-		self.x6p1 = PlayerState(1, 0, [self.x61, self.x62], [])
-
-		self.x63 = Species(0, 2, 1, ["scavenger", "foraging", "cooperation"], 0)
-		self.x64 = Species(0, 5, 2, ["carnivore", "cooperation"], 0)
-		self.x6p2 = PlayerState(2, 0, [self.x63, self.x64], [])
-
-		self.x65 = Species(0, 4, 2, ["scavenger"], 0)
-		self.x6p3 = PlayerState(3, 0, [self.x65], [])
-
-		self.x6deal = Dealer([self.x6p1, self.x6p2, self.x6p3], 8, [])
-
-
 	def tearDown(self):
 		del self.vegHorns 
 		del self.vegCoop
@@ -91,21 +64,17 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.xstep3spec.food, 2)
 		self.assertEqual(self.xstep3deal.wateringHole, 3)
 
-		self.x4d.feed1()
-		self.assertEqual(self.x41.food, 1)
-		self.assertEqual(self.x42.food, 1)
-		self.assertEqual(self.x43.food, 2)
-		self.assertEqual(self.x44.food, 2)
-		self.assertEqual(self.x4d.wateringHole, 4)
-
-		self.x6deal.feed1()
-		self.assertEqual(self.x61.food, 2)
-		self.assertEqual(self.x62.food, 2)
-		self.assertEqual(self.x63.food, 2)
-		self.assertEqual(self.x64.food, 1)
-		self.assertEqual(self.x65.food, 1)
-		self.assertEqual(self.x6deal.wateringHole, 0)
-
+	def testRemovePlayer(self):
+		self.assertEqual(len(self.dealer.players), 3)
+		self.assertTrue(self.p1 in self.dealer.currentlyFeeding)
+		self.assertTrue(self.p2 in self.dealer.currentlyFeeding)
+		self.assertTrue(self.p3 in self.dealer.currentlyFeeding)
+		self.dealer.removePlayerFromTurn(self.p2)
+		self.assertEqual(len(self.dealer.players), 3)
+		self.assertTrue(self.p1 in self.dealer.currentlyFeeding)
+		self.assertFalse(self.p2 in self.dealer.currentlyFeeding)
+		self.assertTrue(self.p3 in self.dealer.currentlyFeeding)
+		# check exception raise condition
 
 	def testFeedFromWateringHole(self):
 		self.assertEqual(self.dealer.wateringHole, 3)

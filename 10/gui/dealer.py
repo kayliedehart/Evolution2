@@ -50,6 +50,19 @@ class Dealer:
 		Drawing(dealer=self)
 
 	"""
+		Remove a player from the currentlyFeeding list
+		Done in cases where a player has no more species to feed this turn
+			or does not wish to continue feeding this turn
+		@param player: the player to remove
+		PlayerState -> Void
+	"""
+	def removePlayerFromTurn(self, player):
+		if player in self.currentlyFeeding:
+			del self.currentlyFeeding[self.currentlyFeeding.index(player)]
+		else:
+			raise ValueError("Player is already finished for this turn!")
+
+	"""
 		Actually feed a species based on its traits and decrement the watering hole as needed
 		Fat tissue species should NOT be fed here -- they are fed elsewhere
 		@param player: the player who owns the species to be fed
@@ -94,15 +107,15 @@ class Dealer:
 		Clear a now-extinct species and give pity cards to the species' owner
 		If the species owner's last remaining species dies, remove that player from the players being fed this round
 		@param player: the player whose species just went the way of the dodo
-		@param speciesIdx: the species to Clear
+		@param speciesIdx: the species to clear
 		PlayerState, Nat -> Void
 	"""
 	def extinctSpecies(self, player, speciesIdx):
-		if player.species[speciesIdx].population <= 0:
+		if player.isExtinct(speciesIdx):
 			self.distributeCards(player, 2)
-			del player.species[speciesIdx]
-			if not player.species:
-				del self.currentlyFeeding[self.currentlyFeeding.index(player)]
+			player.removeSpecies(speciesIdx)
+			if player.hasNoSpecies():
+				self.removePlayerFromTurn(player)
 
 	"""
 		Distribute cards to a player
@@ -129,7 +142,7 @@ class Dealer:
 		hungry = player.getHungrySpecies()
 
 		if len(hungry) == 0:
-			self.currentlyFeeding.remove(player)
+			self.removePlayerFromTurn(player)
 			return True
 		elif (len(hungry) == 1) and not hungry[0][1].hasTrait("carnivore") and not hungry[0][1].hasTrait("fat-tissue"):
 			self.feedFromWateringHole(player, hungry[0][0], 1)
@@ -159,17 +172,17 @@ class Dealer:
 					self.executeAttack(queryPlayer, defender, decision[0], decision[2])
 					return True
 		else:
-			del self.currentlyFeeding[self.currentlyFeeding.index(queryPlayer)]
+			self.removePlayerFromTurn(queryPlayer)
 			return False
 
 	"""
-	Execute automatic feedings triggered by scavenger traits.
-	@param player: current PlayerState
+		Execute automatic feedings triggered by scavenger traits.
+		@param player: current PlayerState
 	"""
 	def scavengeFeed(self, curPlayer):
 		for i in range(len(curPlayer.species)):
 			spec = curPlayer.species[i]
-			if spec.hasTrait("scavenger"):
+			if curPlayer.speciesHasTrait(i, "scavenger"):
 				self.feedFromWateringHole(curPlayer, i, 1)
 		try:
 			nextPlayer = self.players[self.players.index(curPlayer)+1]

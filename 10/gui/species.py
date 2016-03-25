@@ -51,6 +51,13 @@ class Species:
 		return name in self.traits
 
 	"""
+		Tell if this species is extinct, i.e. its population is 0
+		Void -> Boolean
+	"""
+	def isExtinct(self):
+		return self.population <= 0
+
+	"""
 		comparator for species/OptSpecies (aka False or Species)
 		decides if a species is larger than the given; precedence is decided in the following order:
 			population size, food eaten, body size

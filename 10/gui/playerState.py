@@ -90,6 +90,38 @@ class PlayerState:
 		return Species.isAttackable(defPlayer.species[defIdx], self.species[attIdx], left, right)
 
 	"""
+		Tell whether or not the given species is extinct (i.e. that its population <= 0)
+		@param specIdx: index of the species to check
+		Nat -> Boolean
+	"""
+	def isExtinct(self, specIdx):
+		return self.species[specIdx].isExtinct()
+
+	"""
+		Remove the given species from this player's list of species
+		@param specIdx: index of the species to remove
+		Nat -> Void
+	"""
+	def removeSpecies(self, specIdx):
+		del self.species[specIdx]
+
+	"""
+		Tell whether or not this player has any species
+		Void -> Boolean
+	"""
+	def hasNoSpecies(self):
+		return not (len(self.species) > 0)
+
+	"""
+		Tell whether the species at the given index has the given trait
+		@param specIdx: the index of the species to check
+		@param traitName: the name of the trait to check for
+		Nat, String -> Boolean
+	"""
+	def speciesHasTrait(self, specIdx, traitName):
+		return self.species[specIdx].hasTrait(traitName)
+
+	"""
 		Feed the given species the given amount of fat food that it requested
 		@param specIdx: index of the species to feed
 		@param foodCount: amount of food to try to feed
