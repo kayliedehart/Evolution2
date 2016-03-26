@@ -54,9 +54,8 @@ class PlayerState:
 	def getHungrySpecies(self):
 		hungry = []
 		for i in range(len(self.species)):
-			s = self.species[i]
-			if s.population > s.food or (s.body > s.fatFood and s.hasTrait("fat-tissue")):
-				hungry.append((i, s))
+			if self.species[i].isHungry():
+				hungry.append((i, self.species[i]))
 
 		return hungry
 

@@ -58,6 +58,15 @@ class Species:
 		return self.population <= 0
 
 	"""
+		Tell if this species is hungry aka:
+		- its food is less than its population
+		- if it has fat tissue, its fat food is less than its body size
+		Void -> Boolean
+	"""
+	def isHungry(self):
+		return self.food < self.population or (self.hasTrait("fat-tissue") and self.fatFood < self.body)
+
+	"""
 		comparator for species/OptSpecies (aka False or Species)
 		decides if a species is larger than the given; precedence is decided in the following order:
 			population size, food eaten, body size
