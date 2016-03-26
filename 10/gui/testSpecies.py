@@ -12,6 +12,9 @@ class TestSpecies(unittest.TestCase):
 		self.anotherSpecies = Species(2, 5, 7, self.someTraits, 0)
 		self.yetAnotherSpecies = Species(1, 5, 7, self.someTraits, 0)
 		self.yetAnotherYetAnotherSpecies = Species(2, 5, 7, self.someTraits, 0)
+		self.fatNoFood = Species(0, 2, 2, ["fat-tissue"], 2)
+		self.foodNoFat = Species(2, 2, 2, ["fat-tissue"], 0)
+		self.fedUp = Species(2, 2, 2, ["fat-tissue"], 2)
 
 		self.carnivore = Species(3, 5, 5, ["carnivore"], 0)
 		self.carnivoreAmbush = Species(3, 3, 5, self.someTraits, 0)
@@ -37,6 +40,9 @@ class TestSpecies(unittest.TestCase):
 		del self.anotherSpecies 
 		del self.yetAnotherSpecies 
 		del self.yetAnotherYetAnotherSpecies 
+		del self.fatNoFood
+		del self.foodNoFat
+		del self.fedUp
 
 		del self.carnivore
 		del self.carnivoreAmbush
@@ -66,6 +72,16 @@ class TestSpecies(unittest.TestCase):
 		self.assertTrue(self.aSpecies.hasTrait("ambush"))
 		self.assertFalse(self.aSpecies.hasTrait("Ambush"))
 		self.assertFalse(self.aSpecies.hasTrait("invincibility"))
+
+	def testIsExtinct(self):
+		self.assertTrue(self.defaultSpecies.isExtinct())
+		self.assertFalse(self.aSpecies.isExtinct())
+
+	def testIsHungry(self):
+		self.assertTrue(self.aSpecies.isHungry())
+		self.assertTrue(self.fatNoFood.isHungry())
+		self.assertTrue(self.foodNoFat.isHungry())
+		self.assertFalse(self.fedUp.isHungry())
 
 	def testWarningCall(self):
 		self.assertTrue(self.vulnerable.checkWarningCall(self.carnivore, False, False))
