@@ -96,6 +96,80 @@ class Species:
 		self.fatFood += food
 
 	"""
+		creates a json array fitting the spec from the given species
+		Void -> JsonArray
+	"""
+	def speciesToJson(self):
+		result = [["food", self.food],
+				  ["body", self.body],
+				  ["population", self.population],
+				  ["traits", self.traits]]
+
+		if self.fatFood > 0:
+			result.append(["fat-food", self.fatFood])
+
+		return result
+
+	""" 
+	   Helper to convert json species to internal Species
+	   JSONSpecies = [["food",Nat],
+	   ["body",Nat],
+	   ["population",Nat],
+	   ["traits",LOT],
+	   OPT: ["fat-food",Nat]]
+	   JSONSpecies -> OptSpecies
+	"""
+	@staticmethod
+	def speciesFromJson(jsonSpecies):    
+		# If the if statement errors out, the input is ill shaped
+		try:
+			if jsonSpecies is False:
+				return False
+
+			if jsonSpecies[0][0] == "food" and jsonSpecies[1][0] == "body" and jsonSpecies[2][0] == "population" and jsonSpecies[3][0] == "traits":
+				food = jsonSpecies[0][1]
+				body = jsonSpecies[1][1]
+				population = jsonSpecies[2][1]
+				traits = []
+				hasFatTissue = False
+
+				for trait in jsonSpecies[3][1] :
+					if TraitCard.checkTrait(trait):
+						traits.append(trait)
+					if trait == "fat-tissue":
+						hasFatTissue = True
+
+				if len(jsonSpecies) == 5 and hasFatTissue and jsonSpecies[4][0] == "fat-food":
+					fatFood = jsonSpecies[4][1]
+				else:
+					fatFood = 0
+
+				return Species(food, body, population, traits, fatFood)
+			else:
+				pass
+				# TODO: what should actually happen when the labels for an array are wrong?
+
+		except Exception as e:
+			raise e
+
+	""" 
+	   convert a json species from spec to a list of species/optspecies
+	   JsonSituation -> [Species, Species, OptSpecies, OptSpecies]
+	"""
+	@staticmethod
+	def situationFromJson(situation):    
+		defend = Species.speciesFromJson(situation[0])
+		attack = Species.speciesFromJson(situation[1])
+
+		if not attack or not defend:
+			quit()
+
+		lNeighbor = Species.speciesFromJson(situation[2])
+		rNeighbor = Species.speciesFromJson(situation[3])
+		
+		return defend, attack, lNeighbor, rNeighbor
+
+	"""
 		comparator for species/OptSpecies (aka False or Species)
 		decides if a species is larger than the given; precedence is decided in the following order:
 			population size, food eaten, body size

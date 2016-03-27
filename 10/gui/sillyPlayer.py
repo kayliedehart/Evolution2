@@ -3,6 +3,23 @@ from species import *
 
 class SillyPlayer:
 
+	""" 
+		override equality
+		Any -> Boolean
+	"""
+	def __eq__(self, other):
+		if isinstance(other, self.__class__):
+			return self.__dict__ == other.__dict__
+		else:
+			return False
+
+	""" 
+		override inequality
+		Any -> Boolean
+	"""
+	def __ne__(self, other):
+		return not self.__eq__(other)
+		
 	"""
 		Sorts a list of species from largest to smallest, giving precedence to population, then food eaten, then body size
 		@param species: a tuple of (the original index the species was at when given by the dealer, species object)

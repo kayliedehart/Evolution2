@@ -1,6 +1,8 @@
 # Representation of the dealer in a game of Evolution
 from species import *
 from drawing import Drawing
+from traitCard import *
+from playerState import *
 
 
 class Dealer:
@@ -47,6 +49,39 @@ class Dealer:
 	"""
 	def display(self):
 		Drawing(dealer=self)
+
+	"""
+		creates a Dealer from a json array
+		JsonArray -> Dealer
+	"""
+	@staticmethod
+	def dealerFromJson(dealer):
+		players = []
+		wateringHole = -1
+		cards = []
+
+		try:
+			for player in dealer[0]:
+				players.append(PlayerState.playerStateFromJson(player))
+
+			wateringHole = dealer[1]
+
+			for card in dealer[2]:
+				cards.append(TraitCard.traitCardFromJson(card))
+
+			return Dealer(players, wateringHole, cards)
+
+		except Exception as e:
+			raise e
+
+	"""
+		creates a json array describing a given internal Dealer
+		Void -> JsonArray
+	"""
+	def dealerToJson(self):
+		return [[PlayerState.playerStateToJson(player) for player in self.players], 
+				self.wateringHole,
+				[TraitCard.traitCardToJson(card) for card in self.deck]]
 
 	"""
 		Remove a player from the currentlyFeeding list

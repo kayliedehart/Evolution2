@@ -1,9 +1,10 @@
 import unittest
 import constants
 from jsonParsing import *
-from species import Species
-from traitCard import TraitCard
-from playerState import PlayerState
+from species import *
+from traitCard import *
+from playerState import *
+from dealer import *
 
 class testJsonParsing(unittest.TestCase):
 
@@ -89,17 +90,16 @@ class testJsonParsing(unittest.TestCase):
 		optJ = False
 
 
-		self.assertEqual(JsonParsing.speciesFromJson(self.avgSpeciesJ), self.avgSpecies)
-		self.assertEqual(JsonParsing.speciesToJson(self.avgSpecies), self.avgSpeciesJ)
+		self.assertEqual(Species.speciesFromJson(self.avgSpeciesJ), self.avgSpecies)
+		self.assertEqual(self.avgSpecies.speciesToJson(), self.avgSpeciesJ)
 
-		self.assertEqual(JsonParsing.speciesFromJson(self.fatTissueSpeciesJ), self.fatTissueSpecies)
-		self.assertEqual(JsonParsing.speciesToJson(self.fatTissueSpecies), self.fatTissueSpeciesJ)
+		self.assertEqual(Species.speciesFromJson(self.fatTissueSpeciesJ), self.fatTissueSpecies)
+		self.assertEqual(self.fatTissueSpecies.speciesToJson(), self.fatTissueSpeciesJ)
 
-		self.assertEqual(JsonParsing.speciesFromJson(self.fatTraitNoFoodJ), self.fatTraitNoFood)
-		self.assertEqual(JsonParsing.speciesToJson(self.fatTraitNoFood), self.fatTraitNoFoodJ)
+		self.assertEqual(Species.speciesFromJson(self.fatTraitNoFoodJ), self.fatTraitNoFood)
+		self.assertEqual(self.fatTraitNoFood.speciesToJson(), self.fatTraitNoFoodJ)
 
-		self.assertEqual(JsonParsing.speciesFromJson(optJ), False)
-		self.assertEqual(JsonParsing.speciesToJson(False), optJ)
+		self.assertEqual(Species.speciesFromJson(optJ), False)
 
 		# TODO: catch exceptions for tests
 #        self.assertEqual(JsonParsing.speciesFromJson(invalidJ), )
@@ -114,19 +114,19 @@ class testJsonParsing(unittest.TestCase):
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
 					  False,
 					  False]
-		situation1 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, ["carnivore"], 0), Species(0, 0, 0, [], 0), Species(0, 0, 0, [], 0))
+		situation1 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, ["carnivore"], 0), False, False)
 
 		situation2J = [[["food", 1], ["body", 0], ["population", 1], ["traits", []]],
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", []]],
 					  False]
-		situation2 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, ["carnivore"], 0), Species(1, 0, 1, [], 0), Species(0, 0, 0, [], 0))
+		situation2 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, ["carnivore"], 0), Species(1, 0, 1, [], 0), False)
 
 		situation3J = [[["food", 1], ["body", 0], ["population", 1], ["traits", []]],
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
 					  False,
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", []]]]
-		situation3 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, ["carnivore"], 0), Species(0, 0, 0, [], 0), Species(1, 0, 1, [], 0))
+		situation3 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, ["carnivore"], 0), False, Species(1, 0, 1, [], 0))
 
 		situation4J = [[["food", 1], ["body", 0], ["population", 1], ["traits", []]],
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
@@ -136,26 +136,26 @@ class testJsonParsing(unittest.TestCase):
 
 		badSituation1 = [False, False, [["food", 1], ["body", 0], ["population", 1], ["traits", []]], False]
 
-		self.assertEqual(JsonParsing.situationFromJson(situation1J), situation1)
-		self.assertEqual(JsonParsing.situationFromJson(situation2J), situation2)
-		self.assertEqual(JsonParsing.situationFromJson(situation3J), situation3)
-		self.assertEqual(JsonParsing.situationFromJson(situation4J), situation4)
+		self.assertEqual(Species.situationFromJson(situation1J), situation1)
+		self.assertEqual(Species.situationFromJson(situation2J), situation2)
+		self.assertEqual(Species.situationFromJson(situation3J), situation3)
+		self.assertEqual(Species.situationFromJson(situation4J), situation4)
 		# TODO: check for exiting
 #        self.assertEqual(JsonParsing.situationFromJson(badSituation1), )
 
 
 	def testPlayerStateParsing(self):
-		self.assertEqual(JsonParsing.playerStateFromJson(self.onePlayerJ), self.onePlayer)
-		self.assertEqual(JsonParsing.playerStateToJson(self.onePlayer), self.onePlayerJ)
-		self.assertEqual(JsonParsing.playerStateFromJson(self.twoPlayerJ), self.twoPlayer)
-		self.assertEqual(JsonParsing.playerStateToJson(self.twoPlayer), self.twoPlayerJ)
+		self.assertEqual(PlayerState.playerStateFromJson(self.onePlayerJ), self.onePlayer)
+		self.assertEqual(self.onePlayer.playerStateToJson(), self.onePlayerJ)
+		self.assertEqual(PlayerState.playerStateFromJson(self.twoPlayerJ), self.twoPlayer)
+		self.assertEqual(self.twoPlayer.playerStateToJson(), self.twoPlayerJ)
 
 	def testDealerParsing(self):
 		config = [[self.onePlayerJ, self.twoPlayerJ, self.threePlayerJ], 5, []]
 		deal = Dealer([self.onePlayer, self.twoPlayer, self.threePlayer], 5, [])
 
-		self.assertEqual(JsonParsing.dealerFromJson(config), deal)
-		self.assertEqual(JsonParsing.dealerToJson(deal), config)
+		self.assertEqual(Dealer.dealerFromJson(config), deal)
+		self.assertEqual(deal.dealerToJson(), config)
 
 	def testCheckTrait(self):
 		goodTrait = "fat-tissue"
@@ -163,11 +163,11 @@ class testJsonParsing(unittest.TestCase):
 		warn = "warning-call"
 		badTrait = "invincibility"
 
-		self.assertTrue(JsonParsing.checkTrait(goodTrait))
-		self.assertTrue(JsonParsing.checkTrait(carn))
-		self.assertTrue(JsonParsing.checkTrait(warn))
+		self.assertTrue(TraitCard.checkTrait(goodTrait))
+		self.assertTrue(TraitCard.checkTrait(carn))
+		self.assertTrue(TraitCard.checkTrait(warn))
 		
-		self.assertFalse(JsonParsing.checkTrait(badTrait))
+		self.assertFalse(TraitCard.checkTrait(badTrait))
 
 
 
