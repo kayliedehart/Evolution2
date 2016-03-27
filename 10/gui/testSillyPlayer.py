@@ -95,7 +95,6 @@ class TestPlayer(unittest.TestCase):
 	def testFeed(self):
 		self.assertEqual(SillyPlayer.feed(self.aPlayerState, 5, [self.bPlayerState, self.cPlayerState]), [4, 4])
 		self.assertEqual(SillyPlayer.feed(self.aPlayerState, 1, [self.bPlayerState, self.cPlayerState]), [4, 1])
-		self.assertEqual(SillyPlayer.feed(self.aPlayerState, 0, [self.bPlayerState, self.cPlayerState]), False)
 		self.assertEqual(SillyPlayer.feed(PlayerState(1, 0, [Species(0, 1, 2, [], 0)], []), 5, [self.bPlayerState, self.cPlayerState]), 0)
 		self.assertEqual(SillyPlayer.feed(PlayerState(1, 0, [Species(0, 1, 2, ["fat-tissue", "carnivore"], 1), 
 																	Species(0, 1, 2, [], 0)], []), 5, [self.bPlayerState, self.cPlayerState]), 1)

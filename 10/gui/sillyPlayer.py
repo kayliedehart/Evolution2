@@ -68,12 +68,13 @@ class SillyPlayer:
 					for k in range(len(defender.species)):
 						lNeighbor, rNeighbor = defender.getNeighbors(k)
 						if (Species.isAttackable(defender.species[k], animal, lNeighbor, rNeighbor) 
-											and	(preyIndex is False or (defender.species[k].compare(defender.species[preyIndex])) > 0)):
+											and	(preyIndex is False 
+											  or (defender.species[k].compare(otherPlayers[defPlayerIndex].species[preyIndex])) > 0)):
 							defPlayerIndex = j
 							preyIndex = k
 							carnIndex = i
 
-				return carnIndex, defPlayerIndex, preyIndex
+		return carnIndex, defPlayerIndex, preyIndex
 
 	"""
 		Find the index of the given player in a list of players
