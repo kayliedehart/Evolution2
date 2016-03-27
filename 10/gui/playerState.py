@@ -120,6 +120,16 @@ class PlayerState:
 	def speciesHasTrait(self, specIdx, traitName):
 		return self.species[specIdx].hasTrait(traitName)
 
+
+	"""
+		Drop the population of the given species as in a carnivore attack
+		If the species' food > its population, drop the food as well
+		@param specIdx: the index of the species to have its population decremented
+		Nat -> Void
+	"""
+	def executeAttack(self, specIdx):
+		self.species[specIdx].executeAttack()
+
 	"""
 		Feed the given species the given amount of fat food that it requested
 		@param specIdx: index of the species to feed
@@ -147,7 +157,7 @@ class PlayerState:
 	def feedSpecies(self, specIdx, foodCount, wateringHole):
 		spec = self.species[specIdx]
 		foodCount = min(wateringHole, foodCount, spec.population - spec.food)
-		spec.food += foodCount
+		spec.eatFood(foodCount)
 		wateringHole -= foodCount
 
 		forageAmount = self.forage(specIdx, wateringHole)
@@ -168,7 +178,7 @@ class PlayerState:
 		spec = self.species[specIdx]
 		amountFed = 0
 		if wateringHole > 0 and spec.hasTrait("foraging") and spec.population > spec.food:
-			spec.food += 1
+			spec.eatFood(1)
 			amountFed += 1
 
 		return amountFed
@@ -193,3 +203,20 @@ class PlayerState:
 					wateringHole -= fedThisSpecies
 
 		return amountFed
+
+	"""
+		After a carnivore attack, have all species with the scavenge trait eat from left to right
+		@param wateringHole: the amount of food that can be handed out amongst the scavengers
+		@return the amount of food eaten amongst our scavengers
+		Nat -> Nat
+	"""
+	def scavenge(self, wateringHole):
+		amountFed = 0
+		for i in range(len(self.species)):
+			if self.speciesHasTrait(i, "scavenger"):
+				fedThisSpecies = self.feedSpecies(i, 1, wateringHole)
+				amountFed += fedThisSpecies
+				wateringHole -= fedThisSpecies
+
+		return amountFed
+

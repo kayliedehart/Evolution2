@@ -71,9 +71,6 @@ class Dealer:
 		PlayerState, Nat, Nat -> Void
 	"""
 	def feedFromWateringHole(self, curPlayer, specIdx, foodCount=1, fatFood=False):
-		spec = curPlayer.species[specIdx]
-		amountFed = 0
-
 		if fatFood:
 			amountFed = curPlayer.feedFatFood(specIdx, min(foodCount, self.wateringHole))
 			self.wateringHole -= amountFed
@@ -85,22 +82,20 @@ class Dealer:
 		Execute a carnivore attack, including feeding
 		@param attPlayer: the player who owns the attacking species
 		@param defPlayer: the player who owns the defending species
-		@param defend: the species that's being attacked
+		@param defIdx: the species that's being attacked
 		@param attIdx: the index of the species that's attacking
 		PlayerState, PlayerState, Nat, Nat -> Void 
 	"""
-	def executeAttack(self, attPlayer, defPlayer, attIdx, defendIdx):
-		att = attPlayer.species[attIdx]
-		defend = defPlayer.species[defendIdx]
+	def executeAttack(self, attPlayer, defPlayer, attIdx, defIdx):
+		defPlayer.executeAttack(defIdx)
 
-		defend.population -= 1
-		self.extinctSpecies(defPlayer, defendIdx)
+		if defPlayer.speciesHasTrait(defIdx, "horns"):
+			attPlayer.executeAttack(attIdx)
 
-		if defend.hasTrait("horns"):
-			att.population -= 1
-			self.extinctSpecies(attPlayer, attIdx)
+		isDefExtinct = self.extinctSpecies(defPlayer, defIdx)
+		isAttExtinct = self.extinctSpecies(attPlayer, attIdx)
 
-		if att.population > att.food:
+		if not isAttExtinct:
 			self.feedFromWateringHole(attPlayer, attIdx, 1)
 
 	"""
@@ -108,14 +103,18 @@ class Dealer:
 		If the species owner's last remaining species dies, remove that player from the players being fed this round
 		@param player: the player whose species just went the way of the dodo
 		@param speciesIdx: the species to clear
-		PlayerState, Nat -> Void
+		@return whether the species was successfully removed
+		PlayerState, Nat -> Boolean
 	"""
 	def extinctSpecies(self, player, speciesIdx):
-		if player.isExtinct(speciesIdx):
+		isExtinct = player.isExtinct(speciesIdx)
+		if isExtinct:
 			self.distributeCards(player, 2)
 			player.removeSpecies(speciesIdx)
 			if player.hasNoSpecies():
 				self.removePlayerFromTurn(player)
+		
+		return isExtinct
 
 	"""
 		Distribute cards to a player
@@ -144,7 +143,7 @@ class Dealer:
 		if len(hungry) == 0:
 			self.removePlayerFromTurn(player)
 			return True
-		elif (len(hungry) == 1) and not hungry[0][1].hasTrait("carnivore") and not hungry[0][1].hasTrait("fat-tissue"):
+		elif (len(hungry) == 1) and not player.speciesHasTrait(hungry[0][0], "carnivore") and not player.speciesHasTrait(hungry[0][0], "fat-tissue"):
 			self.feedFromWateringHole(player, hungry[0][0], 1)
 			return True
 
@@ -180,16 +179,8 @@ class Dealer:
 		@param player: current PlayerState
 	"""
 	def scavengeFeed(self, curPlayer):
-		for i in range(len(curPlayer.species)):
-			spec = curPlayer.species[i]
-			if curPlayer.speciesHasTrait(i, "scavenger"):
-				self.feedFromWateringHole(curPlayer, i, 1)
-		try:
-			nextPlayer = self.players[self.players.index(curPlayer)+1]
-			self.scavengeFeed(nextPlayer)
-		except:
-			# There are no more players to be fed after the current player 
-			pass
+		for player in self.currentlyFeeding:
+			self.wateringHole -= player.scavenge(self.wateringHole)
 
 
 	"""

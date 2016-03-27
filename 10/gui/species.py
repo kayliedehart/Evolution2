@@ -67,6 +67,24 @@ class Species:
 		return self.food < self.population or (self.hasTrait("fat-tissue") and self.fatFood < self.body)
 
 	"""
+		Drop the population of this species by 1 (as in a carnivore attack)
+		If this means that our food > our population, drop food as well
+		Void -> Void
+	"""
+	def executeAttack(self):
+		self.population -= 1
+		if self.population < self.food:
+			self.food = self.population
+
+	"""
+		Eat the given amount of food
+		@param food: the amount to eat
+		Nat -> Void
+	"""
+	def eatFood(self, food):
+		self.food += food
+
+	"""
 		comparator for species/OptSpecies (aka False or Species)
 		decides if a species is larger than the given; precedence is decided in the following order:
 			population size, food eaten, body size
