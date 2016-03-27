@@ -103,7 +103,7 @@ class Drawing:
 		speciesFrame = LabelFrame(master, text="Species", padx=10, pady=10)
 		speciesFrame.grid(row=row, column=column)
 
-		for i in range(len(species.traits)):
+		for i in range(len(species["traits"])):
 			self.makeLabelFrame(speciesFrame, "Trait", species["traits"][i], row=row, column=column+i)
 
 		row += 1
@@ -116,7 +116,7 @@ class Drawing:
 		column += 1
 		self.makeLabelFrame(speciesFrame, "Population", species["population"], row=row, column=column)
 		column += 1
-		if species.hasTrait("fat-tissue") and species.fatFood > 0:
+		if ("fat-tissue" in species["traits"]) and species["fatFood"] > 0:
 			self.makeLabelFrame(speciesFrame, "Fat Food", species["fatFood"], row=row, column=column)
 
 		return speciesFrame

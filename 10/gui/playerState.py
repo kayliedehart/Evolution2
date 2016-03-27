@@ -45,6 +45,21 @@ class PlayerState:
 		return not self.__eq__(other)
 
 	"""
+		override dictionary 
+		None -> Dict
+	"""
+	def __dict__(self):
+		speciesDicts = []
+		for spec in self.species:
+			speciesDicts.append(spec.__dict__)
+
+		cards = []
+		for card in self.deck:
+			cards.append(card.__dict__)
+
+		return {"num": self.num, "species": speciesDicts, "hand": cards, "foodbag": self.foodbag}
+
+	"""
 		Display the essence of a player
 		Void -> Void
 	"""
