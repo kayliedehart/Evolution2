@@ -72,9 +72,12 @@ class Species:
 		Void -> Void
 	"""
 	def executeAttack(self):
-		self.population -= 1
-		if self.population < self.food:
-			self.food = self.population
+		if self.population > 0:
+			self.population -= 1
+			if self.population < self.food:
+				self.food = self.population
+		else:
+			raise ValueError("Population already at 0!")
 
 	"""
 		Eat the given amount of food
@@ -83,6 +86,14 @@ class Species:
 	"""
 	def eatFood(self, food):
 		self.food += food
+
+	"""
+		Eat the given amount of fat food
+		@param food: the amount to eat
+		Nat -> Void
+	"""
+	def eatFatFood(self, food):
+		self.fatFood += food
 
 	"""
 		comparator for species/OptSpecies (aka False or Species)

@@ -45,27 +45,6 @@ class TestPlayerState(unittest.TestCase):
 		del self.p6
 		del self.p7
 
-	def testFeedSpecies(self):
-		self.assertEqual(self.noTraits.food, 0)
-		self.p4.feedSpecies(specIdx=1, foodCount=1, wateringHole=3)
-		self.assertEqual(self.noTraits.food, 1)
-
-		self.assertEqual(self.carnForage.food, 3)
-		self.p1.feedSpecies(specIdx=2, foodCount=1, wateringHole=5)
-		self.assertEqual(self.carnForage.food, 5)
-
-	def testForage(self):
-		self.assertEqual(self.carnForage.food, 3)
-		self.p1.forage(specIdx=2, wateringHole=4)
-		self.assertEqual(self.carnForage.food, 4)
-
-	def testCooperate(self):
-		self.assertEqual(self.forCoop.food, 1)
-		self.assertEqual(self.noTraits.food, 0)
-		self.p4.cooperate(0, 2, 5)
-		self.assertEqual(self.forCoop.food, 1)
-		self.assertEqual(self.noTraits.food, 2)
-
 	def testGetHungrySpecies(self):
 		self.assertEqual(self.p1.getHungrySpecies(), [(0, self.vegCoop), (2, self.carnForage)])
 		self.assertEqual(self.p2.getHungrySpecies(), [(0, self.vegHorns), (1, self.fatScav), (2, self.carnCoop)])
@@ -113,6 +92,26 @@ class TestPlayerState(unittest.TestCase):
 		self.assertEqual(self.p2.feedFatFood(1, 3), 1)
 		self.assertEqual(self.fatScav.fatFood, 3)
 
+	def testFeedSpecies(self):
+		self.assertEqual(self.noTraits.food, 0)
+		self.p4.feedSpecies(specIdx=1, foodCount=1, wateringHole=3)
+		self.assertEqual(self.noTraits.food, 1)
+
+		self.assertEqual(self.carnForage.food, 3)
+		self.p1.feedSpecies(specIdx=2, foodCount=1, wateringHole=5)
+		self.assertEqual(self.carnForage.food, 5)
+
+	def testForage(self):
+		self.assertEqual(self.carnForage.food, 3)
+		self.p1.forage(specIdx=2, wateringHole=4)
+		self.assertEqual(self.carnForage.food, 4)
+
+	def testCooperate(self):
+		self.assertEqual(self.forCoop.food, 1)
+		self.assertEqual(self.noTraits.food, 0)
+		self.p4.cooperate(0, 2, 5)
+		self.assertEqual(self.forCoop.food, 1)
+		self.assertEqual(self.noTraits.food, 2)
 
 
 if __name__ == "__main__":

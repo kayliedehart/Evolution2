@@ -1,6 +1,5 @@
 # Representation of the dealer in a game of Evolution
 from species import *
-from sillyPlayer import *
 from drawing import Drawing
 
 
@@ -157,7 +156,7 @@ class Dealer:
 		PlayerState -> Boolean
 	"""
 	def queryFeed(self, queryPlayer):
-		decision = SillyPlayer.feed(queryPlayer, self.wateringHole, self.players)
+		decision = queryPlayer.feed(self.wateringHole, self.players)
 		if decision is not False:
 			if type(decision) == int:
 				self.feedFromWateringHole(queryPlayer, decision, 1)

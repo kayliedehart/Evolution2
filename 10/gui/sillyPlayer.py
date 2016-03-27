@@ -5,25 +5,25 @@ class SillyPlayer:
 
 	"""
 		Sorts a list of species from largest to smallest, giving precedence to population, then food eaten, then body size
-		The first Nat in the tuple is the original index the species was at when given by the dealer
-		set removeFed to True if you would like to filter out all species that cannot be fed
-		listOf(Tuple(Nat, Species)), Opt: Boolean -> listOf(Tuple(Nat, Species))
+		@param species: a tuple of (the original index the species was at when given by the dealer, species object)
+		@return the same tuples sorted with the largest species first
+		listOf(Tuple(Nat, Species)) -> listOf(Tuple(Nat, Species))
 	"""
 	@staticmethod
-	def sortSpecies(species, removeFed=False):
-		result = species
-		if removeFed:
-			temp = []
-			for i, s in species:
-				if s.population > s.food or (s.body > s.fatFood and s.hasTrait("fat-tissue")):
-					temp.append((i, s))
-			result = temp
-			
+	def sortSpecies(species):
+		result = []
+		for i, s in species:
+			if s.isHungry():
+				result.append((i, s))
+
 		result = sorted(result, key=lambda x: (x[1].population, x[1].food, x[1].body), reverse=True)
 		return result
 
 	"""
 		Gets a fat tissue species with the greatest need and its current needs
+		@param species: the species to choose from
+		@param wateringHole: the max. amount of food that can be taken
+		@return the index of the species to be fed and the amount it wants to eat
 		ListOf((Nat, Species)), Nat -> Nat, Nat
 	"""
 	@staticmethod
@@ -95,6 +95,39 @@ class SillyPlayer:
 					return -1, -1, -1
 
 	"""
+		Find the index of the given player in a list of players
+		Invariant: players must have unique IDs
+		@param curState: the state to find in the list
+		@param players: the list of players, which may or may not contain curState
+		@return the index of the player, or False if it is not in the list, and the list of players that aren't us
+		PlayerState, ListOf(PlayerState) -> (Nat or False), ListOf(PlayerState)
+	"""
+	@staticmethod
+	def getIndex(curState, players):
+		otherPlayers = []
+		myIndex = False
+		for i in range(len(players)):
+			if players[i].num != curState.num:
+				otherPlayers.append(players[i])
+			else:
+				myIndex = i
+		return [myIndex, otherPlayers]
+
+	"""
+		Take the given state's species, associate them with their original place in the list,
+		and then sort the list
+		@param curState: the state whose species we should sort
+		@return a list of species with their original index sorted by size
+		PlayerState -> ListOf((Nat, Species))
+	"""
+	@staticmethod
+	def indexSpecies(curState):
+		speciesWithIndices = []
+		for i in range(len(curState.species)):
+			speciesWithIndices.append((i, curState.species[i]))
+		return SillyPlayer.sortSpecies(speciesWithIndices)
+
+	"""
 		Choose a species to feed
 		@param curState: current public state of this player
 		@param wateringHole: amount of food in wateringHole
@@ -108,35 +141,20 @@ class SillyPlayer:
 	"""
 	@staticmethod
 	def feed(curState, wateringHole, players):
-		speciesWithIndices = []
-		otherPlayers = []
-		myIndex = -1
-
-		# ensure that we are not in other players
-		for i in range(len(players)):
-			if players[i].num != curState.num:
-				otherPlayers.append(players[i])
-			else:
-				myIndex = i
-
-		for i in range(len(curState.species)):
-			speciesWithIndices.append((i, curState.species[i]))
-		species = SillyPlayer.sortSpecies(speciesWithIndices, removeFed=True)
-
-		if not species or wateringHole == 0:
-			return False
+		species = SillyPlayer.indexSpecies(curState)
+		myIndex, otherPlayers = SillyPlayer.getIndex(curState, players)
 
 		fatTissueSpecies, currentNeed = SillyPlayer.getFatTissueSpecies(species, wateringHole)
-		if fatTissueSpecies != -1:
+		if fatTissueSpecies is not False:
 			return [fatTissueSpecies, currentNeed]
 
 		vegetarian = SillyPlayer.getVegetarian(species)
-		if vegetarian != -1:
+		if vegetarian is not False:
 			return vegetarian
 
 		carnivore, defender, prey = SillyPlayer.getCarnivoreAttack(species, otherPlayers)
-		if (carnivore, defender, prey) != (-1, -1, -1):
-			if defender >= myIndex and myIndex > -1:
+		if carnivore is not False:
+			if myIndex is not False and defender >= myIndex:
 				defender += 1
 			return [carnivore, defender, prey]
 

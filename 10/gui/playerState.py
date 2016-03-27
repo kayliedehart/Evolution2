@@ -1,5 +1,6 @@
 from species import *
 from drawing import Drawing 
+from sillyPlayer import SillyPlayer
 
 
 class PlayerState:
@@ -10,17 +11,19 @@ class PlayerState:
 
 	""" 
 		Internal representation of a json player
-		num: ID number
-		foodbag: yep
-		species: this player's species boards
-		hand: traitcards in this player's hand (not on boards/haven't been traded in)
-		Nat, Nat, ListOf(Species), ListOf(TraitCard) -> PlayerState
+		@param num: ID number
+		@param foodbag: yep
+		@param species: this player's species boards
+		@param hand: traitcards in this player's hand (not on boards/haven't been traded in)
+		@param player: the external player with strategic functionality
+		Nat, Nat, ListOf(Species), ListOf(TraitCard), Player -> PlayerState
 	"""
-	def __init__(self, id, bag, speciesList, cards):
+	def __init__(self, id, bag, speciesList, cards, player=None):
 		self.num = id
 		self.foodbag = bag
 		self.species = speciesList
 		self.hand = cards
+		self.player = SillyPlayer()
 
 	""" 
 		override equality
@@ -45,6 +48,20 @@ class PlayerState:
 	"""
 	def display(self):
 		Drawing(player=self)
+
+	"""
+		Proxy to call the feed method in the external player
+		@param wateringHole: the amount of food that can be eaten
+		@param players: all the players in this round
+		@return FeedingAction -One of:
+			False - no feeding at this time
+			Nat - index of Species fed
+			[Nat, Nat] - index of fat-tissue Species fed, amount of fatFood
+			[Nat, Nat, Nat] - index of carnivore, index of player to attack, index of species to attack
+		Nat, ListOf(PlayerState) -> FeedingAction
+	"""
+	def feed(self, wateringHole, player):
+		return self.player.feed(self, wateringHole, player)
 
 	"""
 		Filter out all fed species to get a list of species that can be fed
@@ -120,7 +137,6 @@ class PlayerState:
 	def speciesHasTrait(self, specIdx, traitName):
 		return self.species[specIdx].hasTrait(traitName)
 
-
 	"""
 		Drop the population of the given species as in a carnivore attack
 		If the species' food > its population, drop the food as well
@@ -141,7 +157,7 @@ class PlayerState:
 		spec = self.species[specIdx]
 		if spec.hasTrait("fat-tissue"):
 			foodCount = min(foodCount, spec.body - spec.fatFood)
-			spec.fatFood += foodCount
+			spec.eatFatFood(foodCount)
 			return foodCount
 		else:
 			raise ValueError("Tried to feed fat food to a species without fat tissue")
