@@ -5,12 +5,11 @@ import sys
 import json
 from gui.dealer import Dealer
 from gui.playerState import PlayerState
-from gui.jsonParsing import *
 
 try:
 	testInput = json.load(sys.stdin)
 	if len(testInput) == 3:
-		curDealer = JsonParsing.dealerFromJson(testInput)
+		curDealer = Dealer.dealerFromJson(testInput)
 		curDealer.display()
 		curDealer.players[0].display()
 		exit(0)

@@ -59,7 +59,7 @@ class Drawing:
 		dealerFrame.grid(row=row, column=column)
 
 		self.makeLabelFrame(dealerFrame, "Watering Hole", "{} tokens".format(dealer["wateringHole"]), row=row, column=column)
-		self.makeLabelFrame(dealerFrame, "Deck", "{} cards left".format(len(dealer["deck"]), row=row+1, column=column)
+		self.makeLabelFrame(dealerFrame, "Deck", "{} cards left".format(len(dealer["deck"])), row=row+1, column=column)
 
 		column += 1
 
