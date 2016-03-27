@@ -71,11 +71,11 @@ class TestPlayer(unittest.TestCase):
 	def testGetFatTissueSpecies(self):
 		self.assertEqual(SillyPlayer.getFatTissueSpecies(self.ourIndexedSpecies, 5), (4, 4))
 		self.assertEqual(SillyPlayer.getFatTissueSpecies(self.ourIndexedSpecies, 3), (4, 3))
-		self.assertEqual(SillyPlayer.getFatTissueSpecies(self.noFatTissueIndexed, 5), (-1, 0))
+		self.assertEqual(SillyPlayer.getFatTissueSpecies(self.noFatTissueIndexed, 5), (False, 0))
 
 	def testGetVegetarian(self):
 		self.assertEqual(SillyPlayer.getVegetarian(self.ourIndexedSpecies), 3)
-		self.assertEqual(SillyPlayer.getVegetarian(self.noVegIndexed), -1)
+		self.assertEqual(SillyPlayer.getVegetarian(self.noVegIndexed), False)
 
 	def testGetCarnivoreAttack(self):
 		carn, play, prey = SillyPlayer.getCarnivoreAttack(self.ourIndexedSpecies, otherPlayers=[self.bPlayerState, self.cPlayerState])
@@ -88,9 +88,9 @@ class TestPlayer(unittest.TestCase):
 		self.assertEqual(prey, 0)
 		carn, play, prey = SillyPlayer.getCarnivoreAttack(self.ourIndexedSpecies, 
 			otherPlayers=[PlayerState(4, 0, [Species(1, 1, 1, ["warning-call"], 0), Species(1, 1, 1, ["warning-call"], 0)], [])])
-		self.assertEqual(carn, -1)
-		self.assertEqual(play, -1)
-		self.assertEqual(prey, -1)
+		self.assertFalse(carn)
+		self.assertFalse(play)
+		self.assertFalse(prey)
 
 	def testFeed(self):
 		self.assertEqual(SillyPlayer.feed(self.aPlayerState, 5, [self.bPlayerState, self.cPlayerState]), [4, 4])

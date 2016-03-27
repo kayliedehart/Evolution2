@@ -21,78 +21,59 @@ class SillyPlayer:
 
 	"""
 		Gets a fat tissue species with the greatest need and its current needs
-		@param species: the species to choose from
+		@param species: the list of species to choose from
 		@param wateringHole: the max. amount of food that can be taken
 		@return the index of the species to be fed and the amount it wants to eat
-		ListOf((Nat, Species)), Nat -> Nat, Nat
+		ListOf((Nat, Species)), Nat -> Nat or False, Nat or False
 	"""
 	@staticmethod
 	def getFatTissueSpecies(species, wateringHole):
-		fatTissueSpecies = False
-		speciesIndex = -1
+		speciesIndex = False
 		currentNeed = 0
 		for i, animal in species:
 			if animal.hasTrait("fat-tissue") and animal.body > animal.fatFood:
-				if not fatTissueSpecies:
-					fatTissueSpecies = animal
+				animalNeed = animal.body - animal.fatFood
+				if speciesIndex is False or animalNeed > currentNeed:
 					speciesIndex = i
-					currentNeed = animal.body - animal.fatFood
-				else:
-					animalNeed = animal.body - animal.fatFood
-					# in the case that they're equal, current already takes precedence because it was to the left
-					# of the animal we're checking (by list ordering)
-					if animalNeed > currentNeed:
-						fatTissueSpecies = animal
-						speciesIndex = i
-						currentNeed = animalNeed
+					currentNeed = animalNeed
 
-		if currentNeed > wateringHole:
-			currentNeed = wateringHole
-
-		return speciesIndex, currentNeed
+		return speciesIndex, min(currentNeed, wateringHole)
 
 	"""
 		Gets a vegetarian species with the greatest need
-		ListOf(Tuple(Nat, Species)) -> Nat
+		Invariant: list is already ordered 
+		ListOf(Tuple(Nat, Species)) -> Nat or False
 	"""
 	@staticmethod
 	def getVegetarian(species):
 		for index, animal in species:
-			# Return the first hungry vegetarian in an already ordered list
 			if not animal.hasTrait("carnivore") and animal.population > animal.food:
 				return index
 
-		return -1
+		return False
 
 	""" 
 		Gets an attacker and a player + species to attack
-		ListOf(Tuple(Nat, Species)), ListOf(PlayerState) -> (Nat, Nat, Nat)
+		ListOf(Tuple(Nat, Species)), ListOf(PlayerState) -> (Nat or False, Nat or False, Nat or False)
 	"""
 	@staticmethod
 	def getCarnivoreAttack(species, otherPlayers):
-		prey = False
-		carnIndex = defPlayerIndex = preyIndex = -1
+		carnIndex = defPlayerIndex = preyIndex = False
 		for i, animal in species:
 			if animal.hasTrait("carnivore"):
-				canAttack = False
 				# get a player with an attackable animal
 				for j in range(len(otherPlayers)):
 					defender = otherPlayers[j]
 					# get an attackable animal; range so that we can check bounds before getting neighbors
 					for k in range(len(defender.species)):
 						lNeighbor, rNeighbor = defender.getNeighbors(k)
-						if (Species.isAttackable(defender.species[k], animal, lNeighbor, rNeighbor) and
-																				(defender.species[k].compare(prey)) > 0):
+						if (Species.isAttackable(defender.species[k], animal, lNeighbor, rNeighbor) 
+											and	(preyIndex is False or (defender.species[k].compare(defender.species[preyIndex])) > 0)):
 							defPlayerIndex = j
-							prey = defender.species[k]
 							preyIndex = k
 							carnIndex = i
-							canAttack = True
 
-				if canAttack:
-					return carnIndex, defPlayerIndex, preyIndex
-				else:
-					return -1, -1, -1
+				return carnIndex, defPlayerIndex, preyIndex
 
 	"""
 		Find the index of the given player in a list of players
@@ -133,10 +114,10 @@ class SillyPlayer:
 		@param wateringHole: amount of food in wateringHole
 		@param players: current public states of all players
 		@return FeedingAction -One of:
-			False - no feeding at this time
-			Nat - index of Species fed
 			[Nat, Nat] - index of fat-tissue Species fed, amount of fatFood
+			Nat - index of an herbivore Species fed
 			[Nat, Nat, Nat] - index of carnivore, index of player to attack, index of species to attack
+			False - no feeding at this time
 		PlayerState, Nat, ListOf(PlayerState) -> FeedingAction
 	"""
 	@staticmethod
@@ -145,18 +126,16 @@ class SillyPlayer:
 		myIndex, otherPlayers = SillyPlayer.getIndex(curState, players)
 
 		fatTissueSpecies, currentNeed = SillyPlayer.getFatTissueSpecies(species, wateringHole)
+		vegetarian = SillyPlayer.getVegetarian(species)
+		carnivore, defender, prey = SillyPlayer.getCarnivoreAttack(species, otherPlayers)
+
 		if fatTissueSpecies is not False:
 			return [fatTissueSpecies, currentNeed]
-
-		vegetarian = SillyPlayer.getVegetarian(species)
-		if vegetarian is not False:
+		elif vegetarian is not False:
 			return vegetarian
-
-		carnivore, defender, prey = SillyPlayer.getCarnivoreAttack(species, otherPlayers)
-		if carnivore is not False:
+		elif carnivore is not False:
 			if myIndex is not False and defender >= myIndex:
-				defender += 1
+				defender += 1 # account for our placement in the original given player list
 			return [carnivore, defender, prey]
-
-		# none can be fed
-		return False
+		else:
+			return False
