@@ -96,8 +96,14 @@ class SillyPlayer:
 
 	"""
 		Choose a species to feed
-		handed states of all players so strategic moves can be made based on neighbors
-		it will return a FeedingAction; see the FeedingAction class for more information
+		@param curState: current public state of this player
+		@param wateringHole: amount of food in wateringHole
+		@param players: current public states of all players
+		@return FeedingAction -One of:
+			False - no feeding at this time
+			Nat - index of Species fed
+			[Nat, Nat] - index of fat-tissue Species fed, amount of fatFood
+			[Nat, Nat, Nat] - index of carnivore, index of player to attack, index of species to attack
 		PlayerState, Nat, ListOf(PlayerState) -> FeedingAction
 	"""
 	@staticmethod
