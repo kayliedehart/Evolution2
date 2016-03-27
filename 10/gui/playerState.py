@@ -4,6 +4,7 @@ from traitCard import *
 from sillyPlayer import SillyPlayer
 
 
+
 class PlayerState:
 	num = 0
 	foodbag = 0
@@ -48,7 +49,7 @@ class PlayerState:
 		Void -> Void
 	"""
 	def display(self):
-		Drawing(player=self)
+		Drawing(player=self.__dict__)
 
 	""" 
 	   creates a json array of a PlayerState object

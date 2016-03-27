@@ -1,5 +1,4 @@
 # Representation of the dealer in a game of Evolution
-from species import *
 from drawing import Drawing
 from traitCard import *
 from playerState import *
@@ -48,7 +47,7 @@ class Dealer:
 		Void -> Void
 	"""
 	def display(self):
-		Drawing(dealer=self)
+		Drawing(dealer=self.__dict__)
 
 	"""
 		creates a Dealer from a json array
