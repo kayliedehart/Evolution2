@@ -43,6 +43,13 @@ class Species:
 	def __ne__(self, other):
 		return not self.__eq__(other)
 
+	def toDict(self):
+		return {"food": self.food,
+				"body": self.body,
+				"population": self.population,
+				"traits": self.traits,
+				"fatFood": self.fatFood}
+
 	""" 
 		tell if this species has a trait card with a certain name
 		String -> Boolean

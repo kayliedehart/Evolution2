@@ -36,6 +36,10 @@ class TraitCard():
 		else:
 			return False
 
+	def toDict(self):
+		return {"name": self.name,
+				"food": self.food}
+
 	"""
 		creates a trait card from a json array
 		JsonArray -> TraitCard

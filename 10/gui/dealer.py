@@ -46,16 +46,10 @@ class Dealer:
 		override dictionary 
 		None -> Dict
 	"""
-	def __dict__(self):
-		playerDicts = []
-		for player in self.players:
-			playerDicts.append(player.__dict__)
-
-		cards = []
-		for card in self.deck:
-			cards.append(card.__dict__)
-
-		return {"wateringHole": self.wateringHole, "deck": cards, "players": playerDicts}
+	def toDict(self):
+		return {"wateringHole": self.wateringHole, 
+				"deck": [card.toDict() for card in self.deck], 
+				"players": [player.toDict() for player in self.players]}
 
 	"""
 		Display the essence of a dealer
