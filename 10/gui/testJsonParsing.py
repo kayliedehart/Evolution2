@@ -1,6 +1,5 @@
 import unittest
 import constants
-from jsonParsing import *
 from species import *
 from traitCard import *
 from playerState import *
@@ -55,6 +54,14 @@ class testJsonParsing(unittest.TestCase):
 							 ["bag", 0]]
 		self.threePlayer = PlayerState(3, 0, [self.fatTraitNoFood], [])
 
+		self.config = [[self.onePlayerJ, self.twoPlayerJ, self.threePlayerJ], 5, []]
+		self.deal = Dealer([self.onePlayer, self.twoPlayer, self.threePlayer], 5, [])
+
+		self.goodTrait = "fat-tissue"
+		self.carn = "carnivore"
+		self.warn = "warning-call"
+		self.badTrait = "invincibility"
+
 	def tearDown(self):
 		del self.species1J
 		del self.species1
@@ -72,6 +79,12 @@ class testJsonParsing(unittest.TestCase):
 		del self.twoPlayer
 		del self.threePlayerJ
 		del self.threePlayer
+		del self.config
+		del self.deal
+		del self.goodTrait
+		del self.carn
+		del self.warn
+		del self.badTrait
 
 	def testSpeciesParsing(self):        
 		invalidJ = ["no"]
@@ -100,13 +113,6 @@ class testJsonParsing(unittest.TestCase):
 		self.assertEqual(self.fatTraitNoFood.speciesToJson(), self.fatTraitNoFoodJ)
 
 		self.assertEqual(Species.speciesFromJson(optJ), False)
-
-		# TODO: catch exceptions for tests
-#        self.assertEqual(JsonParsing.speciesFromJson(invalidJ), )
-#        self.assertEqual(JsonParsing.speciesFromJson(validButWrongJ), )
-#        self.assertEqual(JsonParsing.speciesFromJson(fatFoodNoTraitJ), )
-#        with self.assertRaises ValueError:
-#            the test case that fails
 
 	
 	def testSituationParsing(self):
@@ -140,9 +146,6 @@ class testJsonParsing(unittest.TestCase):
 		self.assertEqual(Species.situationFromJson(situation2J), situation2)
 		self.assertEqual(Species.situationFromJson(situation3J), situation3)
 		self.assertEqual(Species.situationFromJson(situation4J), situation4)
-		# TODO: check for exiting
-#        self.assertEqual(JsonParsing.situationFromJson(badSituation1), )
-
 
 	def testPlayerStateParsing(self):
 		self.assertEqual(PlayerState.playerStateFromJson(self.onePlayerJ), self.onePlayer)
@@ -151,11 +154,15 @@ class testJsonParsing(unittest.TestCase):
 		self.assertEqual(self.twoPlayer.playerStateToJson(), self.twoPlayerJ)
 
 	def testDealerParsing(self):
-		config = [[self.onePlayerJ, self.twoPlayerJ, self.threePlayerJ], 5, []]
-		deal = Dealer([self.onePlayer, self.twoPlayer, self.threePlayer], 5, [])
+		self.assertEqual(Dealer.dealerFromJson(self.config), self.deal)
+		self.assertEqual(deal.dealerToJson(), self.config)
 
-		self.assertEqual(Dealer.dealerFromJson(config), deal)
-		self.assertEqual(deal.dealerToJson(), config)
+	def testCheckTrait(self):
+		self.assertTrue(TraitCard.checkTrait(self.goodTrait))
+		self.assertTrue(TraitCard.checkTrait(self.carn))
+		self.assertTrue(TraitCard.checkTrait(self.warn))
+		
+		self.assertFalse(TraitCard.checkTrait(self.badTrait))
 
 
 if __name__ == "__main__":
