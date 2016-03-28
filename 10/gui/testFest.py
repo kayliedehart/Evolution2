@@ -2,9 +2,9 @@ import os
 import glob
 import json
 import unittest
-from jsonParsing import *
 from sillyPlayer import *
 from dealer import *
+from species import *
 
 CUR_DIR = os.getcwd()
 HW_5_TEST_PATH = "homework_5_tests/"
@@ -37,7 +37,7 @@ class testFest(unittest.TestCase):
 					with open(HW_5_TEST_PATH + outFiles[i], 'r') as output:
 						input = json.load(input)
 						output = json.load(output)
-						defend, attack, lNeighbor, rNeighbor = JsonParsing.situationFromJson(input)
+						defend, attack, lNeighbor, rNeighbor = Species.situationFromJson(input)
 						self.assertEqual(Species.isAttackable(defend, attack, lNeighbor, rNeighbor), output)
 
 	def testHw8(self):
@@ -56,15 +56,15 @@ class testFest(unittest.TestCase):
 					with open(HW_8_TEST_PATH + outFiles[i], 'r') as output:
 						input = json.load(input)
 						output = json.load(output)
-						input = JsonParsing.dealerFromJson(input)
-						output = JsonParsing.dealerFromJson(output)
+						input = Dealer.dealerFromJson(input)
+						output = Dealer.dealerFromJson(output)
 						input.feed1()
 						try:
-							self.assertEqual(JsonParsing.dealerToJson(input), JsonParsing.dealerToJson(output))
+							self.assertEqual(input.dealerToJson(), output.dealerToJson())
 						except AssertionError as e:
 							print "assertionerror"
 							print inFileName
-							print JsonParsing.dealerToJson(input)
+							print input.dealerToJson()
 							raise e
 							
 

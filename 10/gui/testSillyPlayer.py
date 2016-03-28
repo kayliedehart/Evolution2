@@ -1,7 +1,6 @@
 import unittest
 import json
 from sillyPlayer import *
-from jsonParsing import *
 from playerState import PlayerState
 import constants
 
@@ -23,14 +22,14 @@ class TestPlayer(unittest.TestCase):
 		self.noVeg = [self.big, self.aCarnivore]
 		self.noVegIndexed = [(0, self.big), (1, self.aCarnivore)]
 		self.aPlayerState = PlayerState(1, 0, self.ourSpecies, [])
-		self.big_json = JsonParsing.speciesToJson(self.big)
-		self.aCarnivore_json = JsonParsing.speciesToJson(self.aCarnivore)
-		self.fedVeg_json = JsonParsing.speciesToJson(self.fedVeg)
-		self.smallerVeg_json = JsonParsing.speciesToJson(self.smallerVeg)        
-		self.bPlayerState = JsonParsing.playerStateFromJson([["id", 2],
+		self.big_json = self.big.speciesToJson()
+		self.aCarnivore_json = self.aCarnivore.speciesToJson()
+		self.fedVeg_json = self.fedVeg.speciesToJson()
+		self.smallerVeg_json = self.smallerVeg.speciesToJson()        
+		self.bPlayerState = PlayerState.playerStateFromJson([["id", 2],
 						 ["species", [self.aCarnivore_json, self.fedVeg_json, self.smallerVeg_json]],
 						 ["bag", 0]])
-		self.cPlayerState = JsonParsing.playerStateFromJson([["id", 3],
+		self.cPlayerState = PlayerState.playerStateFromJson([["id", 3],
 						 ["species", [self.big_json, self.aCarnivore_json]],
 						 ["bag", 0]])
 
