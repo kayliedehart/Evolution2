@@ -16,7 +16,10 @@ class Drawing:
 		self.canvas = Canvas(root, width=800, height=600)
 
 		if dealer or player is not False:
-			self.Master = self.drawDealer(self.canvas, dealer or player)
+			try:
+				self.Master = self.drawDealer(self.canvas, dealer)
+			except TypeError:
+				self.Master = self.drawPlayer(self.canvas, player)
 			self.Master.grid(row=0, column=0)
 			self.createScrollbars(root, self.Master)
 
