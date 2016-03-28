@@ -1,3 +1,4 @@
+# A Species or SpeciesBoard in a game of Evolution
 import constants
 from traitCard import *
 

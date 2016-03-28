@@ -1,3 +1,4 @@
+# An external Player strategy implementation
 from species import *
 
 

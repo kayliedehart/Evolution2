@@ -6,11 +6,12 @@ CUR_PATH = os.path.dirname(os.path.abspath(__file__))
 class Drawing:
 
 	"""
-		Only pass in dealer OR player -- not both
-		or don't
-		i'm a comment, not a cop
+		Make a Dealer or Player representation
+		@param dealer: a dictionary representation of a Dealer state
+		@param player: a dictionary representation of a PlayerState
+		Dict -> Void
 	"""
-	def __init__(self, dealer=False, player=False):	
+	def __init__(self, dealer=False, player=False):
 		root = Tk()
 		self.canvas = Canvas(root, width=800, height=600)
 		self.dealerMaster = self.playerMaster = False
@@ -27,7 +28,6 @@ class Drawing:
 			raise ValueError("Must give a dealer or a player")
 
 		root.mainloop()
-		root.destroy()
 
 	"""
 		Create scrollbars for the window

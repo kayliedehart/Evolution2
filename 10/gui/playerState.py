@@ -1,3 +1,4 @@
+# An internal Player in a game of Evolution
 from species import *
 from drawing import Drawing 
 from traitCard import *
@@ -59,7 +60,7 @@ class PlayerState:
 		Void -> Void
 	"""
 	def display(self):
-		Drawing(player=self.__dict__)
+		Drawing(player=self.toDict())
 
 	""" 
 	   creates a json array of a PlayerState object

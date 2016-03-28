@@ -2,19 +2,19 @@
 # A test harness for the Dealer's and Player's display methods
 
 import sys
+import os
 import json
-from gui.dealer import Dealer
-from gui.playerState import PlayerState
+from gui.dealer import *
 
-try:
-	testInput = json.load(sys.stdin)
-	if len(testInput) == 3:
-		curDealer = Dealer.dealerFromJson(testInput)
-		curDealer.display()
-		curDealer.players[0].display()
-		exit(0)
+# try:
+testInput = json.load(sys.stdin)
+if len(testInput) == 3:
+	curDealer = Dealer.dealerFromJson(testInput)
+	curDealer.display()
+	curDealer.players[0].display()
+	exit(0)
 
 
-except Exception as e:
-	raise e
-	quit()
+# except Exception as e:
+# 	raise e
+# 	quit()

@@ -56,7 +56,7 @@ class Dealer:
 		Void -> Void
 	"""
 	def display(self):
-		Drawing(dealer=self.__dict__)
+		Drawing(dealer=self.toDict())
 
 	"""
 		creates a Dealer from a json array
