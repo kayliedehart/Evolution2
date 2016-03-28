@@ -14,18 +14,11 @@ class Drawing:
 	def __init__(self, dealer=False, player=False):
 		root = Tk()
 		self.canvas = Canvas(root, width=800, height=600)
-		self.dealerMaster = self.playerMaster = False
 
-		if dealer is not False:
-			self.dealerMaster = self.drawDealer(self.canvas, dealer)
-			self.dealerMaster.grid(row=0, column=0)
-			self.createScrollbars(root, self.dealerMaster)
-		elif player is not False:
-			self.playerMaster = self.drawPlayer(self.canvas, player)
-			self.playerMaster.grid(row=0, column=0)
-			self.createScrollbars(root, self.playerMaster)
-		if dealer is False and player is False:
-			raise ValueError("Must give a dealer or a player")
+		if dealer or player is not False:
+			self.Master = self.drawDealer(self.canvas, dealer or player)
+			self.Master.grid(row=0, column=0)
+			self.createScrollbars(root, self.Master)
 
 		root.mainloop()
 
@@ -51,22 +44,30 @@ class Drawing:
 		self.canvas.configure(scrollregion=self.canvas.bbox("all"))		
 
 	"""
+		Make a Top Level Frame widget with the given text
+		@param text:  the text at the top of the Frame
+		@return the LabelFrame
+		String, Nat, Nat -> LabelFrame
+	"""
+	def makeTopLevelFrame(self, master, text, row=0, column=0):
+		frame = LabelFrame(master, text=text, padx=10, pady=10)
+		frame.grid(row=row, column=column)
+		return frame
+
+	"""
 		Create a LabelFrame containing representations of everything within the Dealer
 		Tk, Dealer, Opt: Nat, Opt:Nat -> LabelFrame
 	"""
 	def drawDealer(self, master, dealer, row=0, column=0):
-		dealerFrame = LabelFrame(master, text="Dealer", padx=10, pady=10)
-		dealerFrame.grid(row=row, column=column)
+		dealerFrame = self.makeTopLevelFrame(master, "Dealer", row, column)
 
 		self.makeLabelFrame(dealerFrame, "Watering Hole", "{} tokens".format(dealer["wateringHole"]), row=row, column=column)
 		self.makeLabelFrame(dealerFrame, "Deck", "{} cards left".format(len(dealer["deck"])), row=row+1, column=column)
 
-		column += 1
-
 		playersFrame = LabelFrame(dealerFrame, text="Players", padx=10, pady=10)
-		playersFrame.grid(row=row, column=column, rowspan=len(dealer["players"]))
+		playersFrame.grid(row=row, column=column+1, rowspan=len(dealer["players"]))
 		for i in range(len(dealer["players"])):
-			self.drawPlayer(playersFrame, dealer["players"][i], row=row+i, column=column)
+			self.drawPlayer(playersFrame, dealer["players"][i], row=row+i, column=column+1)
 
 		return dealerFrame
 
@@ -75,23 +76,17 @@ class Drawing:
 		Tk, Player, Opt: Nat, Opt:Nat -> LabelFrame
 	"""
 	def drawPlayer(self, master, player, row=0, column=0):
-		ptext = "Player " + str(player["num"])
-		playerFrame = LabelFrame(master, text=ptext, padx=10, pady=10)
-		playerFrame.grid(row=row, column=column, sticky="nw")
+		playerFrame = self.makeTopLevelFrame(master, "Player {}".format(player["num"]), row, column)
 
 		self.makeLabelFrame(playerFrame, "Food Bag", "{} tokens".format(player["foodbag"]), row=row, column=column)
 		
-		speciesFrame = LabelFrame(playerFrame, text="Species List", padx=10, pady=10)
-		speciesFrame.grid(row=row, column=column+1)
+		speciesFrame = self.makeTopLevelFrame(playerFrame, "Hand", row, column+1)
 		for i in range(len(player["species"])):
 			self.drawSpecies(speciesFrame, player["species"][i], row=row, column=column+i+2)
-		
-		row += 1
 
-		handFrame = LabelFrame(playerFrame, text="Hand", padx=10, pady=10)
-		handFrame.grid(row=row, column=column)
+		handFrame = self.makeTopLevelFrame(playerFrame, "Hand", row+1, column)
 		for i in range(len(player["hand"])):
-			self.drawTraitCard(handFrame, player["hand"][i], row=row, column=column+i)
+			self.drawTraitCard(handFrame, player["hand"][i], row=row+1, column=column+i)
 		
 		return playerFrame
 
@@ -100,8 +95,7 @@ class Drawing:
 		Tk, Species, Opt: Nat, Opt:Nat -> LabelFrame
 	"""
 	def drawSpecies(self, master, species, row=0, column=0):
-		speciesFrame = LabelFrame(master, text="Species", padx=10, pady=10)
-		speciesFrame.grid(row=row, column=column)
+		speciesFrame = self.makeTopLevelFrame(master, "Species", row, column)
 
 		for i in range(len(species["traits"])):
 			self.makeLabelFrame(speciesFrame, "Trait", species["traits"][i], row=row, column=column+i)
@@ -111,13 +105,10 @@ class Drawing:
 		foodFrame = self.drawFood(speciesFrame, species["food"])
 		foodFrame.grid(row=row, column=column)
 
-		column += 1
-		self.makeLabelFrame(speciesFrame, "Body", species["body"], row=row, column=column)
-		column += 1
-		self.makeLabelFrame(speciesFrame, "Population", species["population"], row=row, column=column)
-		column += 1
+		self.makeLabelFrame(speciesFrame, "Body", species["body"], row=row, column=column+1)
+		self.makeLabelFrame(speciesFrame, "Population", species["population"], row=row, column=column+2)
 		if ("fat-tissue" in species["traits"]) and species["fatFood"] > 0:
-			self.makeLabelFrame(speciesFrame, "Fat Food", species["fatFood"], row=row, column=column)
+			self.makeLabelFrame(speciesFrame, "Fat Food", species["fatFood"], row=row, column=column+3)
 
 		return speciesFrame
 
@@ -127,8 +118,7 @@ class Drawing:
 		Tk, Nat, Opt: Nat, Opt: Nat -> LabelFrame
 	"""
 	def drawFood(self, master, food, row=0, column=0):
-		foodFrame = LabelFrame(master, text="Food", padx=10, pady=10)
-		foodFrame.grid(row=row, column=column)
+		foodFrame = self.makeTopLevelFrame(master, "Food", row, column)
 
 		photo = PhotoImage(file=CUR_PATH+"/ham.gif")
 		ham = Label(master=foodFrame, image=photo)
@@ -157,6 +147,7 @@ class Drawing:
 		titleFrame.grid(row=row, column=column, sticky="NEWS")
 		bodyLabel = Label(master=titleFrame, text=str(bodyText))
 		bodyLabel.grid(row=row+1, column=column)
+
 
 if __name__ == "__main__":
 	Drawing()
