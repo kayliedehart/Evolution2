@@ -92,32 +92,20 @@ class PlayerState:
 	"""
 	@staticmethod
 	def playerStateFromJson(state):
-		id = 0
-		bag = -1
-		speciesList = []
-		cards = []
-
 		try:
 			if state[0][0] == "id":
-				id = state[0][1]
-
+				num = state[0][1]
 			if state[1][0] == "species":
-				for species in state[1][1]:
-					speciesList.append(Species.speciesFromJson(species))
-
+				speciesList = [Species.speciesFromJson(species) for species in state[1][1]]
 			if state[2][0] == "bag":
 				bag = state[2][1]
-
 			if len(state) == 4 and state[3][0] == "cards":
-				for card in state[3][1]:
-					cards.append(TraitCard.traitCardFromJson(card))
+				cards = [TraitCard.traitCardFromJson(card) for card in state[3][1]]
+			if num > 0 and bag >= 0:
+				return PlayerState(num, bag, speciesList, cards)
 
-			if id > 0 and bag >= 0:
-				return PlayerState(id, bag, speciesList, cards)
-
-		except Exception as e:
-			raise e
-
+		except:
+			quit()
 
 	"""
 		Proxy to call the feed method in the external player

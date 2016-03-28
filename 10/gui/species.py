@@ -118,6 +118,18 @@ class Species:
 
 		return result
 
+
+	"""
+		Get the amount of fat food a json species has
+		JsonSpecies, ListOf(String) -> Nat 
+	"""
+	@staticmethod
+	def jsonFatFood(jsonSpecies, traits):
+		if (len(jsonSpecies) == 5) and ("fat-tissue" in traits) and (jsonSpecies[4][0] == "fat-food"):
+			return jsonSpecies[4][1]
+		else:
+			return 0
+
 	""" 
 	   Helper to convert json species to internal Species
 	   JSONSpecies = [["food",Nat],
@@ -129,36 +141,21 @@ class Species:
 	"""
 	@staticmethod
 	def speciesFromJson(jsonSpecies):    
-		# If the if statement errors out, the input is ill shaped
 		try:
 			if jsonSpecies is False:
 				return False
-
-			if jsonSpecies[0][0] == "food" and jsonSpecies[1][0] == "body" and jsonSpecies[2][0] == "population" and jsonSpecies[3][0] == "traits":
+			if jsonSpecies[0][0] == "food": 
 				food = jsonSpecies[0][1]
+			if jsonSpecies[1][0] == "body":
 				body = jsonSpecies[1][1]
+			if jsonSpecies[2][0] == "population":
 				population = jsonSpecies[2][1]
-				traits = []
-				hasFatTissue = False
-
-				for trait in jsonSpecies[3][1] :
-					if TraitCard.checkTrait(trait):
-						traits.append(trait)
-					if trait == "fat-tissue":
-						hasFatTissue = True
-
-				if len(jsonSpecies) == 5 and hasFatTissue and jsonSpecies[4][0] == "fat-food":
-					fatFood = jsonSpecies[4][1]
-				else:
-					fatFood = 0
-
-				return Species(food, body, population, traits, fatFood)
-			else:
-				pass
-				# TODO: what should actually happen when the labels for an array are wrong?
-
-		except Exception as e:
-			raise e
+			if jsonSpecies[3][0] == "traits":
+				traits = [trait for trait in jsonSpecies[3][1] if TraitCard.checkTrait(trait)]
+			fatFood = Species.jsonFatFood(jsonSpecies, traits)
+			return Species(food, body, population, traits, fatFood)
+		except:
+			quit()
 
 	""" 
 	   convert a json species from spec to a list of species/optspecies

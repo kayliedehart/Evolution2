@@ -75,6 +75,11 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.xstep3spec.food, 2)
 		self.assertEqual(self.xstep3deal.wateringHole, 3)
 
+	def testToDict(self):
+		self.assertEqual(self.p2dealer.toDict(), {"wateringHole": 3, "deck": [], 
+			"players": [{"num": 6, "species": {"food": , "body": , "population": , "traits":, "fatFood"}, "hand": [], "foodbag": 0}, 
+						{"num": 5, "species":, "hand": [], "foodbag": 0}]})
+
 	def testRemovePlayer(self):
 		self.assertEqual(len(self.dealer.players), 3)
 		self.assertTrue(self.p1 in self.dealer.currentlyFeeding)

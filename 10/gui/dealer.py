@@ -64,23 +64,18 @@ class Dealer:
 	"""
 	@staticmethod
 	def dealerFromJson(dealer):
-		players = []
-		wateringHole = -1
-		cards = []
-
 		try:
-			for player in dealer[0]:
-				players.append(PlayerState.playerStateFromJson(player))
-
-			wateringHole = dealer[1]
-
-			for card in dealer[2]:
-				cards.append(TraitCard.traitCardFromJson(card))
+			if type(dealer[0]) == list:
+				players = [PlayerState.playerStateFromJson(player) for player in dealer[0]] 
+			if type(dealer[1]) == int:
+				wateringHole = dealer[1]
+			if type(dealer[2]) == list:
+				cards = [TraitCard.traitCardFromJson(card) for card in dealer[2]]
 
 			return Dealer(players, wateringHole, cards)
 
-		except Exception as e:
-			raise e
+		except:
+			quit()
 
 	"""
 		creates a json array describing a given internal Dealer
