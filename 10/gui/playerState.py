@@ -67,13 +67,8 @@ class PlayerState:
 	   Void -> JsonArray
 	"""
 	def playerStateToJson(self):
-		species = []
-		for animal in self.species:
-			species.append(Species.speciesToJson(animal))
-
-		cards = []
-		for card in self.hand:
-			cards.append(TraitCard.traitCardToJson(card))
+		species = [Species.speciesToJson(animal) for animal in self.species]
+		cards = [TraitCard.traitCardToJson(card) for card in self.hand]
 
 		result = [["id", self.num],
 				  ["species", species],
@@ -93,6 +88,7 @@ class PlayerState:
 	@staticmethod
 	def playerStateFromJson(state):
 		try:
+			cards = []
 			if state[0][0] == "id":
 				num = state[0][1]
 			if state[1][0] == "species":
