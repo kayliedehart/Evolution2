@@ -3,7 +3,6 @@ from dealer import *
 from species import Species
 from playerState import PlayerState
 from traitCard import TraitCard
-from jsonParsing import *
 
 class TestDealer(unittest.TestCase):
 
@@ -75,10 +74,14 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.xstep3spec.food, 2)
 		self.assertEqual(self.xstep3deal.wateringHole, 3)
 
-	def testToDict(self):
+	def testToDict(self):		
 		self.assertEqual(self.p2dealer.toDict(), {"wateringHole": 3, "deck": [], 
-			"players": [{"num": 6, "species": {"food": , "body": , "population": , "traits":, "fatFood"}, "hand": [], "foodbag": 0}, 
-						{"num": 5, "species":, "hand": [], "foodbag": 0}]})
+			"players": [{"num": 6, "species": 
+							[{"food": 3, "body": 4, "population": 5, "traits": ["carnivore", "cooperation"], "fatFood": 0}], 
+							"hand": [], "foodbag": 0}, 
+						{"num": 5, "species": 
+							[{"food": 1, "body": 2, "population": 3, "traits": ["horns"], "fatFood": 0}], 
+							"hand": [], "foodbag": 0}]})
 
 	def testRemovePlayer(self):
 		self.assertEqual(len(self.dealer.players), 3)

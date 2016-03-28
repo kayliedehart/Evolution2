@@ -43,7 +43,7 @@ class Dealer:
 		return not self.__eq__(other)
 
 	"""
-		override dictionary 
+		Create a dict from this dealer
 		None -> Dict
 	"""
 	def toDict(self):

@@ -24,6 +24,8 @@ class TestPlayerState(unittest.TestCase):
 		self.p5 = PlayerState(5, 0, [self.full, self.fat], [])
 		self.p6 = PlayerState(6, 0, [self.extinct], [])
 		self.p7 = PlayerState(7, 0, [], [])
+		self.p8 = PlayerState(8, 0, [self.carnCoop], [])
+		self.p9 = PlayerState(9, 0, [self.vegHorns], [])
 
 	def tearDown(self):
 		del self.noTraits
@@ -44,6 +46,22 @@ class TestPlayerState(unittest.TestCase):
 		del self.p5
 		del self.p6
 		del self.p7
+		del self.p8
+		del self.p9
+
+	def testToDict(self):
+		self.assertEqual(self.p8.toDict(), {"num": 8, "species": 
+							[{"food": 3, "body": 4, "population": 5, "traits": ["carnivore", "cooperation"], "fatFood": 0}], 
+							"hand": [], "foodbag": 0})
+		self.assertEqual(self.p9.toDict(), {"num": 9, "species": 
+							[{"food": 1, "body": 2, "population": 3, "traits": ["horns"], "fatFood": 0}], 
+							"hand": [], "foodbag": 0})
+
+	# THIS IS THE SILLY FEED!!! 
+	def testFeed(self):
+		self.assertEqual(self.p1.feed(5, [self.p1, self.p2, self.p3]), 0)
+		self.assertEqual(self.p2.feed(5, [self.p1, self.p2, self.p3]), [1, 2])
+		self.assertEqual(self.p3.feed(5, [self.p1, self.p2, self.p3]), 0)
 
 	def testGetHungrySpecies(self):
 		self.assertEqual(self.p1.getHungrySpecies(), [(0, self.vegCoop), (2, self.carnForage)])
@@ -79,6 +97,19 @@ class TestPlayerState(unittest.TestCase):
 		self.assertFalse(self.p6.speciesHasTrait(0, "scavenger"))
 		self.assertTrue(self.p1.speciesHasTrait(0, "cooperation"))
 
+	def testExecuteAttack(self):
+		self.assertEqual(self.vegCoop.population, 3)
+		self.assertEqual(self.vegCoop.food, 1)
+		self.p1.executeAttack(0)
+		self.assertEqual(self.vegCoop.population, 2)
+		self.assertEqual(self.vegCoop.food, 1)
+		self.p1.executeAttack(0)
+		self.assertEqual(self.vegCoop.population, 1)
+		self.assertEqual(self.vegCoop.food, 1)
+		self.p1.executeAttack(0)
+		self.assertEqual(self.vegCoop.population, 0)
+		self.assertEqual(self.vegCoop.food, 0)
+
 	def testFeedFatFood(self):
 		self.assertEqual(self.fatScav.fatFood, 1)
 		self.assertEqual(self.p2.feedFatFood(1, 2), 2)
@@ -112,6 +143,16 @@ class TestPlayerState(unittest.TestCase):
 		self.p4.cooperate(0, 2, 5)
 		self.assertEqual(self.forCoop.food, 1)
 		self.assertEqual(self.noTraits.food, 2)
+
+	def testScavenge(self):
+		self.assertEqual(self.vegHorns.food, 1)
+		self.assertEqual(self.fatScav.food, 2)
+		self.assertEqual(self.carnCoop.food, 3)
+		self.assertEqual(self.p2.scavenge(5), 1)
+		self.assertEqual(self.vegHorns.food, 1)
+		self.assertEqual(self.fatScav.food, 3)
+		self.assertEqual(self.carnCoop.food, 3)
+
 
 
 if __name__ == "__main__":

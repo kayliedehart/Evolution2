@@ -1,7 +1,5 @@
 import unittest
-import constants
-from jsonParsing import *
-
+from species import *
 
 class TestSpecies(unittest.TestCase):
 
@@ -59,6 +57,11 @@ class TestSpecies(unittest.TestCase):
 		del self.bigHerding
 		del self.herdingHorns
 
+	def testToDict(self):
+		self.assertEqual(self.aSpecies.toDict(), {"food": 3, "body": 3, "population": 5, "traits": ["carnivore", "ambush"], "fatFood": 0})
+		self.assertEqual(self.fatNoFood.toDict(), {"food": 0, "body": 2, "population": 2, "traits": ["fat-tissue"], "fatFood": 2})
+		self.assertEqual(self.foodNoFat.toDict(), {"food": 2, "body": 2, "population": 2, "traits": ["fat-tissue"], "fatFood": 0})
+
 	def testComparators(self):
 		self.assertTrue(self.aSpecies.compare(False) > 0)
 		self.assertTrue(self.aSpecies.compare(self.anotherSpecies) < 0)
@@ -76,6 +79,29 @@ class TestSpecies(unittest.TestCase):
 	def testIsExtinct(self):
 		self.assertTrue(self.defaultSpecies.isExtinct())
 		self.assertFalse(self.aSpecies.isExtinct())
+
+	def testExecuteAttack(self):
+		self.assertEqual(self.aSpecies.food, 3)
+		self.assertEqual(self.aSpecies.population, 5)
+		self.aSpecies.executeAttack()
+		self.assertEqual(self.aSpecies.food, 3)
+		self.assertEqual(self.aSpecies.population, 4)
+		self.aSpecies.executeAttack()
+		self.assertEqual(self.aSpecies.food, 3)
+		self.assertEqual(self.aSpecies.population, 3)
+		self.aSpecies.executeAttack()
+		self.assertEqual(self.aSpecies.food, 2)
+		self.assertEqual(self.aSpecies.population, 2)
+
+	def testEatFood(self):
+		self.assertEqual(self.aSpecies.food, 3)
+		self.aSpecies.eatFood(1)
+		self.assertEqual(self.aSpecies.food, 4)
+
+	def testEatFatFood(self):
+		self.assertEqual(self.foodNoFat.fatFood, 0)
+		self.foodNoFat.eatFatFood(1)
+		self.assertEqual(self.foodNoFat.fatFood, 1)
 
 	def testIsHungry(self):
 		self.assertTrue(self.aSpecies.isHungry())

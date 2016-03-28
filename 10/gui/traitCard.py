@@ -36,6 +36,10 @@ class TraitCard():
 		else:
 			return False
 
+	"""
+		Create a dict from this trait card
+		None -> Dict
+	"""	
 	def toDict(self):
 		return {"name": self.name,
 				"food": self.food}

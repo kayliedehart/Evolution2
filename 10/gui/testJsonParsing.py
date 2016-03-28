@@ -157,19 +157,6 @@ class testJsonParsing(unittest.TestCase):
 		self.assertEqual(Dealer.dealerFromJson(config), deal)
 		self.assertEqual(deal.dealerToJson(), config)
 
-	def testCheckTrait(self):
-		goodTrait = "fat-tissue"
-		carn = "carnivore"
-		warn = "warning-call"
-		badTrait = "invincibility"
-
-		self.assertTrue(TraitCard.checkTrait(goodTrait))
-		self.assertTrue(TraitCard.checkTrait(carn))
-		self.assertTrue(TraitCard.checkTrait(warn))
-		
-		self.assertFalse(TraitCard.checkTrait(badTrait))
-
-
 
 if __name__ == "__main__":
 	unittest.main()

@@ -1,5 +1,4 @@
 # A Species or SpeciesBoard in a game of Evolution
-import constants
 from traitCard import *
 
 
@@ -44,6 +43,10 @@ class Species:
 	def __ne__(self, other):
 		return not self.__eq__(other)
 
+	"""
+		Create a dict from this species
+		None -> Dict
+	"""	
 	def toDict(self):
 		return {"food": self.food,
 				"body": self.body,
