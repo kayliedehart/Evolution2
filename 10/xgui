@@ -10,8 +10,11 @@ from gui.dealer import *
 testInput = json.load(sys.stdin)
 if len(testInput) == 3:
 	curDealer = Dealer.dealerFromJson(testInput)
-	curDealer.display()
-	curDealer.players[0].display()
+	pid = os.fork()
+	if pid == 0:
+		curDealer.players[0].display()
+	else:
+		curDealer.display()
 	exit(0)
 
 
