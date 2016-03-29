@@ -82,8 +82,6 @@ class PlayerState:
 	"""
 	   creates a PlayerState from a json array
 	   JsonArray -> PlayerState
-	   TODO: make this not quite so awful
-	   for one: what should happen in the else cases?
 	"""
 	@staticmethod
 	def playerStateFromJson(state):
@@ -93,10 +91,12 @@ class PlayerState:
 				num = state[0][1]
 			if state[1][0] == "species":
 				speciesList = [Species.speciesFromJson(species) for species in state[1][1]]
+				print speciesList
 			if state[2][0] == "bag":
 				bag = state[2][1]
 			if len(state) == 4 and state[3][0] == "cards":
 				cards = [TraitCard.traitCardFromJson(card) for card in state[3][1]]
+				print "CARDS" + str(cards)
 			if num > 0 and bag >= 0:
 				return PlayerState(num, bag, speciesList, cards)
 

@@ -66,10 +66,14 @@ class Dealer:
 	def dealerFromJson(dealer):
 		try:
 			if type(dealer[0]) == list:
-				players = [PlayerState.playerStateFromJson(player) for player in dealer[0]] 
+				print "list"
+				players = [PlayerState.playerStateFromJson(player) for player in dealer[0]]
+				print "Ok PlayerState"
 			if type(dealer[1]) == int:
+				print "int"
 				wateringHole = dealer[1]
 			if type(dealer[2]) == list:
+				print "list"
 				cards = [TraitCard.traitCardFromJson(card) for card in dealer[2]]
 
 			return Dealer(players, wateringHole, cards)
@@ -95,13 +99,13 @@ class Dealer:
 	"""
 	def removePlayerFromTurn(self, player):
 		if player in self.currentlyFeeding:
-			self.currentlyFeeding.remove(player)
+			del self.currentlyFeeding[self.currentlyFeeding.index(player)]
 		else:
 			raise ValueError("Player is already finished for this turn!")
 
 	"""
-		Actually feed a species based on its traits and decrement the watering hole as needed
-		Fat tissue species should NOT be fed here -- they are fed elsewhere
+		Actually feed a species based on its traits and decrement the watering hole.
+
 		@param player: the player who owns the species to be fed
 		@param species: the index of the species who's being fed
 		@param foodCount: how much food species should be fed 
@@ -110,18 +114,15 @@ class Dealer:
 	def feedFromWateringHole(self, curPlayer, specIdx, foodCount=1, fatFood=False):
 		if fatFood:
 			amountFed = curPlayer.feedFatFood(specIdx, min(foodCount, self.wateringHole))
+			self.wateringHole -= amountFed
 		else:
 			amountFed = curPlayer.feedSpecies(specIdx, foodCount, self.wateringHole)
-			
-		self.wateringHole -= amountFed
+			self.wateringHole -= amountFed
 
 	"""
-		Execute a carnivore attack, including feeding
-		Effect: the defending species will lose 1 population, 
-			which may in turn cause it to lose 1 food (if its population == food before attack)
-			or for the species to become extinct. 
-			If the defender had the "horns" trait, it is also possible that any of the above
-			will happen to the attacker as well.
+		Execute a carnivore attack: reduce Species populations, check if 
+		Species are extinct, and if the attacker is not Extinct, feed.
+
 		@param attPlayer: the player who owns the attacking species
 		@param defPlayer: the player who owns the defending species
 		@param defIdx: the species that's being attacked
@@ -142,7 +143,9 @@ class Dealer:
 
 	"""
 		Clear a now-extinct species and give pity cards to the species' owner
-		If the species owner's last remaining species dies, remove that player from the players being fed this round
+		If the species owner's last remaining species dies, remove that player 
+		from the players being fed this round.
+
 		@param player: the player whose species just went the way of the dodo
 		@param speciesIdx: the species to clear
 		@return whether the species was successfully removed
@@ -198,6 +201,7 @@ class Dealer:
 		@return Boolean: if a carnivore attack took place
 		PlayerState -> Boolean
 	"""
+	#TODO:  Consider making decision an object, decision.execute()
 	def queryFeed(self, queryPlayer):
 		decision = queryPlayer.feed(self.wateringHole, self.players)
 		if decision is not False:
@@ -223,6 +227,7 @@ class Dealer:
 	def scavengeFeed(self, curPlayer):
 		for player in self.currentlyFeeding:
 			self.wateringHole -= player.scavenge(self.wateringHole)
+
 
 	"""
 	Execute the next step in the feeding routine; either feeding the next player automatically
