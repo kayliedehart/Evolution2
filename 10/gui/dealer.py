@@ -104,8 +104,8 @@ class Dealer:
 			raise ValueError("Player is already finished for this turn!")
 
 	"""
-		Actually feed a species based on its traits and decrement the watering hole as needed
-		Fat tissue species should NOT be fed here -- they are fed elsewhere
+		Actually feed a species based on its traits and decrement the watering hole.
+
 		@param player: the player who owns the species to be fed
 		@param species: the index of the species who's being fed
 		@param foodCount: how much food species should be fed 
@@ -120,7 +120,9 @@ class Dealer:
 			self.wateringHole -= amountFed
 
 	"""
-		Execute a carnivore attack, including feeding
+		Execute a carnivore attack: reduce Species populations, check if 
+		Species are extinct, and if the attacker is not Extinct, feed.
+
 		@param attPlayer: the player who owns the attacking species
 		@param defPlayer: the player who owns the defending species
 		@param defIdx: the species that's being attacked
@@ -141,7 +143,9 @@ class Dealer:
 
 	"""
 		Clear a now-extinct species and give pity cards to the species' owner
-		If the species owner's last remaining species dies, remove that player from the players being fed this round
+		If the species owner's last remaining species dies, remove that player 
+		from the players being fed this round.
+
 		@param player: the player whose species just went the way of the dodo
 		@param speciesIdx: the species to clear
 		@return whether the species was successfully removed
@@ -197,6 +201,7 @@ class Dealer:
 		@return Boolean: if a carnivore attack took place
 		PlayerState -> Boolean
 	"""
+	#TODO:  Consider making decision an object, decision.execute()
 	def queryFeed(self, queryPlayer):
 		decision = queryPlayer.feed(self.wateringHole, self.players)
 		if decision is not False:
@@ -232,11 +237,10 @@ class Dealer:
 	Void -> Void
 	"""
 	def feed1(self):
-		curPlayer = self.players[0]
-		if self.wateringHole > 0:
-			if not self.autoFeed(curPlayer):
-				attack = self.queryFeed(curPlayer)
-				if attack:
-					self.scavengeFeed(curPlayer)
+		curPlayer = self.currentlyFeeding[0]
+		if not self.autoFeed(curPlayer):
+			attack = self.queryFeed(curPlayer)
+			if attack:
+				self.scavengeFeed(curPlayer)
 
 	#TODO: iterate through Players and call helper feed1

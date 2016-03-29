@@ -38,6 +38,13 @@ class TestDealer(unittest.TestCase):
 		self.xstep3p = PlayerState(1, 0, [self.xstep3spec], [])
 		self.xstep3deal = Dealer([self.xstep3p], 5, [])
 
+		# 8949-0357-4
+		self.pCFS1 = PlayerState(1, 3, [Species(4, 2, 5, ["carnivore", "cooperation"], 0), 
+			Species(1, 3, 4, ["foraging", "carnivore", "scavenger"], 0)], [])
+		self.pCFS2 = PlayerState(2, 4, [Species(2, 3, 3, ["burrowing"], 0)], [])
+		self.pCFS3 = PlayerState(3, 5, [], [])
+		self.dCFS = Dealer([self.pCFS1, self.pCFS2, self.pCFS3], 10, [])
+
 	def tearDown(self):
 		del self.vegHorns 
 		del self.vegCoop
@@ -66,6 +73,12 @@ class TestDealer(unittest.TestCase):
 		del self.xstep3spec
 		del self.xstep3p
 		del self.xstep3deal
+
+		# 8949-0357-4
+		del self.pCFS1
+		del self.pCFS2
+		del self.pCFS3
+		del self.dCFS
 
 
 	def testXstep(self):
@@ -288,23 +301,17 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(pExtinction1.species[0].food, 4)
 		self.assertEqual(dExtinction.wateringHole, 8)
 
+	def testCoopForgScavenge(self):
 		# cooperation + foraging + scavenging
 		# 8949-0357-4
-		pCFS1 = PlayerState(1, 3, [Species(4, 2, 5, ["carnivore", "cooperation"], 0), 
-			Species(1, 3, 4, ["foraging", "carnivore", "scavenger"], 0)], [])
-		pCFS2 = PlayerState(2, 4, [Species(2, 3, 3, ["burrowing"], 0)], [])
-		pCFS3 = PlayerState(3, 5, [], [])
-		dCFS = Dealer([pCFS1, pCFS2, pCFS3], 10, [])
+		self.dCFS.feed1()
+		self.assertEqual(self.pCFS1.species[0].food, 5)
+		self.assertEqual(self.pCFS1.species[1].food, 4)
+		self.assertEqual(self.pCFS2.species[0].population, 2)
+		self.assertEqual(self.pCFS2.species[0].food, 2)
+		self.assertEqual(self.pCFS3.species, [])
+		self.assertEqual(self.dCFS.wateringHole, 6)
 
-		dCFS.feed1()
-		self.assertEqual(pCFS1.species[0].food, 5)
-		self.assertEqual(pCFS1.species[1].food, 4)
-		self.assertEqual(pCFS2.species[0].population, 2)
-		self.assertEqual(dCFS.wateringHole, 6)
-
-
-	def testMatthias(self):
-		pass
 
 if __name__ == "__main__":
 	unittest.main()
