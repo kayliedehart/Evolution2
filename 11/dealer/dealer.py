@@ -229,7 +229,7 @@ class Dealer:
 	Execute the next step in the feeding routine; either feeding the next player automatically
 	or querying the player for their feeding decision, and completing subsequent triggered feedings
 
-	#Invariants: wateringHole must be greater than 0
+	ASSUME: wateringHole must be greater than 0
 	Void -> Void
 	"""
 	def feed1(self):
@@ -238,5 +238,143 @@ class Dealer:
 			attack = self.queryFeed(curPlayer)
 			if attack:
 				self.scavengeFeed(curPlayer)
+		# TODO: Account for the player maybe having been removed.
+		# self.currentlyFeeding = self.currentlyFeeding[1:] + self.currentlyFeeding[:1]
 
-	#TODO: iterate through Players and call helper feed1
+
+	"""
+	For each upgrade request, move the player's payment out of their hand and 
+	to the discard list, and modify the requested species field.
+	@param player: the current player upgrading
+	@param gain: a gainPopulation or gainBodySize list
+	@param gfunc: the appropriate player function to call in order to modify
+	
+	PlayerState, list of (gainPopulation xor gainBodySize), function -> Void
+	"""
+	def playerGains(self, player, gain, gfunc):
+		for g in gain:
+			self.discard.append(player.hand.pop(g.cardIdx))
+			player.gfunc(g.specIdx)
+
+	"""
+	Give the PlayerState a new SpeciesBoard with a population of 1 and
+	the requested traits, and move all cards to the discard.
+	@param player: the PlayerState to be updated
+	@param purchase: the buySpeciesBoard requests being carried out
+	PlayerState, list of buySpeciesBoard -> Void
+	"""
+	def createSpecBoard(self, player, purchase):
+		for p in purchase:
+			player.addSpecies(p.traitList)
+
+			trashCards = p.traitList[:].append(p.payment)
+			for i in trashCards:
+				self.discard.append(player.hand.pop(i))
+
+	"""
+	Update PlayerState per a Player's requests for increases in population, 
+	bodysize, or creating additional SpeciesBoards.
+	@param player: the PlayerState to be updated
+	@param purchases: the Action4 to be carried out
+	PlayerState, Action4 -> Void
+	"""
+	def buyUpgrades(self, player, purchases):
+		self.playerGains(player, purchases.GP, addPopulation)
+		self.playerGains(player, purchases.GB, addBody)
+		self.createSpecBoard(player, purchases.BT)
+
+
+	"""
+	Update the wateringHole with the food value of all donated cards, 
+	and then discard cards. 
+	@param tributes = the list of traitCards donated by the Players
+	list of TraitCard -> Void
+	"""
+	def replenishWateringHole(self, tributes):
+		self.wateringHole += sum([tribute.food for tribute in tributes])
+		self.wateringHole = max(0, self.wateringHole)
+		self.discard.append(tributes)
+
+	"""
+	 EFFECT: Adds population to any fertile species, feeds long necks, and moves previously
+	 stored fatFood to regular food for each species.
+	 Void -> Void
+	"""
+	def prelimAutoFeedings(self):
+		for player in self.players:
+			player.fertile()
+			self.wateringHole -= player.longNeck(self.wateringHole)
+			player.transferFatFood()
+
+	"""
+	Update PlayerState per a Player's requests to exchange old traits on
+	a species with new ones from their hand.
+	@param player: the PlayerState to be updated
+	@param actions: the Action4 to be carried out; using RT
+	PlayerState, Action4 -> Void
+	"""
+	def replaceTraits(self, player, actions):
+		for rt in actions.RT:
+			player.replaceTrait(rt.specIdx, rt.oldTraitIdx, rt.newTraitIdx)
+
+
+
+	"""
+	EFFECT: based on player actions, update PlayerStates, replenish wateringHole, 
+	carry out automatic feedings from the wateringHole, and then initialize the
+	round-robin feeding cycle. 
+
+	@param actions: list of Action4
+	ASSUME:  (length players) == (length card-actions)
+		the actions are specified in the same order as players
+	List of Action4 -> Void 
+	"""
+	def step4(self, actions):
+		for i in range(len(self.players)):
+			self.buyUpgrades(self.players[i], actions[i])
+		
+		#TODO: THIS TOTALLY DOESN'T WORK. They're indeces.
+		whCards = [action.tribute for action in actions]
+		self.replenishWateringHole(whCards)
+
+		self.prelimAutoFeedings()
+
+		for i in range(len(self.players)):
+			self.replaceTraits(self.players[i], actions[i])
+
+		while (self.wateringHole > 0) and (len(currentlyFeeding) > 0):
+			self.feed1()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
