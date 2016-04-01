@@ -63,6 +63,37 @@ class TestSpecies(unittest.TestCase):
 		self.assertEqual(self.fatNoFood.toDict(), {"food": 0, "body": 2, "population": 2, "traits": [{"name":"fat-tissue", "food": 0}], "fatFood": 2})
 		self.assertEqual(self.foodNoFat.toDict(), {"food": 2, "body": 2, "population": 2, "traits": [{"name":"fat-tissue", "food": 0}], "fatFood": 0})
 
+	def testReplaceTrait(self):
+		self.climbing.replaceTrait(0, TraitCard("hard-shell"))
+		self.assertEqual(self.climbing, self.smallHardShell)
+		self.bigHardShell.replaceTrait(0, TraitCard("herding"))
+		self.assertNotEqual(self.bigHardShell, self.smallHerding)
+
+	def testTransferFatFood(self):
+		self.assertEqual(self.fatNoFood.food, 0)
+		self.assertEqual(self.fatNoFood.fatFood, 2)
+		self.fatNoFood.transferFatFood()
+		self.assertEqual(self.fatNoFood.food, 2)
+		self.assertEqual(self.fatNoFood.fatFood, 0)
+
+		self.fedUp.food = 0
+		self.fedUp.fatFood = 4
+		self.assertEqual(self.fedUp.food, 0)
+		self.assertEqual(self.fedUp.fatFood, 4)
+		self.fedUp.transferFatFood()
+		self.assertEqual(self.fedUp.food, 2)
+		self.assertEqual(self.fedUp.fatFood, 2)
+
+	def testAddPopulation(self):
+		self.assertEqual(self.fedUp.population, 2)
+		self.fedUp.addPopulation()
+		self.assertEqual(self.fedUp.population, 3)
+
+	def testAddBody(self):
+		self.assertEqual(self.fedUp.body, 2)
+		self.fedUp.addBody()
+		self.assertEqual(self.fedUp.body, 3)
+
 	def testComparators(self):
 		self.assertTrue(self.aSpecies.compare(False) > 0)
 		self.assertTrue(self.aSpecies.compare(self.anotherSpecies) < 0)
