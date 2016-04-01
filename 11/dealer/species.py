@@ -99,6 +99,31 @@ class Species:
 		self.food += food
 
 	"""
+		Transfer fat food to regular food
+		Assumes that this species has not eaten yet (should only be called at beginning of step 4)
+		TODO: do you keep fatfood that is uneaten?
+		Void -> Void
+	"""
+	def transferFatFood(self):
+		amountToEat = min(self.population, self.fatFood)
+		self.eatFood(amountToEat)
+		self.fatFood -= amountToEat
+
+	"""
+		Add one population to this species
+		Void -> Void
+	"""
+	def addPopulation(self):
+		self.population += 1
+
+	"""
+		Add one body size to this species
+		Void -> Void
+	"""
+	def addBody(self):
+		self.body += 1
+
+	"""
 		Eat the given amount of fat food
 		@param food: the amount to eat
 		Nat -> Void
