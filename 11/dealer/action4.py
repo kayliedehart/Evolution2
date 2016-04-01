@@ -1,20 +1,19 @@
 # A Representation for an "Action4" in a game of Evolution
-# TODO: WTF is an ACTION4?! Something vaguely more descriptive, please.
-# Also, may actually correspond to Step 3. Because who needs consistency!
+
 
 class Action4:
 
 	"""
 		Construct a new Action4
-		@param nat: 
+		@param cardIdx: the index of the traitCard donated by the Player in their hand
 		@param GP: a list of GainPopulation
 		@param GB: a list of GainBodySize
 		@param BT: a list of BuySpeciesBoard
 		@param RT: a list of ReplaceTrait
 		Nat, [GainPopulation, ...], [GainBodySize, ...], [BuySpeciesBoard, ...], [ReplaceTrait, ...] -> Void
 	"""
-	def __init__(self, nat, GP, GB, BT, RT):
-		self.nat = nat
+	def __init__(self, cardIdx, GP, GB, BT, RT):
+		self.tribute = cardIdx
 		self.GP = GP
 		self.GB = GB
 		self.RT = RT
@@ -31,9 +30,9 @@ class Action4:
 	@staticmethod
 	def actionFromJson(action4):
 		Action4.validate(action4)
-		nat, GP, GB, BT, RT = action4
+		cardIdx, GP, GB, BT, RT = action4
 
-		return Action4(nat, GainPopulation.fromJson(GP), GainBodySize.fromJson(GB), 
+		return Action4(cardIdx, GainPopulation.fromJson(GP), GainBodySize.fromJson(GB), 
 							BuySpeciesBoard.fromJson(BT), ReplaceTrait.fromJson(RT))
 
 	"""
