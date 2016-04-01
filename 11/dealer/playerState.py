@@ -166,6 +166,30 @@ class PlayerState:
 		return self.species[specIdx].isExtinct()
 
 	"""
+		Add one population to a species at the given index
+		@param specIdx: index of the species to modify
+		Nat -> Void
+	"""
+	def addPopulation(self, specIdx):
+		self.species[specIdx].addPopulation()
+
+	"""
+		Add one body size to a species at the given index
+		@param specIdx: index of the species to modify
+		Nat -> Void
+	"""
+	def addBody(self, specIdx):
+		self.species[specIdx].addBody()
+
+	"""
+		Give this player a new species with the given traits
+		@param traitIdcs: indices of the trait cards this new species will have, up to 3
+		ListOf(Nat) -> Void
+	"""
+	def addSpecies(self, traitIdcs):
+		self.species.append(Species(0, 0, 1, [self.hand[i] for i in traitIdcs], 0))
+
+	"""
 		Remove the given species from this player's list of species
 		@param specIdx: index of the species to remove
 		Nat -> Void
@@ -280,11 +304,55 @@ class PlayerState:
 	"""
 	def scavenge(self, wateringHole):
 		amountFed = 0
-		for i in range(len(self.species)):
-			if self.speciesHasTrait(i, "scavenger"):
-				fedThisSpecies = self.feedSpecies(i, 1, wateringHole)
+		scavengers = self.getSpeciesWithTrait("scavenger")
+		for scav in scavengers:
+			if wateringHole > 0:
+				fedThisSpecies = self.feedSpecies(scav, 1, wateringHole)
+				amountFed += fedThisSpecies
+				wateringHole -= fedThisSpecies
+		return amountFed
+
+
+	"""
+		Get all species this player owns that has the given trait 
+		@param trait: the name of the trait to be checked
+		String -> ListOf(SpecIdx)
+	"""
+	def getSpeciesWithTrait(self, trait):
+		return [i for i in len(self.species) if self.speciesHasTrait(i, trait)]
+
+	"""
+		Give all fertile species this player owns one population
+		Void -> Void
+	"""
+	def fertile(self):
+		fertile = self.getSpeciesWithTrait("fertile")
+		for spec in fertile:
+			self.species[spec].addPopulation()
+
+	"""
+		Give all long-necked species this player owns one food, as long as the watering hole
+		is large enough to feed them
+		@param wateringHole: the dealer's watering hole
+		@return the amount of food eaten by the longnecks
+		Nat -> Nat
+	"""
+	def longNeck(self, wateringHole):
+		amountFed = 0
+		longNeck = self.getSpeciesWithTrait("long-neck")
+		for ln in longNeck:
+			if wateringHole > 0:
+				fedThisSpecies = self.feedSpecies(longNeck, 1, wateringHole)
 				amountFed += fedThisSpecies
 				wateringHole -= fedThisSpecies
 
 		return amountFed
 
+	"""
+		Transfer fat food that a species stored last turn to its actual food 
+		Void -> Void
+	"""
+	def transferFatFood(self):
+		fatTissue = self.getSpeciesWithTrait("fat-tissue")
+		for ft in fatTissue:
+			self.species[ft].transferFatFood()
