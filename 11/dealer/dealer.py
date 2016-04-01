@@ -257,6 +257,16 @@ class Dealer:
 			player.gfunc(g.specIdx)
 
 	"""
+		Remove used cards from a players's hand
+		@param player: PlayerState to update
+		@param loCards: list of TraitCard indeces in players hand
+		list of Nat -> Void
+	"""
+	def takePlayerCards(self, player, loCards):
+		for card in loCards:
+			self.discard.append(player.hand.pop(card))
+
+	"""
 	Give the PlayerState a new SpeciesBoard with a population of 1 and
 	the requested traits, and move all cards to the discard.
 	@param player: the PlayerState to be updated
@@ -267,9 +277,9 @@ class Dealer:
 		for p in purchase:
 			player.addSpecies(p.traitList)
 
-			trashCards = p.traitList[:].append(p.payment)
-			for i in trashCards:
-				self.discard.append(player.hand.pop(i))
+			trashCards = p.traitList[:]
+			trashCards.append(p.payment)
+			self.takePlayerCards(player, trashCards)
 
 	"""
 	Update PlayerState per a Player's requests for increases in population, 
@@ -316,8 +326,7 @@ class Dealer:
 	def replaceTraits(self, player, actions):
 		for rt in actions.RT:
 			player.replaceTrait(rt.specIdx, rt.oldTraitIdx, rt.newTraitIdx)
-
-
+			self.takePlayerCards(player, [rt.oldTraitIdx, rt.newTraitIdx])
 
 	"""
 	EFFECT: based on player actions, update PlayerStates, replenish wateringHole, 
@@ -330,6 +339,9 @@ class Dealer:
 	List of Action4 -> Void 
 	"""
 	def step4(self, actions):
+		#TODO: when discarding cards, consider replacing with temporary value (ie: False)
+		# to preserve indeces, since getting rid of anything throws off the whole list.
+
 		for i in range(len(self.players)):
 			self.buyUpgrades(self.players[i], actions[i])
 		
