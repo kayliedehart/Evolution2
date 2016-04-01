@@ -6,16 +6,16 @@ class TestPlayerState(unittest.TestCase):
 
 	def setUp(self):
 		self.noTraits = Species(0, 1, 3, [], 0)
-		self.vegHorns = Species(1, 2, 3, ["horns"], 0)
-		self.vegCoop = Species(1, 2, 3, ["cooperation"], 0)
-		self.fat = Species(4, 3, 4, ["fat-tissue"], 3)
+		self.vegHorns = Species(1, 2, 3, [TraitCard("horns")], 0)
+		self.vegCoop = Species(1, 2, 3, [TraitCard("cooperation")], 0)
+		self.fat = Species(4, 3, 4, [TraitCard("fat-tissue")], 3)
 		self.full = Species(2, 2, 2, [], 0)
-		self.fatScav = Species(2, 3, 4, ["fat-tissue", "scavenger"], 1)
-		self.fatFor = Species(4, 3, 4, ["fat-tissue", "foraging"], 1)
-		self.carnCoop = Species(3, 4, 5, ["carnivore", "cooperation"], 0)
-		self.carnForage = Species(3, 4, 5, ["carnivore", "foraging"], 0)
-		self.carnForage1 = Species(3, 4, 5, ["carnivore", "foraging"], 0)
-		self.forCoop = Species(1, 3, 5, ["foraging", "cooperation"], 0)
+		self.fatScav = Species(2, 3, 4, [TraitCard("fat-tissue"), TraitCard("scavenger")], 1)
+		self.fatFor = Species(4, 3, 4, [TraitCard("fat-tissue"), TraitCard("foraging")], 1)
+		self.carnCoop = Species(3, 4, 5, [TraitCard("carnivore"), TraitCard("cooperation")], 0)
+		self.carnForage = Species(3, 4, 5, [TraitCard("carnivore"), TraitCard("foraging")], 0)
+		self.carnForage1 = Species(3, 4, 5, [TraitCard("carnivore"), TraitCard("foraging")], 0)
+		self.forCoop = Species(1, 3, 5, [TraitCard("foraging"), TraitCard("cooperation")], 0)
 		self.extinct = Species(0, 0, 0, [], 0)
 		self.p1 = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], [])
 		self.p2 = PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], [])
@@ -51,10 +51,10 @@ class TestPlayerState(unittest.TestCase):
 
 	def testToDict(self):
 		self.assertEqual(self.p8.toDict(), {"num": 8, "species": 
-							[{"food": 3, "body": 4, "population": 5, "traits": ["carnivore", "cooperation"], "fatFood": 0}], 
+							[{"food": 3, "body": 4, "population": 5, "traits": [{"name":"carnivore", "food":0}, {"name":"cooperation", "food":0}], "fatFood": 0}], 
 							"hand": [], "foodbag": 0})
 		self.assertEqual(self.p9.toDict(), {"num": 9, "species": 
-							[{"food": 1, "body": 2, "population": 3, "traits": ["horns"], "fatFood": 0}], 
+							[{"food": 1, "body": 2, "population": 3, "traits": [{"name":"horns", "food":0}], "fatFood": 0}], 
 							"hand": [], "foodbag": 0})
 
 	# THIS IS THE SILLY FEED!!! 

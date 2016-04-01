@@ -66,19 +66,15 @@ class Dealer:
 	def dealerFromJson(dealer):
 		try:
 			if type(dealer[0]) == list:
-				print "list"
 				players = [PlayerState.playerStateFromJson(player) for player in dealer[0]]
-				print "Ok PlayerState"
 			if type(dealer[1]) == int:
-				print "int"
 				wateringHole = dealer[1]
 			if type(dealer[2]) == list:
-				print "list"
 				cards = [TraitCard.traitCardFromJson(card) for card in dealer[2]]
 
 			return Dealer(players, wateringHole, cards)
 
-		except:
+		except Exception as e:
 			quit()
 
 	"""

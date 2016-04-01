@@ -1,35 +1,36 @@
 import unittest
 from species import *
+from traitCard import TraitCard
 
 class TestSpecies(unittest.TestCase):
 
 	def setUp(self):        
-		self.someTraits = ["carnivore", "ambush"]
+		self.someTraits = [TraitCard("carnivore"), TraitCard("ambush")]
 		self.defaultSpecies = Species(0, 0, 0, [], 0)
 		self.aSpecies = Species(3, 3, 5, self.someTraits, 0)
 		self.anotherSpecies = Species(2, 5, 7, self.someTraits, 0)
 		self.yetAnotherSpecies = Species(1, 5, 7, self.someTraits, 0)
 		self.yetAnotherYetAnotherSpecies = Species(2, 5, 7, self.someTraits, 0)
-		self.fatNoFood = Species(0, 2, 2, ["fat-tissue"], 2)
-		self.foodNoFat = Species(2, 2, 2, ["fat-tissue"], 0)
-		self.fedUp = Species(2, 2, 2, ["fat-tissue"], 2)
+		self.fatNoFood = Species(0, 2, 2, [TraitCard("fat-tissue")], 2)
+		self.foodNoFat = Species(2, 2, 2, [TraitCard("fat-tissue")], 0)
+		self.fedUp = Species(2, 2, 2, [TraitCard("fat-tissue")], 2)
 
-		self.carnivore = Species(3, 5, 5, ["carnivore"], 0)
+		self.carnivore = Species(3, 5, 5, [TraitCard("carnivore")], 0)
 		self.carnivoreAmbush = Species(3, 3, 5, self.someTraits, 0)
-		self.carnivoreClimber = Species(3, 3, 5, ["carnivore", "climbing"], 0)
-		self.smallCarnivorePackHunter = Species(3, 1, 5, ["carnivore", "pack-hunting"], 0)
-		self.warningCall = Species(1, 1, 2, ["warning-call"], 0)
+		self.carnivoreClimber = Species(3, 3, 5, [TraitCard("carnivore"), TraitCard("climbing")], 0)
+		self.smallCarnivorePackHunter = Species(3, 1, 5, [TraitCard("carnivore"), TraitCard("pack-hunting")], 0)
+		self.warningCall = Species(1, 1, 2, [TraitCard("warning-call")], 0)
 		self.vulnerable = Species(1, 1, 2, [], 0)
-		self.burrowSuccess = Species(2, 1, 2, ["burrowing"], 0)
-		self.burrowFail = Species(0, 1, 2, ["burrowing"], 0)
-		self.climbing = Species(1, 1, 2, ["climbing"], 0)
-		self.smallHardShell = Species(1, 1, 2, ["hard-shell"], 0)
-		self.bigHardShell = Species(1, 4, 2, ["hard-shell"], 0)
-		self.smallHerding = Species(1, 1, 3, ["herding"], 0)
-		self.bigHerding = Species(1, 5, 5, ["herding"], 0)
-		self.herdingHorns = Species(1, 3, 4, ["herding", "horns"], 0)
-		self.smallSymbiosis = Species(1, 1, 2, ["symbiosis"], 0)
-		self.bigSymbiosis = Species(1, 5, 5, ["symbiosis"], 0)
+		self.burrowSuccess = Species(2, 1, 2, [TraitCard("burrowing")], 0)
+		self.burrowFail = Species(0, 1, 2, [TraitCard("burrowing")], 0)
+		self.climbing = Species(1, 1, 2, [TraitCard("climbing")], 0)
+		self.smallHardShell = Species(1, 1, 2, [TraitCard("hard-shell")], 0)
+		self.bigHardShell = Species(1, 4, 2, [TraitCard("hard-shell")], 0)
+		self.smallHerding = Species(1, 1, 3, [TraitCard("herding")], 0)
+		self.bigHerding = Species(1, 5, 5, [TraitCard("herding")], 0)
+		self.herdingHorns = Species(1, 3, 4, [TraitCard("herding"), TraitCard("horns")], 0)
+		self.smallSymbiosis = Species(1, 1, 2, [TraitCard("symbiosis")], 0)
+		self.bigSymbiosis = Species(1, 5, 5, [TraitCard("symbiosis")], 0)
 
 	def tearDown(self):
 		del self.someTraits 
@@ -58,9 +59,9 @@ class TestSpecies(unittest.TestCase):
 		del self.herdingHorns
 
 	def testToDict(self):
-		self.assertEqual(self.aSpecies.toDict(), {"food": 3, "body": 3, "population": 5, "traits": ["carnivore", "ambush"], "fatFood": 0})
-		self.assertEqual(self.fatNoFood.toDict(), {"food": 0, "body": 2, "population": 2, "traits": ["fat-tissue"], "fatFood": 2})
-		self.assertEqual(self.foodNoFat.toDict(), {"food": 2, "body": 2, "population": 2, "traits": ["fat-tissue"], "fatFood": 0})
+		self.assertEqual(self.aSpecies.toDict(), {"food": 3, "body": 3, "population": 5, "traits": [{"name":"carnivore", "food": 0}, {"name":"ambush", "food": 0}], "fatFood": 0})
+		self.assertEqual(self.fatNoFood.toDict(), {"food": 0, "body": 2, "population": 2, "traits": [{"name":"fat-tissue", "food": 0}], "fatFood": 2})
+		self.assertEqual(self.foodNoFat.toDict(), {"food": 2, "body": 2, "population": 2, "traits": [{"name":"fat-tissue", "food": 0}], "fatFood": 0})
 
 	def testComparators(self):
 		self.assertTrue(self.aSpecies.compare(False) > 0)

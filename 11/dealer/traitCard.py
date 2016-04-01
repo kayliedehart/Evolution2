@@ -24,7 +24,7 @@ class TraitCard():
 
 	# create a new trait card
 	# String, Opt: Nat -> TraitCard
-	def __init__(self, name, food):
+	def __init__(self, name, food=None):
 		self.name = name
 		self.food = food or 0
 

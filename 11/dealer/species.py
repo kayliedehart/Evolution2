@@ -14,10 +14,10 @@ class Species:
 		food: how much food this species has eaten this turn
 		body: body size
 		population: population size
-		traits: Traits (String) on this species board (up to 3)
+		traits: TraitCards on this species board (up to 3)
 		fatFood: how much food has been stored on a fat tissue card
 				 can only be non-zero when a fat tissue card is in self.traits
-		Nat, Nat, Nat, ListOf(Trait), Nat -> Species
+		Nat, Nat, Nat, ListOf(TraitCard), Nat -> Species
 	"""
 	def __init__(self, food, body, population, traits, fatFood):
 		self.food = food
@@ -51,7 +51,7 @@ class Species:
 		return {"food": self.food,
 				"body": self.body,
 				"population": self.population,
-				"traits": self.traits,
+				"traits": [traitCard.toDict() for traitCard in self.traits],
 				"fatFood": self.fatFood}
 
 	""" 
@@ -59,7 +59,7 @@ class Species:
 		String -> Boolean
 	"""
 	def hasTrait(self, name):
-		return name in self.traits
+		return name in [traitCard.name for traitCard in self.traits]
 
 	"""
 		Tell if this species is extinct, i.e. its population is 0
@@ -114,11 +114,10 @@ class Species:
 		result = [["food", self.food],
 				  ["body", self.body],
 				  ["population", self.population],
-				  ["traits", self.traits]]
+				  ["traits", [trait.name for trait in self.traits]]]
 
 		if self.fatFood > 0:
 			result.append(["fat-food", self.fatFood])
-
 		return result
 
 
@@ -128,7 +127,7 @@ class Species:
 	"""
 	@staticmethod
 	def jsonFatFood(jsonSpecies, traits):
-		if (len(jsonSpecies) == 5) and ("fat-tissue" in traits) and (jsonSpecies[4][0] == "fat-food"):
+		if (len(jsonSpecies) == 5) and ("fat-tissue" in [trait.name for trait in traits]) and (jsonSpecies[4][0] == "fat-food"):
 			return jsonSpecies[4][1]
 		else:
 			return 0
@@ -154,10 +153,10 @@ class Species:
 			if jsonSpecies[2][0] == "population":
 				population = jsonSpecies[2][1]
 			if jsonSpecies[3][0] == "traits":
-				traits = [trait for trait in jsonSpecies[3][1] if TraitCard.checkTrait(trait)]
+				traits = [TraitCard(trait) for trait in jsonSpecies[3][1] if TraitCard.checkTrait(trait)]
 			fatFood = Species.jsonFatFood(jsonSpecies, traits)
 			return Species(food, body, population, traits, fatFood)
-		except:
+		except Exception as e:
 			quit()
 
 	""" 

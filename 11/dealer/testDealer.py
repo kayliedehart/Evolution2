@@ -12,14 +12,14 @@ class TestDealer(unittest.TestCase):
 		self.t3 = TraitCard("carnivore", 2)
 		self.t4 = TraitCard("fat-tissue", 0)
 		self.t5 = TraitCard("foraging", 3)
-		self.vegHorns = Species(1, 2, 3, ["horns"], 0)
-		self.vegCoop = Species(1, 2, 3, ["cooperation"], 0)
-		self.fat = Species(4, 3, 4, ["fat-tissue"], 3)
-		self.fatScav = Species(2, 3, 4, ["fat-tissue", "scavenger"], 1)
-		self.fatFor = Species(4, 3, 4, ["fat-tissue", "foraging"], 1)
-		self.carnCoop = Species(3, 4, 5, ["carnivore", "cooperation"], 0)
-		self.carnForage = Species(3, 4, 5, ["carnivore", "foraging"], 0)
-		self.carnForage1 = Species(3, 4, 5, ["carnivore", "foraging"], 0)
+		self.vegHorns = Species(1, 2, 3, [TraitCard("horns")], 0)
+		self.vegCoop = Species(1, 2, 3, [TraitCard("cooperation")], 0)
+		self.fat = Species(4, 3, 4, [TraitCard("fat-tissue")], 3)
+		self.fatScav = Species(2, 3, 4, [TraitCard("fat-tissue"), TraitCard("scavenger")], 1)
+		self.fatFor = Species(4, 3, 4, [TraitCard("fat-tissue"), TraitCard("foraging")], 1)
+		self.carnCoop = Species(3, 4, 5, [TraitCard("carnivore"), TraitCard("cooperation")], 0)
+		self.carnForage = Species(3, 4, 5, [TraitCard("carnivore"), TraitCard("foraging")], 0)
+		self.carnForage1 = Species(3, 4, 5, [TraitCard("carnivore"), TraitCard("foraging")], 0)
 		self.extinct = Species(0, 0, 0, [], 0)
 		self.p1 = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], [])
 		self.p2 = PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], [])
@@ -34,14 +34,14 @@ class TestDealer(unittest.TestCase):
 		self.p3dealer = Dealer([self.p8], 3, [self.t1, self.t2, self.t3, self.t4, self.t5])
 
 
-		self.xstep3spec = Species(0, 5, 2, ["foraging"], 0)
+		self.xstep3spec = Species(0, 5, 2, [TraitCard("foraging")], 0)
 		self.xstep3p = PlayerState(1, 0, [self.xstep3spec], [])
 		self.xstep3deal = Dealer([self.xstep3p], 5, [])
 
 		# 8949-0357-4
-		self.pCFS1 = PlayerState(1, 3, [Species(4, 2, 5, ["carnivore", "cooperation"], 0), 
-			Species(1, 3, 4, ["foraging", "carnivore", "scavenger"], 0)], [])
-		self.pCFS2 = PlayerState(2, 4, [Species(2, 3, 3, ["burrowing"], 0)], [])
+		self.pCFS1 = PlayerState(1, 3, [Species(4, 2, 5, [TraitCard("carnivore"), TraitCard("cooperation")], 0), 
+			Species(1, 3, 4, [TraitCard("foraging"), TraitCard("carnivore"), TraitCard("scavenger")], 0)], [])
+		self.pCFS2 = PlayerState(2, 4, [Species(2, 3, 3, [TraitCard("burrowing")], 0)], [])
 		self.pCFS3 = PlayerState(3, 5, [], [])
 		self.dCFS = Dealer([self.pCFS1, self.pCFS2, self.pCFS3], 10, [])
 
@@ -90,10 +90,10 @@ class TestDealer(unittest.TestCase):
 	def testToDict(self):		
 		self.assertEqual(self.p2dealer.toDict(), {"wateringHole": 3, "deck": [], 
 			"players": [{"num": 6, "species": 
-							[{"food": 3, "body": 4, "population": 5, "traits": ["carnivore", "cooperation"], "fatFood": 0}], 
+							[{"food": 3, "body": 4, "population": 5, "traits": [{"name":"carnivore", "food": 0}, {"name":"cooperation", "food":0}], "fatFood": 0}], 
 							"hand": [], "foodbag": 0}, 
 						{"num": 5, "species": 
-							[{"food": 1, "body": 2, "population": 3, "traits": ["horns"], "fatFood": 0}], 
+							[{"food": 1, "body": 2, "population": 3, "traits": [{"name":"horns", "food": 0}], "fatFood": 0}], 
 							"hand": [], "foodbag": 0}]})
 
 	def testRemovePlayer(self):
@@ -221,8 +221,8 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.fatScav.food, 4)
 		self.assertEqual(self.dealer.wateringHole, 1)
 
-		self.carnCoop.traits.append("scavenger")
-		self.vegCoop.traits.append("scavenger")
+		self.carnCoop.traits.append(TraitCard("scavenger"))
+		self.vegCoop.traits.append(TraitCard("scavenger"))
 		self.assertEqual(self.vegCoop.food, 1)
 		self.assertEqual(self.carnCoop.food, 3)
 		self.dealer.scavengeFeed(self.p1)
@@ -269,13 +269,13 @@ class TestDealer(unittest.TestCase):
 		# a user who can no longer attack/feed should not be deleted from players
 		# but should be deleted from currentlyFeeding 
 		# 0067-2657-7
-		pNoAtkSpecies1 = PlayerState(1, 0, [Species(0, 1, 1, ["carnivore"], 0), 
-					Species(1, 1, 1, ["horns", "cooperation"], 0), 
+		pNoAtkSpecies1 = PlayerState(1, 0, [Species(0, 1, 1, [TraitCard("carnivore")], 0), 
+					Species(1, 1, 1, [TraitCard("horns"), TraitCard("cooperation")], 0), 
 					Species(1, 1, 1, [], 0)], [])
-		pNoAtkSpecies2 = PlayerState(2, 0, [Species(0, 1, 1, ["hard-shell"], 0)], [])
-		pNoAtkSpecies3 = PlayerState(3, 0, [Species(0, 1, 1, ["cooperation", "scavenger", "climbing"], 0), 
-					Species(0, 1, 2, ["cooperation", "scavenger", "climbing"], 0), 
-					Species(0, 1, 4, ["foraging", "hard-shell"], 0)], [])
+		pNoAtkSpecies2 = PlayerState(2, 0, [Species(0, 1, 1, [TraitCard("hard-shell")], 0)], [])
+		pNoAtkSpecies3 = PlayerState(3, 0, [Species(0, 1, 1, [TraitCard("cooperation"), TraitCard("scavenger"), TraitCard("climbing")], 0), 
+					Species(0, 1, 2, [TraitCard("cooperation"), TraitCard("scavenger"), TraitCard("climbing")], 0), 
+					Species(0, 1, 4, [TraitCard("foraging"), TraitCard("hard-shell")], 0)], [])
 		dNoAtkSpecies = Dealer([pNoAtkSpecies1, pNoAtkSpecies2, pNoAtkSpecies3], 5, [])
 		self.assertEqual(len(dNoAtkSpecies.players), 3)
 		self.assertEqual(len(dNoAtkSpecies.currentlyFeeding), 3)
@@ -286,10 +286,10 @@ class TestDealer(unittest.TestCase):
 
 		# successfully extincting someone else's species should give two cards to loser
 		# 2598-3830-8
-		pExtinction1 = PlayerState(3, 2, [Species(3, 4, 4, ["carnivore"], 0)], [TraitCard("burrowing", -3)])
-		pExtinction2 = PlayerState(2, 42, [Species(0, 3, 4, ["climbing"], 0),
-					Species(4, 2, 4, ["climbing"], 0),
-					Species(4, 1, 4, ["climbing"], 0)], [TraitCard("climbing", 3)])
+		pExtinction1 = PlayerState(3, 2, [Species(3, 4, 4, [TraitCard("carnivore")], 0)], [TraitCard("burrowing", -3)])
+		pExtinction2 = PlayerState(2, 42, [Species(0, 3, 4, [TraitCard("climbing")], 0),
+					Species(4, 2, 4, [TraitCard("climbing")], 0),
+					Species(4, 1, 4, [TraitCard("climbing")], 0)], [TraitCard("climbing", 3)])
 		pExtinction3 = PlayerState(4, 100, [Species(0, 7, 1, [], 0)], [])
 		dExtinction = Dealer([pExtinction1, pExtinction2, pExtinction3], 9, [TraitCard("burrowing", 3), TraitCard("horns", 3), TraitCard("climbing", 1)])
 
