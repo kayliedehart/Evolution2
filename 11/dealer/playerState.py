@@ -82,8 +82,6 @@ class PlayerState:
 	"""
 	   creates a PlayerState from a json array
 	   JsonArray -> PlayerState
-	   TODO: make this not quite so awful
-	   for one: what should happen in the else cases?
 	"""
 	@staticmethod
 	def playerStateFromJson(state):
