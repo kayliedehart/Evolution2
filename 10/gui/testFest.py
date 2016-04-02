@@ -10,7 +10,7 @@ CUR_DIR = os.getcwd()
 HW_5_TEST_PATH = "homework_5_tests/"
 HW_6_TEST_PATH = "homework_6_tests/"
 HW_7_TEST_PATH = "homework_7_tests/"
-HW_8_TEST_PATH = "homework_8_tests/"
+HW_8_TEST_PATH = "homework_10_tests/"
 
 
 class testFest(unittest.TestCase):

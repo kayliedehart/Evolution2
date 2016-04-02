@@ -99,6 +99,16 @@ class Species:
 		self.food += food
 
 	"""
+		Replace the trait at the given index with a new trait card
+		ASSUME: TraitCards are always placed in discard by the dealer when assigned
+		@param oldTraitIdx: the index of the trait to be replaced
+		@param newTrait: the trait to replace the old one with
+		Nat, TraitCard -> Void
+	"""
+	def replaceTrait(self, oldTraitIdx, newTrait):
+		self.traits[oldTraitIdx] = newTrait
+
+	"""
 		Transfer fat food to regular food
 		Assumes that this species has not eaten yet (should only be called at beginning of step 4)
 		TODO: do you keep fatfood that is uneaten?

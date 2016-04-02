@@ -319,7 +319,7 @@ class PlayerState:
 		String -> ListOf(SpecIdx)
 	"""
 	def getSpeciesWithTrait(self, trait):
-		return [i for i in len(self.species) if self.speciesHasTrait(i, trait)]
+		return [i for i in range(len(self.species)) if self.speciesHasTrait(i, trait)]
 
 	"""
 		Give all fertile species this player owns one population
@@ -356,3 +356,13 @@ class PlayerState:
 		fatTissue = self.getSpeciesWithTrait("fat-tissue")
 		for ft in fatTissue:
 			self.species[ft].transferFatFood()
+
+	"""
+		Replace a TraitCard on the given species
+		@param specIdx: the index of the species whose traits need switched out
+		@param oldTraitIdx: the index of the old trait card
+		@param newTraitIdx: the index of the trait card replacing the old one
+		Nat, Nat, Nat -> Void
+	"""
+	def replaceTrait(self, specIdx, oldTraitIdx, newTraitIdx):
+		self.species[specIdx].replaceTrait(oldTraitIdx, self.hand[newTraitIdx])
