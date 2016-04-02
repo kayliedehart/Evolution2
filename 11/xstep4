@@ -1,0 +1,19 @@
+#!/usr/bin/env python2.7
+# A test harness for the Dealer's step4 method
+
+import sys
+import json
+from dealer.dealer import *
+from dealer.action4 import *
+
+try:
+	testInput = json.load(sys.stdin)
+	if len(testInput) == 2:
+		curDealer = Dealer.dealerFromJson(testInput[0])
+		curDealer.step4(Action4.actionFromJson(testInput[1]))
+		result = curDealer.dealerToJson()
+		print json.dumps(result)
+
+except Exception as e:
+	raise e
+	quit()
