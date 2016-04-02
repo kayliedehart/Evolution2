@@ -2,6 +2,7 @@
 from drawing import Drawing
 from traitCard import *
 from playerState import *
+from action4 import Action4
 
 
 class Dealer:

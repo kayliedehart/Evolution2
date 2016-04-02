@@ -1,5 +1,8 @@
 # A Representation for an "Action4" in a game of Evolution
-
+import gainPopulation
+import gainBodySize
+import buySpeciesBoard
+import replaceTrait
 
 class Action4:
 
