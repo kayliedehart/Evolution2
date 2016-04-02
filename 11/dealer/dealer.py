@@ -242,8 +242,9 @@ class Dealer:
 			attack = self.queryFeed(curPlayer)
 			if attack:
 				self.scavengeFeed(curPlayer)
-		# TODO: Account for the player maybe having been removed.
-		# self.currentlyFeeding = self.currentlyFeeding[1:] + self.currentlyFeeding[:1]
+				
+		if curPlayer in self.currentlyFeeding:
+			self.currentlyFeeding = self.currentlyFeeding[1:] + self.currentlyFeeding[:1]
 
 
 	"""
