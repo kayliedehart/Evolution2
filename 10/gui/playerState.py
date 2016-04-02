@@ -95,7 +95,6 @@ class PlayerState:
 				bag = state[2][1]
 			if len(state) == 4 and state[3][0] == "cards":
 				cards = [TraitCard.traitCardFromJson(card) for card in state[3][1]]
-				print "CARDS" + str(cards)
 			if num > 0 and bag >= 0:
 				return PlayerState(num, bag, speciesList, cards)
 

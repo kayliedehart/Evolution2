@@ -319,7 +319,7 @@ class PlayerState:
 		String -> ListOf(SpecIdx)
 	"""
 	def getSpeciesWithTrait(self, trait):
-		return [i for i in len(self.species) if self.speciesHasTrait(i, trait)]
+		return [i for i in range(len(self.species)) if self.speciesHasTrait(i, trait)]
 
 	"""
 		Give all fertile species this player owns one population
