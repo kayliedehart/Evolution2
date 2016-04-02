@@ -9,6 +9,10 @@ class Dealer:
 	players = []
 	currentlyFeeding = []
 	deck = []
+	# indices of cards players have played this turn
+	# it contains (index of player, index of card played)
+	# used to avoid mutation of lists when using indexes
+	cardsPlayed = [] 
 	discard = []
 
 	"""
@@ -245,41 +249,32 @@ class Dealer:
 	"""
 	For each upgrade request, move the player's payment out of their hand and 
 	to the discard list, and modify the requested species field.
-	@param player: the current player upgrading
+	@param playerIdx: index of the current player upgrading
 	@param gain: a gainPopulation or gainBodySize list
 	@param gfunc: the appropriate player function to call in order to modify
 	
-	PlayerState, list of (gainPopulation xor gainBodySize), function -> Void
+	Nat, list of (gainPopulation xor gainBodySize), function -> Void
 	"""
-	def playerGains(self, player, gain, gfunc):
+	def playerGains(self, playerIdx, gain, gfunc):
 		for g in gain:
-			self.discard.append(player.hand.pop(g.cardIdx))
+			self.updateDiscards((playerIdx, g.cardIdx))
 			player.gfunc(g.specIdx)
-
-	"""
-		Remove used cards from a players's hand
-		@param player: PlayerState to update
-		@param loCards: list of TraitCard indeces in players hand
-		list of Nat -> Void
-	"""
-	def takePlayerCards(self, player, loCards):
-		for card in loCards:
-			self.discard.append(player.hand.pop(card))
 
 	"""
 	Give the PlayerState a new SpeciesBoard with a population of 1 and
 	the requested traits, and move all cards to the discard.
-	@param player: the PlayerState to be updated
+	@param player: the index to the PlayerState to be updated
 	@param purchase: the buySpeciesBoard requests being carried out
-	PlayerState, list of buySpeciesBoard -> Void
+	Nat, list of buySpeciesBoard -> Void
 	"""
-	def createSpecBoard(self, player, purchase):
+	def createSpecBoard(self, playerIdx, purchase):
 		for p in purchase:
-			player.addSpecies(p.traitList)
+			self.players[playerIdx].addSpecies(p.traitList)
 
 			trashCards = p.traitList[:]
 			trashCards.append(p.payment)
-			self.takePlayerCards(player, trashCards)
+
+			self.updateDiscards([(playerIdx, cardIdx) for cardIdx in trashCards])
 
 	"""
 	Update PlayerState per a Player's requests for increases in population, 
@@ -289,21 +284,40 @@ class Dealer:
 	PlayerState, Action4 -> Void
 	"""
 	def buyUpgrades(self, player, purchases):
+		self.createSpecBoard(player, purchases.BT)
 		self.playerGains(player, purchases.GP, addPopulation)
 		self.playerGains(player, purchases.GB, addBody)
-		self.createSpecBoard(player, purchases.BT)
 
+	"""
+	Get a list of TraitCard objects from a list of indexes pointing at them
+	@param moves: The list of (player's index, index of their card)
+	@return a list of TraitCard that those moves represented
+	ListOf((Nat, Nat)) -> ListOf(TraitCard)
+	"""
+	def getPlayerCards(self, moves):
+		return [traitCards.append(self.players[moves[i][0]].hand[moves[i][1]]) for i in range(len(moves))]
+
+	"""
+	Update the permanent discard as well as the temporary cards-played to have the most recently-played cards
+	@param moves: the PlayerIndex, CardIndex tuples
+	@param cards: the actual TraitCards that correspond to the moves
+	ListOf((Nat, Nat)) -> Void
+	"""
+	def updateDiscards(self, moves):
+		self.cardsPlayed += moves
+		self.discard += self.getPlayerCards(moves)
 
 	"""
 	Update the wateringHole with the food value of all donated cards, 
 	and then discard cards. 
-	@param tributes = the list of traitCards donated by the Players
-	list of TraitCard -> Void
+	@param tributes = list of (player index, card player wants to play)
+	ListOf(Nat, Nat) -> Void
 	"""
 	def replenishWateringHole(self, tributes):
-		self.wateringHole += sum([tribute.food for tribute in tributes])
+		tributeCards = self.getPlayercards(tributes)
+		self.wateringHole += sum([tribute.food for tribute in tributeCards])
 		self.wateringHole = max(0, self.wateringHole)
-		self.discard.append(tributes)
+		self.updateDiscards(tributes)
 
 	"""
 	 EFFECT: Adds population to any fertile species, feeds long necks, and moves previously
@@ -319,14 +333,32 @@ class Dealer:
 	"""
 	Update PlayerState per a Player's requests to exchange old traits on
 	a species with new ones from their hand.
-	@param player: the PlayerState to be updated
+	@param player: index of the PlayerState to be updated
 	@param actions: the Action4 to be carried out; using RT
-	PlayerState, Action4 -> Void
+	Nat, Action4 -> Void
 	"""
-	def replaceTraits(self, player, actions):
+	def replaceTraits(self, playerIdx, actions):
 		for rt in actions.RT:
-			player.replaceTrait(rt.specIdx, rt.oldTraitIdx, rt.newTraitIdx)
-			self.takePlayerCards(player, [rt.oldTraitIdx, rt.newTraitIdx])
+			self.players[playerIdx].replaceTrait(rt.specIdx, rt.oldTraitIdx, rt.newTraitIdx)
+			self.updateDiscards([(playerIdx, rt.newTraitIdx)])
+
+	"""
+	Removes any cards players have played from their hands and resets the list of cards played this turn
+	Done after buying all upgrades/updating all traits so that indexes within a hand don't change
+	Void -> Void
+	"""
+	def revokePlayedCards(self):
+		cardsDict = {}
+		for i in range(len(self.players)):
+			cardsDict[i] = []
+
+		for playerIdx, cardIdx in self.cardsPlayed:
+			cardsDict[playerIdx] += [cardIdx]
+
+		for playerIdx, cardIdcs in cardsDict:
+			self.players[playerIdx].discardFromHand(cardIdcs)
+
+		self.cardsPlayed = []
 
 	"""
 	EFFECT: based on player actions, update PlayerStates, replenish wateringHole, 
@@ -339,18 +371,13 @@ class Dealer:
 	List of Action4 -> Void 
 	"""
 	def step4(self, actions):
-		#TODO: when discarding cards, consider replacing with temporary value (ie: False)
-		# to preserve indeces, since getting rid of anything throws off the whole list.
-
-		#TODO: THIS TOTALLY DOESN'T WORK. They're indeces.
-		whCards = [action.tribute for action in actions]
-		self.replenishWateringHole(whCards)
-
+		self.replenishWateringHole([(playerIdx, action.tribute) for playerIdx, action in enumerate(actions)])
 		for i in range(len(self.players)):
-			self.buyUpgrades(self.players[i], actions[i])
-			self.replaceTraits(self.players[i], actions[i])
-		
+			self.buyUpgrades(i, actions[i])
+			self.replaceTraits(i, actions[i])
+		self.revokePlayedCards()
 		self.prelimAutoFeedings()
+
 		self.currentlyFeeding = self.players[:]	
 		while (self.wateringHole > 0) and (len(currentlyFeeding) > 0):
 			self.feed1()

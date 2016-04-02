@@ -205,6 +205,14 @@ class PlayerState:
 		return not (len(self.species) > 0)
 
 	"""
+		Deletes the cards at the given indices from this player's hand
+		@param cardIdcs: the indexes of the cards to remove
+		ListOf(Nat) -> Void
+	"""
+	def discardFromHand(self, cardIdcs):
+		self.hand = [self.hand[i] for i in range(len(self.hand)) if i not in cardIdcs]
+
+	"""
 		Tell whether the species at the given index has the given trait
 		@param specIdx: the index of the species to check
 		@param traitName: the name of the trait to check for
