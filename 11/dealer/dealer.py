@@ -342,18 +342,16 @@ class Dealer:
 		#TODO: when discarding cards, consider replacing with temporary value (ie: False)
 		# to preserve indeces, since getting rid of anything throws off the whole list.
 
-		for i in range(len(self.players)):
-			self.buyUpgrades(self.players[i], actions[i])
-		
 		#TODO: THIS TOTALLY DOESN'T WORK. They're indeces.
 		whCards = [action.tribute for action in actions]
 		self.replenishWateringHole(whCards)
 
-		self.prelimAutoFeedings()
-
 		for i in range(len(self.players)):
+			self.buyUpgrades(self.players[i], actions[i])
 			self.replaceTraits(self.players[i], actions[i])
-
+		
+		self.prelimAutoFeedings()
+		self.currentlyFeeding = self.players[:]	
 		while (self.wateringHole > 0) and (len(currentlyFeeding) > 0):
 			self.feed1()
 
