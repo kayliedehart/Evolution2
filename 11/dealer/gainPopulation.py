@@ -16,8 +16,12 @@ class GainPopulation:
 	@staticmethod
 	def fromJson(GP):
 		GainPopulation.validate(GP)
-		key, spec, card = GP
-		return GainPopulation(spec, card)
+		if GP:
+			key, spec, card = GP
+			return GainPopulation(spec, card)
+		else:
+			return []
+
 
 
 	"""

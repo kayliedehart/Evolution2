@@ -268,6 +268,7 @@ class PlayerState:
 
 		return foodCount
 
+	# TODO: abstract everything. all of it
 	"""
 		If the given species has the foraging trait, give it one more food
 		@param specIdx: index of the species to feed

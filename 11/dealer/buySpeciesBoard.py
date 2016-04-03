@@ -16,9 +16,11 @@ class BuySpeciesBoard:
 	@staticmethod
 	def fromJson(BT):
 		BuySpeciesBoard.validate(BT)
-		payment = BT.pop(0)
-		return BuySpeciesBoard(payment, BT)
-
+		if BT:
+			payment = BT.pop(0)
+			return BuySpeciesBoard(payment, BT)
+		else:
+			return []
 
 
 	"""

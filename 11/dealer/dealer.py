@@ -22,7 +22,6 @@ class Dealer:
 		@param currentlyFeeding: list of all players who are still being fed this turn
 		@param wateringHole: the number of food tokens remaining in the watering hole
 		@param deck: the cards in the deck that have not yet been dealt to players
-		TODO: when do we update playersList AND currentlyFeeding?
 	"""
 	def __init__(self, playersList, wateringHole, deck):
 		self.wateringHole = wateringHole
@@ -229,7 +228,6 @@ class Dealer:
 		for player in self.currentlyFeeding:
 			self.wateringHole -= player.scavenge(self.wateringHole)
 
-
 	"""
 	Execute the next step in the feeding routine; either feeding the next player automatically
 	or querying the player for their feeding decision, and completing subsequent triggered feedings
@@ -243,7 +241,7 @@ class Dealer:
 			attack = self.queryFeed(curPlayer)
 			if attack:
 				self.scavengeFeed(curPlayer)
-				
+
 		if curPlayer in self.currentlyFeeding:
 			self.currentlyFeeding = self.currentlyFeeding[1:] + self.currentlyFeeding[:1]
 
