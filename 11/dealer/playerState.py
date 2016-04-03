@@ -268,6 +268,7 @@ class PlayerState:
 
 		return foodCount
 
+	# TODO: abstract everything. all of it
 	"""
 		If the given species has the foraging trait, give it one more food
 		@param specIdx: index of the species to feed
@@ -350,7 +351,7 @@ class PlayerState:
 		longNeck = self.getSpeciesWithTrait("long-neck")
 		for ln in longNeck:
 			if wateringHole > 0:
-				fedThisSpecies = self.feedSpecies(longNeck, 1, wateringHole)
+				fedThisSpecies = self.feedSpecies(ln, 1, wateringHole)
 				amountFed += fedThisSpecies
 				wateringHole -= fedThisSpecies
 

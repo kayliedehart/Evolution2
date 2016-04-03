@@ -16,14 +16,13 @@ class ReplaceTrait:
 
 
 	"""
-	JSON -> ReplaceTrait
+	JSON -> ReplaceTrait or EmptyList
 	"""
 	@staticmethod
 	def fromJson(RT):
 		ReplaceTrait.validate(RT)
 		specIdx, oldTraitIdx, newTraitIdx = RT
 		return ReplaceTrait(specIdx, oldTraitIdx, newTraitIdx)
-
 
 	"""
 	Check if a given list of JSON ReplaceTraits is valid

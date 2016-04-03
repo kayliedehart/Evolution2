@@ -19,7 +19,6 @@ class GainBodySize:
 		key, spec, card = GB
 		return GainBodySize(spec, card)
 
-
 	"""
 	Check if a given list of JSON GainBodySizes is valid
 	EFFECT: If the list is invalid, quit
