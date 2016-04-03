@@ -312,6 +312,36 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.pCFS3.species, [])
 		self.assertEqual(self.dCFS.wateringHole, 6)
 
+	def testPlayerGains(self):
+		pass
+
+	def testCreateSpecBoard(self):
+		pass
+
+	def testBuyUpgrades(self):
+		pass
+
+	def testGetPlayerCards(self):
+		pass
+
+	def testUpdateDiscards(self):
+		pass
+
+	def testReplenishWateringHole(self):
+		pass
+
+	def testPrelimAutoFeedings(self):
+		pass
+
+	def testReplaceTraits(self):
+		pass
+
+	def testRevokePlayedCards(self):
+		pass
+
+	def testStep4(self):
+		pass
+
 
 if __name__ == "__main__":
 	unittest.main()

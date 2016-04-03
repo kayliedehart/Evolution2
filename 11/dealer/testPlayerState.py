@@ -153,10 +153,19 @@ class TestPlayerState(unittest.TestCase):
 		self.assertEqual(self.fatScav.food, 3)
 		self.assertEqual(self.carnCoop.food, 3)
 
+	def testGetSpeciesWithTrait(self):
+		pass
+
 	def testFertile(self):
 		pass
 
 	def testLongNeck(self):
+		pass
+
+	def testTransferFatFood(self):
+		pass
+
+	def testReplaceTrait(self):
 		pass
 
 
