@@ -257,7 +257,7 @@ class Dealer:
 	"""
 	def playerGains(self, playerIdx, gain, gfunc):
 		for g in gain:
-			self.updateDiscards((playerIdx, g.cardIdx))
+			self.updateDiscards([(playerIdx, g.cardIdx)])
 			gfunc(g.specIdx)
 
 	"""

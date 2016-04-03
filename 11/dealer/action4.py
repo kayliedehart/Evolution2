@@ -19,8 +19,8 @@ class Action4:
 		self.tribute = cardIdx
 		self.GP = GP
 		self.GB = GB
-		self.RT = RT
 		self.BT = BT
+		self.RT = RT
 
 
 	"""

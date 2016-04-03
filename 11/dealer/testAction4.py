@@ -30,13 +30,13 @@ class TestAction4(unittest.TestCase):
 		self.actGP = Action4(0, [GainPopulation(0, 1)], [], [], [])
 		self.actGB = Action4(0, [], [GainBodySize(0, 1)], [], [])
 		self.actRT = Action4(0, [], [], [ReplaceTrait(0, 1, 1)], [])
-		self.actBT0t = Action4(0, [], [], [], [BuySpeciesBoard(1)])
-		self.actBT1t = Action4(0, [], [], [], [BuySpeciesBoard(1, 2)])
-		self.actBT2t = Action4(0, [], [], [], [BuySpeciesBoard(1, 2, 3)])
-		self.actBT3t = Action4(0, [], [], [], [BuySpeciesBoard(1, 2, 3, 4)])
-		self.actBT4t = Action4(0, [], [], [], [BuySpeciesBoard(1, 2, 3, 4, 5)])
-		self.addBodyToNewSpec = Action4(0, [GainPopulation(1, 1)], [GainBodySize()], [ReplaceTrait()], [BuySpeciesBoard(2, 3)])
-		self.actAll = Action4(0, [GainPopulation(0, 1)], [GainBodySize(0, 2)], [ReplaceTrait(0, 0, 3)], [BuySpeciesBoard(4, 5)])
+		self.actBT0t = Action4(0, [], [], [], [BuySpeciesBoard(1, [])])
+		self.actBT1t = Action4(0, [], [], [], [BuySpeciesBoard(1, [2])])
+		self.actBT2t = Action4(0, [], [], [], [BuySpeciesBoard(1, [2, 3])])
+		self.actBT3t = Action4(0, [], [], [], [BuySpeciesBoard(1, [2, 3, 4])])
+		self.actBT4t = Action4(0, [], [], [], [BuySpeciesBoard(1, [2, 3, 4, 5])])
+		self.addBodyToNewSpec = Action4(0, [GainPopulation(1, 1)], [], [], [BuySpeciesBoard(2, [3])])
+		self.actAll = Action4(0, [GainPopulation(0, 1)], [GainBodySize(0, 2)], [ReplaceTrait(0, 0, 3)], [BuySpeciesBoard(4, [5])])
 		
 
 	def tearDown(self):
