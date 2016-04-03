@@ -1,8 +1,8 @@
 # A Representation for an "Action4" in a game of Evolution
-import gainPopulation
-import gainBodySize
-import buySpeciesBoard
-import replaceTrait
+from gainPopulation import *
+from gainBodySize import *
+from buySpeciesBoard import *
+from replaceTrait import *
 
 class Action4:
 
@@ -35,8 +35,8 @@ class Action4:
 		Action4.validate(action4)
 		cardIdx, GP, GB, BT, RT = action4
 
-		return Action4(cardIdx, [GainPopulation.fromJson(p) for p in GP], 
-								[GainBodySize.fromJson(b) for b in GB], 
+		return Action4(cardIdx, [GainPopulation.fromJson(p) for p in GP[1:]], 
+								[GainBodySize.fromJson(b) for b in GB[1:]], 
 								[BuySpeciesBoard.fromJson(buyt) for buyt in BT], 
 								[ReplaceTrait.fromJson(rept) for rept in RT])
 

@@ -16,6 +16,7 @@ class GainPopulation:
 	@staticmethod
 	def fromJson(GP):
 		GainPopulation.validate(GP)
+		print GP
 		key, spec, card = GP
 		return GainPopulation(spec, card)
 

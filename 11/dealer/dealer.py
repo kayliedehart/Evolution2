@@ -258,7 +258,7 @@ class Dealer:
 	def playerGains(self, playerIdx, gain, gfunc):
 		for g in gain:
 			self.updateDiscards((playerIdx, g.cardIdx))
-			player.gfunc(g.specIdx)
+			gfunc(g.specIdx)
 
 	"""
 	Give the PlayerState a new SpeciesBoard with a population of 1 and
@@ -279,14 +279,14 @@ class Dealer:
 	"""
 	Update PlayerState per a Player's requests for increases in population, 
 	bodysize, or creating additional SpeciesBoards.
-	@param player: the PlayerState to be updated
+	@param playerIdx: the index of the PlayerState to be updated
 	@param purchases: the Action4 to be carried out
-	PlayerState, Action4 -> Void
+	Nat, Action4 -> Void
 	"""
-	def buyUpgrades(self, player, purchases):
-		self.createSpecBoard(player, purchases.BT)
-		self.playerGains(player, purchases.GP, addPopulation)
-		self.playerGains(player, purchases.GB, addBody)
+	def buyUpgrades(self, playerIdx, purchases):
+		self.createSpecBoard(playerIdx, purchases.BT)
+		self.playerGains(playerIdx, purchases.GP, self.players[playerIdx].addPopulation)
+		self.playerGains(playerIdx, purchases.GB, self.players[playerIdx].addBody)
 
 	"""
 	Get a list of TraitCard objects from a list of indexes pointing at them
@@ -295,7 +295,7 @@ class Dealer:
 	ListOf((Nat, Nat)) -> ListOf(TraitCard)
 	"""
 	def getPlayerCards(self, moves):
-		return [traitCards.append(self.players[moves[i][0]].hand[moves[i][1]]) for i in range(len(moves))]
+		return [self.players[moves[i][0]].hand[moves[i][1]] for i in range(len(moves))]
 
 	"""
 	Update the permanent discard as well as the temporary cards-played to have the most recently-played cards
@@ -314,7 +314,7 @@ class Dealer:
 	ListOf(Nat, Nat) -> Void
 	"""
 	def replenishWateringHole(self, tributes):
-		tributeCards = self.getPlayercards(tributes)
+		tributeCards = self.getPlayerCards(tributes)
 		self.wateringHole += sum([tribute.food for tribute in tributeCards])
 		self.wateringHole = max(0, self.wateringHole)
 		self.updateDiscards(tributes)
@@ -355,7 +355,7 @@ class Dealer:
 		for playerIdx, cardIdx in self.cardsPlayed:
 			cardsDict[playerIdx] += [cardIdx]
 
-		for playerIdx, cardIdcs in cardsDict:
+		for playerIdx, cardIdcs in cardsDict.items():
 			self.players[playerIdx].discardFromHand(cardIdcs)
 
 		self.cardsPlayed = []
