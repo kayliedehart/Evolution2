@@ -1,8 +1,8 @@
 # A Representation for an "Action4" in a game of Evolution
-import gainPopulation
-import gainBodySize
-import buySpeciesBoard
-import replaceTrait
+from gainPopulation import GainPopulation
+from gainBodySize import GainBodySize
+from buySpeciesBoard import BuySpeciesBoard
+from replaceTrait import ReplaceTrait
 
 class Action4:
 
