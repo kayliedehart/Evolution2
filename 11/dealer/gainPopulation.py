@@ -11,12 +11,11 @@ class GainPopulation:
 		self.cardIdx = cardIdx
 
 	"""
-	JSON -> GainPopulation
+	JSON, PlayerState -> GainPopulation
 	"""
 	@staticmethod
-	def fromJson(GP):
-		GainPopulation.validate(GP)
-		print GP
+	def fromJson(GP, player):
+		GainPopulation.validate(GP, player)
 		key, spec, card = GP
 		return GainPopulation(spec, card)
 
@@ -24,8 +23,8 @@ class GainPopulation:
 	"""
 	Check if a given list of JSON GainPopulations is valid
 	EFFECT: If the list is invalid, quit
-	JSON -> Void
+	JSON, PlayerState -> Void
 	"""
 	@staticmethod
-	def validate(GP):
+	def validate(GP, player):
 		pass

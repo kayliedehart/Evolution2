@@ -3,6 +3,11 @@ from dealer import *
 from species import Species
 from playerState import PlayerState
 from traitCard import TraitCard
+from action4 import Action4
+from gainPopulation import GainPopulation
+from gainBodySize import GainBodySize
+from buySpeciesBoard import BuySpeciesBoard
+from replaceTrait import ReplaceTrait
 
 class TestDealer(unittest.TestCase):
 
@@ -45,6 +50,30 @@ class TestDealer(unittest.TestCase):
 		self.pCFS3 = PlayerState(3, 5, [], [])
 		self.dCFS = Dealer([self.pCFS1, self.pCFS2, self.pCFS3], 10, [])
 
+		# for step4
+		self.t6 = TraitCard("herding", 0)
+		self.defSpec = Species(0, 0, 1, [], 0)
+		self.specWGrownBody = Species(0, 1, 1, [], 0)
+		self.specW3t = Species(0, 0, 1, [self.t3, self.t4, self.t5], 0)
+		self.specWAll = Species(2, 1, 2, [self.t4], 1)
+		self.playerWithManyCards = PlayerState(1, 0, [], [self.t1, self.t2, self.t3, self.t4, self.t5, self.t6])
+		self.playerForAll = PlayerState(1, 0, [self.specWAll], [])
+		self.playerFor3t = PlayerState(1, 0, [self.specW3t], [self.t6])
+		self.playerForDefSpec = PlayerState(1, 0, [self.defSpec], [self.t5, self.t6])
+		self.playerForBodyNewSpec = PlayerState(1, 0, [self.specWGrownBody], [self.t3, self.t4, self.t5, self.t6])
+		self.noAct = Action4(0, [], [], [], [])
+		self.actGP = Action4(0, [GainPopulation(0, 1)], [], [], [])
+		self.actGB = Action4(0, [], [GainBodySize(0, 1)], [], [])
+		self.actRT = Action4(0, [], [], [], [ReplaceTrait(0, 1, 1)])
+		self.actBT0t = Action4(0, [], [], [BuySpeciesBoard(1, [])], [])
+		self.actBT1t = Action4(0, [], [], [BuySpeciesBoard(1, [2])], [])
+		self.actBT2t = Action4(0, [], [], [BuySpeciesBoard(1, [2, 3])], [])
+		self.actBT3t = Action4(0, [], [], [BuySpeciesBoard(1, [2, 3, 4])], [])
+		self.actBT4t = Action4(0, [], [], [BuySpeciesBoard(1, [2, 3, 4, 5])], [])
+		self.addBodyToNewSpec = Action4(0, [GainPopulation(1, 1)], [], [BuySpeciesBoard(2, [3])], [])
+		self.actAll = Action4(0, [GainPopulation(0, 1)], [GainBodySize(0, 2)], [BuySpeciesBoard(4, [5])], [ReplaceTrait(0, 0, 3)])
+		self.simpleDealerForStep4 = Dealer([self.playerWithManyCards], 0, [])
+
 	def tearDown(self):
 		del self.vegHorns 
 		del self.vegCoop
@@ -79,6 +108,55 @@ class TestDealer(unittest.TestCase):
 		del self.pCFS2
 		del self.pCFS3
 		del self.dCFS
+
+		# for step4
+		del self.t6
+		del self.defSpec
+		del self.specWGrownBody
+		del self.specW3t
+		del self.specWAll
+		del self.playerWithManyCards
+		del self.playerFor3t
+		del self.playerForAll
+		del self.playerForDefSpec
+		del self.playerForBodyNewSpec
+		del self.noAct
+		del self.actGP
+		del self.actGB
+		del self.actRT
+		del self.actBT0t
+		del self.actBT1t
+		del self.actBT2t
+		del self.actBT3t
+		del self.actBT4t
+		del self.addBodyToNewSpec
+		del self.actAll	
+		del self.simpleDealerForStep4
+
+	def testStep4(self):
+		# successfully adding three traits to a new species
+		self.playerWithManyCards = PlayerState(1, 0, [], [self.t1, self.t2, self.t3, self.t4, self.t5, self.t6])
+		self.simpleDealerForStep4 = Dealer([self.playerWithManyCards], 0, [])
+		self.simpleDealerForStep4.step4([self.actBT3t])
+		self.assertEqual(len(self.playerFor3t.hand), 1)
+		self.assertEqual(len(self.playerFor3t.species), 1)
+		self.assertEqual(len(self.playerFor3t.species[0].traits), 3)
+		self.assertEqual(self.simpleDealerForStep4.players[0], self.playerFor3t)
+		for card in [self.t1, self.t2, self.t3, self.t4, self.t5]:
+			self.assertTrue(card in self.simpleDealerForStep4.discard)
+			
+		# test adding a species, then growing its population and body and giving it a new trait
+		self.playerWithManyCards = PlayerState(1, 0, [], [self.t1, self.t2, self.t3, self.t4, self.t5, self.t6])
+		self.simpleDealerForStep4 = Dealer([self.playerWithManyCards], 0, [])
+		self.simpleDealerForStep4.step4([self.actAll])
+		self.assertEqual(len(self.playerForAll.hand), 0)
+		self.assertEqual(len(self.playerForAll.species), 1)
+		self.assertEqual(len(self.playerForAll.species[0].traits), 1)
+		self.assertEqual(self.simpleDealerForStep4.players[0], self.playerForAll)
+		self.assertEqual(self.simpleDealerForStep4.players[0].species, [self.specWAll])
+		for card in [self.t1, self.t2, self.t3, self.t4, self.t5, self.t6]:
+			self.assertTrue(card in self.simpleDealerForStep4.discard)
+		self.assertEqual(self.simpleDealerForStep4.wateringHole, 0)
 
 
 	def testXstep(self):

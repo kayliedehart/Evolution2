@@ -11,20 +11,20 @@ class GainBodySize:
 		self.cardIdx = cardIdx
 
 	"""
-	JSON -> GainPopulation
+	JSON, PlayerState -> GainPopulation
 	"""
 	@staticmethod
-	def fromJson(GB):
-		GainBodySize.validate(GB)
+	def fromJson(GB, player):
+		GainBodySize.validate(GB, player)
 		key, spec, card = GB
 		return GainBodySize(spec, card)
 
 	"""
 	Check if a given list of JSON GainBodySizes is valid
 	EFFECT: If the list is invalid, quit
-	JSON -> Void
+	JSON, PlayerState -> Void
 	"""
 	@staticmethod
-	def validate(GP):
+	def validate(GP, player):
 		pass
 
