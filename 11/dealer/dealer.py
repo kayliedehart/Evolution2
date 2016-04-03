@@ -327,7 +327,11 @@ class Dealer:
 	def prelimAutoFeedings(self):
 		for player in self.players:
 			player.fertile()
+
+		for player in self.players:
 			self.wateringHole -= player.longNeck(self.wateringHole)
+		
+		for player in self.players:
 			player.transferFatFood()
 
 	"""

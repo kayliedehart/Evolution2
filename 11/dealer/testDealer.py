@@ -73,6 +73,9 @@ class TestDealer(unittest.TestCase):
 		self.addBodyToNewSpec = Action4(0, [GainPopulation(1, 1)], [], [BuySpeciesBoard(2, [3])], [])
 		self.actAll = Action4(0, [GainPopulation(0, 1)], [GainBodySize(0, 2)], [BuySpeciesBoard(4, [5])], [ReplaceTrait(0, 0, 3)])
 		self.simpleDealerForStep4 = Dealer([self.playerWithManyCards], 0, [])
+		self.dealerForRevokingCards = Dealer([PlayerState(1, 0, [], [self.t1, self.t2]), 
+											  PlayerState(2, 0, [], [self.t3, self.t4, self.t5]),
+											  PlayerState(3, 0, [], [self.t6])], 0, [])
 
 	def tearDown(self):
 		del self.vegHorns 
@@ -132,6 +135,7 @@ class TestDealer(unittest.TestCase):
 		del self.addBodyToNewSpec
 		del self.actAll	
 		del self.simpleDealerForStep4
+		del self.dealerForRevokingCards
 
 	def testStep4(self):
 		# successfully adding three traits to a new species
@@ -158,6 +162,58 @@ class TestDealer(unittest.TestCase):
 			self.assertTrue(card in self.simpleDealerForStep4.discard)
 		self.assertEqual(self.simpleDealerForStep4.wateringHole, 0)
 
+	def testRevokePlayedCards(self):
+		# revoke cards from the hands of players
+		# if there is an error with indexing, then Player w/id 2 will fail spectacularly
+		self.dealerForRevokingCards.cardsPlayed = [(0, 1), (1, 1), (1, 0), (2, 0)]
+		self.dealerForRevokingCards.revokePlayedCards()
+		self.assertEqual(len(self.dealerForRevokingCards.cardsPlayed), 0)
+		self.assertEqual(self.dealerForRevokingCards.players[0].hand, [self.t1])
+		self.assertEqual(self.dealerForRevokingCards.players[1].hand, [self.t5])
+		self.assertEqual(len(self.dealerForRevokingCards.players[2].hand), 0)
+
+	def testPlayerGains(self):
+		pass
+
+	def testCreateSpecBoard(self):
+		pass
+
+	def testBuyUpgrades(self):
+		pass
+
+	def testGetPlayerCards(self):
+		# self.dealerForRevokingCards = Dealer([PlayerState(1, 0, [], [self.t1, self.t2]), 
+		# 							  PlayerState(2, 0, [], [self.t3, self.t4, self.t5]),
+		# 							  PlayerState(3, 0, [], [self.t6])], 0, [])
+		self.assertEqual(self.dealerForRevokingCards.getPlayerCards([(0, 1), (1, 1), (1, 0), (2, 0)]), 
+							[self.t2, self.t4, self.t3, self.t6])
+
+	def testUpdateDiscards(self):		
+		# self.dealerForRevokingCards = Dealer([PlayerState(1, 0, [], [self.t1, self.t2]), 
+		# 							  PlayerState(2, 0, [], [self.t3, self.t4, self.t5]),
+		# 							  PlayerState(3, 0, [], [self.t6])], 0, [])
+		self.dealerForRevokingCards.discard = [self.t1]
+		self.dealerForRevokingCards.cardsPlayed = [(0, 1)]
+		self.dealerForRevokingCards.updateDiscards([(1, 1), (1, 0)])
+		self.assertEqual(self.dealerForRevokingCards.discard, [self.t1, self.t4, self.t3])
+		self.assertEqual(self.dealerForRevokingCards.cardsPlayed, [(0, 1), (1, 1), (1, 0)])
+
+	def testReplenishWateringHole(self):
+		pass
+
+	def testPrelimAutoFeedings(self):
+		dealerForAutoFeeds = Dealer([PlayerState(1, 0, [Species(0, 2, 3, [TraitCard("fertile"), TraitCard("fat-tissue")], 0)], []),
+									PlayerState(1, 0, [Species(0, 2, 3, [TraitCard("fat-tissue")], 0)], []),
+									PlayerState(3, 0, [Species(0, 2, 3, [TraitCard("fertile"), TraitCard("long-neck")], 0)], [])])
+
+	def testReplaceTraits(self):
+		playerForReplacingTraits = PlayerState(1, 0, [Species(0, 0, 1, [TraitCard("foraging"), TraitCard("herding")], 0)], 
+												[TraitCard("carnivore"), TraitCard("horns")])
+		dealerForReplacingTraits = Dealer([playerForReplacingTraits], 0, [])
+		dealerForReplacingTraits.replaceTraits(0, self.actRT)
+		# the card is still in hand -- it will be removed in the step4 method, not here
+		self.assertEqual(dealerForReplacingTraits.players[0].hand, [TraitCard("carnivore"), TraitCard("horns")]) 
+		self.assertEqual(dealerForReplacingTraits.players[0].species[0].traits, [TraitCard("foraging"), TraitCard("horns")])
 
 	def testXstep(self):
 		self.assertEqual(self.xstep3spec.food, 0)
@@ -389,36 +445,6 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.pCFS2.species[0].food, 2)
 		self.assertEqual(self.pCFS3.species, [])
 		self.assertEqual(self.dCFS.wateringHole, 6)
-
-	def testPlayerGains(self):
-		pass
-
-	def testCreateSpecBoard(self):
-		pass
-
-	def testBuyUpgrades(self):
-		pass
-
-	def testGetPlayerCards(self):
-		pass
-
-	def testUpdateDiscards(self):
-		pass
-
-	def testReplenishWateringHole(self):
-		pass
-
-	def testPrelimAutoFeedings(self):
-		pass
-
-	def testReplaceTraits(self):
-		pass
-
-	def testRevokePlayedCards(self):
-		pass
-
-	def testStep4(self):
-		pass
 
 
 if __name__ == "__main__":
