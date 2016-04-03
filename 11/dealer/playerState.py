@@ -351,7 +351,7 @@ class PlayerState:
 		longNeck = self.getSpeciesWithTrait("long-neck")
 		for ln in longNeck:
 			if wateringHole > 0:
-				fedThisSpecies = self.feedSpecies(longNeck, 1, wateringHole)
+				fedThisSpecies = self.feedSpecies(ln, 1, wateringHole)
 				amountFed += fedThisSpecies
 				wateringHole -= fedThisSpecies
 

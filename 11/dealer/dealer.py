@@ -379,7 +379,7 @@ class Dealer:
 		self.prelimAutoFeedings()
 
 		self.currentlyFeeding = self.players[:]	
-		while (self.wateringHole > 0) and (len(currentlyFeeding) > 0):
+		while (self.wateringHole > 0) and (len(self.currentlyFeeding) > 0):
 			self.feed1()
 
 
