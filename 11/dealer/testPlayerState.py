@@ -27,6 +27,10 @@ class TestPlayerState(unittest.TestCase):
 		self.p8 = PlayerState(8, 0, [self.carnCoop], [])
 		self.p9 = PlayerState(9, 0, [self.vegHorns], [])
 
+		self.playerWithCards = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], 
+												[TraitCard("foraging", 2), TraitCard("carnivore", -7),
+												TraitCard("scavenger", 3), TraitCard("horns", 1)])
+
 	def tearDown(self):
 		del self.noTraits
 		del self.vegHorns 
@@ -48,6 +52,8 @@ class TestPlayerState(unittest.TestCase):
 		del self.p7
 		del self.p8
 		del self.p9
+
+		del self.playerWithCards
 
 	def testToDict(self):
 		self.assertEqual(self.p8.toDict(), {"num": 8, "species": 
@@ -80,6 +86,13 @@ class TestPlayerState(unittest.TestCase):
 	def testIsExtinct(self):
 		self.assertTrue(self.p6.isExtinct(0))
 		self.assertFalse(self.p1.isExtinct(0))
+
+	def testAddSpecies(self):
+		self.assertEqual(len(self.playerWithCards.species), 3)
+		self.assertEqual(len(self.playerWithCards.hand), 4)
+		self.playerWithCards.addSpecies([1,2,3])
+		self.assertEqual(len(self.playerWithCards.species), 4)
+		self.assertEqual(len(self.playerWithCards.hand), 4)
 
 	def testRemoveSpecies(self):
 		self.assertEqual(len(self.p6.species), 1)
@@ -152,6 +165,15 @@ class TestPlayerState(unittest.TestCase):
 		self.assertEqual(self.vegHorns.food, 1)
 		self.assertEqual(self.fatScav.food, 3)
 		self.assertEqual(self.carnCoop.food, 3)
+	
+	def testAddBody(self):
+		pass
+
+	def testAddPopulation(self):
+		pass
+
+	def testDiscardFromHand(self):
+		pass
 
 	def testGetSpeciesWithTrait(self):
 		pass

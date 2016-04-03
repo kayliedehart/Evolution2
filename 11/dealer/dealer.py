@@ -247,7 +247,7 @@ class Dealer:
 
 
 	"""
-	For each upgrade request, move the player's payment out of their hand and 
+	For each upgrade request, move the player's payment 
 	to the discard list, and modify the requested species field.
 	@param playerIdx: index of the current player upgrading
 	@param gain: a gainPopulation or gainBodySize list
