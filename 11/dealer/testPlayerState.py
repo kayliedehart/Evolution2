@@ -153,6 +153,11 @@ class TestPlayerState(unittest.TestCase):
 		self.assertEqual(self.fatScav.food, 3)
 		self.assertEqual(self.carnCoop.food, 3)
 
+	def testFertile(self):
+		pass
+
+	def testLongNeck(self):
+		pass
 
 
 if __name__ == "__main__":
