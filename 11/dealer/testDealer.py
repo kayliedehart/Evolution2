@@ -46,6 +46,11 @@ class TestDealer(unittest.TestCase):
 		self.dCFS = Dealer([self.pCFS1, self.pCFS2, self.pCFS3], 10, [])
 
 	def tearDown(self):
+		del self.t1
+		del self.t2
+		del self.t3
+		del self.t4
+		del self.t5
 		del self.vegHorns 
 		del self.vegCoop
 		del self.fat

@@ -27,24 +27,27 @@ class Action4:
 	Construct an Action4 from the given JSON input
 	EFFECT: if the input is invalid, quit
 	@param action4: JSON representation of an Action4
+	@param player: PlayerState that this action corresponds 
 	@return an Action4 equivalent to the JSON
-	JSON -> Action4
+	JSON, PlayerState -> Action4
 	"""
 	@staticmethod
-	def actionFromJson(action4):
-		Action4.validate(action4)
+	def actionFromJson(action4, player):
+		Action4.validate(action4, player)
 		cardIdx, GP, GB, BT, RT = action4
 
-		return Action4(cardIdx, [GainPopulation.fromJson(p) for p in GP[1:]], 
-								[GainBodySize.fromJson(b) for b in GB[1:]], 
-								[BuySpeciesBoard.fromJson(buyt) for buyt in BT], 
-								[ReplaceTrait.fromJson(rept) for rept in RT])
+		return Action4(cardIdx, [GainPopulation.fromJson(p, player) for p in GP[1:]], 
+								[GainBodySize.fromJson(b, player) for b in GB[1:]], 
+								[BuySpeciesBoard.fromJson(buyt, player) for buyt in BT], 
+								[ReplaceTrait.fromJson(rept, player) for rept in RT])
 
 	"""
 		Validate a JSON Action4
 		EFFECT: if not valid, quit
-		JSON -> Void
+		@param action4: JSON representation of an Action4
+		@param player: PlayerState that this action corresponds 
+		JSON, PlayerState -> Void
 	"""
 	@staticmethod
-	def validate(action4):
+	def validate(action4, player):
 		pass

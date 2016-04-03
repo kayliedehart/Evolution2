@@ -11,11 +11,11 @@ class BuySpeciesBoard:
 		self.traitList = traitIdces
 
 	"""
-	JSON -> BuySpeciesBoard
+	JSON, PlayerState -> BuySpeciesBoard
 	"""
 	@staticmethod
-	def fromJson(BT):
-		BuySpeciesBoard.validate(BT)
+	def fromJson(BT, player):
+		BuySpeciesBoard.validate(BT, player)
 		payment = BT.pop(0)
 		return BuySpeciesBoard(payment, BT)
 
@@ -27,5 +27,5 @@ class BuySpeciesBoard:
 	JSON -> Void
 	"""
 	@staticmethod
-	def validate(BT):
+	def validate(BT, player):
 		pass

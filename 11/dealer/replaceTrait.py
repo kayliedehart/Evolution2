@@ -16,19 +16,19 @@ class ReplaceTrait:
 
 
 	"""
-	JSON -> ReplaceTrait or EmptyList
+	JSON, PlayerState -> ReplaceTrait
 	"""
 	@staticmethod
-	def fromJson(RT):
-		ReplaceTrait.validate(RT)
+	def fromJson(RT, player):
+		ReplaceTrait.validate(RT, player)
 		specIdx, oldTraitIdx, newTraitIdx = RT
 		return ReplaceTrait(specIdx, oldTraitIdx, newTraitIdx)
 
 	"""
 	Check if a given list of JSON ReplaceTraits is valid
 	EFFECT: If the list is invalid, quit
-	JSON -> Void
+	JSON, PlayerState -> Void
 	"""
 	@staticmethod
-	def validate(RT):
+	def validate(RT, player):
 		pass
