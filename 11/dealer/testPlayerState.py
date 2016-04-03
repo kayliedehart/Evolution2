@@ -9,6 +9,8 @@ class TestPlayerState(unittest.TestCase):
 		self.vegHorns = Species(1, 2, 3, [TraitCard("horns")], 0)
 		self.vegCoop = Species(1, 2, 3, [TraitCard("cooperation")], 0)
 		self.fat = Species(4, 3, 4, [TraitCard("fat-tissue")], 3)
+		self.fertileCoop = Species(0, 3, 4, [TraitCard("fertile"), TraitCard("cooperation")], 0)
+		self.fertileLongNeck = Species(0, 3, 4, [TraitCard("fertile"), TraitCard("long-neck"), TraitCard("cooperation")], 0)
 		self.full = Species(2, 2, 2, [], 0)
 		self.fatScav = Species(2, 3, 4, [TraitCard("fat-tissue"), TraitCard("scavenger")], 1)
 		self.fatFor = Species(4, 3, 4, [TraitCard("fat-tissue"), TraitCard("foraging")], 1)
@@ -30,6 +32,10 @@ class TestPlayerState(unittest.TestCase):
 		self.playerWithCards = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], 
 												[TraitCard("foraging", 2), TraitCard("carnivore", -7),
 												TraitCard("scavenger", 3), TraitCard("horns", 1)])
+		self.playerWithFertileLong = PlayerState(1, 0, [self.fertileCoop, self.fertileLongNeck, self.carnForage], 
+												[TraitCard("foraging", 2), TraitCard("carnivore", -7),
+												TraitCard("scavenger", 3), TraitCard("horns", 1)])
+		self.playerWithFat = PlayerState(1, 0, [self.fatScav, self.fatFor], [])
 
 	def tearDown(self):
 		del self.noTraits
@@ -92,6 +98,11 @@ class TestPlayerState(unittest.TestCase):
 		self.assertEqual(len(self.playerWithCards.hand), 4)
 		self.playerWithCards.addSpecies([1,2,3])
 		self.assertEqual(len(self.playerWithCards.species), 4)
+		self.assertTrue(self.playerWithCards.species[3].hasTrait("carnivore"))
+		self.assertTrue(self.playerWithCards.species[3].hasTrait("scavenger"))
+		self.assertTrue(self.playerWithCards.species[3].hasTrait("horns"))
+		self.assertEqual(self.playerWithCards.species[3].population, 1)
+		self.assertEqual(self.playerWithCards.species[3].body, 0)
 		self.assertEqual(len(self.playerWithCards.hand), 4)
 
 	def testRemoveSpecies(self):
@@ -167,28 +178,181 @@ class TestPlayerState(unittest.TestCase):
 		self.assertEqual(self.carnCoop.food, 3)
 	
 	def testAddBody(self):
-		pass
+		# food 1, body 2, population 3, "cooperation", fat food 0
+		self.assertEqual(self.playerWithCards.species[0].body, 2)
+		self.assertEqual(self.playerWithCards.species[0].population, 3)
+		self.assertEqual(self.playerWithCards.species[0].food, 1)
+		self.assertEqual(self.playerWithCards.species[0].fatFood, 0)
+		self.playerWithCards.addBody(0)
+		self.assertEqual(self.playerWithCards.species[0].body, 3)
+		self.assertEqual(self.playerWithCards.species[0].population, 3)
+		self.assertEqual(self.playerWithCards.species[0].food, 1)
+		self.assertEqual(self.playerWithCards.species[0].fatFood, 0)
+		self.assertTrue(self.playerWithCards.species[0].hasTrait("cooperation"))
+
 
 	def testAddPopulation(self):
-		pass
+		# food 1, body 2, population 3, "cooperation", fat food 0
+		self.assertEqual(self.playerWithCards.species[0].body, 2)
+		self.assertEqual(self.playerWithCards.species[0].population, 3)
+		self.assertEqual(self.playerWithCards.species[0].food, 1)
+		self.assertEqual(self.playerWithCards.species[0].fatFood, 0)
+		self.playerWithCards.addPopulation(0)
+		self.assertEqual(self.playerWithCards.species[0].body, 2)
+		self.assertEqual(self.playerWithCards.species[0].population, 4)
+		self.assertEqual(self.playerWithCards.species[0].food, 1)
+		self.assertEqual(self.playerWithCards.species[0].fatFood, 0)
+		self.assertTrue(self.playerWithCards.species[0].hasTrait("cooperation"))
 
 	def testDiscardFromHand(self):
-		pass
+		self.assertEqual(len(self.playerWithCards.hand), 4)
+		self.assertEqual(self.playerWithCards.hand[0], TraitCard("foraging", 2))
+		self.assertEqual(self.playerWithCards.hand[2], TraitCard("scavenger", 3))
+
+		self.playerWithCards.discardFromHand([0, 1, 3])
+		self.assertEqual(len(self.playerWithCards.hand), 1)
+		self.assertEqual(self.playerWithCards.hand[0], TraitCard("scavenger", 3))
 
 	def testGetSpeciesWithTrait(self):
-		pass
+		self.assertEqual(self.p3.getSpeciesWithTrait("cooperation"), [0, 1])
+		self.assertEqual(self.p3.getSpeciesWithTrait("carnivore"), [1, 2])
+		self.assertEqual(self.p3.getSpeciesWithTrait("herding"), [])
 
 	def testFertile(self):
-		pass
+		self.assertEqual(self.playerWithFertileLong.species[0].body, 3)
+		self.assertEqual(self.playerWithFertileLong.species[0].population, 4)
+		self.assertEqual(self.playerWithFertileLong.species[0].food, 0)
+		self.assertEqual(self.playerWithFertileLong.species[0].fatFood, 0)
+
+		self.assertEqual(self.playerWithFertileLong.species[1].body, 3)
+		self.assertEqual(self.playerWithFertileLong.species[1].population, 4)
+		self.assertEqual(self.playerWithFertileLong.species[1].food, 0)
+		self.assertEqual(self.playerWithFertileLong.species[1].fatFood, 0)
+
+		self.assertEqual(self.playerWithFertileLong.species[2].body, 4)
+		self.assertEqual(self.playerWithFertileLong.species[2].population, 5)
+		self.assertEqual(self.playerWithFertileLong.species[2].food, 3)
+		self.assertEqual(self.playerWithFertileLong.species[2].fatFood, 0)
+
+		self.playerWithFertileLong.fertile()
+		self.assertEqual(self.playerWithFertileLong.species[0].body, 3)
+		self.assertEqual(self.playerWithFertileLong.species[0].population, 5)
+		self.assertEqual(self.playerWithFertileLong.species[0].food, 0)
+		self.assertEqual(self.playerWithFertileLong.species[0].fatFood, 0)
+		self.assertTrue(self.playerWithFertileLong.species[0].hasTrait("fertile"))
+
+		self.assertEqual(self.playerWithFertileLong.species[1].body, 3)
+		self.assertEqual(self.playerWithFertileLong.species[1].population, 5)
+		self.assertEqual(self.playerWithFertileLong.species[1].food, 0)
+		self.assertEqual(self.playerWithFertileLong.species[1].fatFood, 0)
+		self.assertTrue(self.playerWithFertileLong.species[1].hasTrait("fertile"))
+
+		self.assertEqual(self.playerWithFertileLong.species[2].body, 4)
+		self.assertEqual(self.playerWithFertileLong.species[2].population, 5)
+		self.assertEqual(self.playerWithFertileLong.species[2].food, 3)
+		self.assertEqual(self.playerWithFertileLong.species[2].fatFood, 0)
+		self.assertFalse(self.playerWithFertileLong.species[2].hasTrait("fertile"))
+		
 
 	def testLongNeck(self):
-		pass
+		self.assertEqual(self.playerWithFertileLong.species[0].body, 3)
+		self.assertEqual(self.playerWithFertileLong.species[0].population, 4)
+		self.assertEqual(self.playerWithFertileLong.species[0].food, 0)
+		self.assertEqual(self.playerWithFertileLong.species[0].fatFood, 0)
+
+		self.assertEqual(self.playerWithFertileLong.species[1].body, 3)
+		self.assertEqual(self.playerWithFertileLong.species[1].population, 4)
+		self.assertEqual(self.playerWithFertileLong.species[1].food, 0)
+		self.assertEqual(self.playerWithFertileLong.species[1].fatFood, 0)
+
+		self.assertEqual(self.playerWithFertileLong.species[2].body, 4)
+		self.assertEqual(self.playerWithFertileLong.species[2].population, 5)
+		self.assertEqual(self.playerWithFertileLong.species[2].food, 3)
+		self.assertEqual(self.playerWithFertileLong.species[2].fatFood, 0)
+
+		# wateringHole -> AmountFed
+		self.assertEqual(self.playerWithFertileLong.longNeck(10), 3)
+
+		self.assertEqual(self.playerWithFertileLong.species[0].body, 3)
+		self.assertEqual(self.playerWithFertileLong.species[0].population, 4)
+		self.assertEqual(self.playerWithFertileLong.species[0].food, 0)
+		self.assertEqual(self.playerWithFertileLong.species[0].fatFood, 0)
+
+		#long-neck, cooperation (1)
+		self.assertEqual(self.playerWithFertileLong.species[1].body, 3)
+		self.assertEqual(self.playerWithFertileLong.species[1].population, 4)
+		self.assertEqual(self.playerWithFertileLong.species[1].food, 1)
+		self.assertEqual(self.playerWithFertileLong.species[1].fatFood, 0)
+
+		#foraging (2)
+		self.assertEqual(self.playerWithFertileLong.species[2].body, 4)
+		self.assertEqual(self.playerWithFertileLong.species[2].population, 5)
+		self.assertEqual(self.playerWithFertileLong.species[2].food, 5)
+		self.assertEqual(self.playerWithFertileLong.species[2].fatFood, 0)
 
 	def testTransferFatFood(self):
-		pass
+		self.assertEqual(self.playerWithFat.species[0].body, 3)
+		self.assertEqual(self.playerWithFat.species[0].population, 4)
+		self.assertEqual(self.playerWithFat.species[0].food, 2)
+		self.assertEqual(self.playerWithFat.species[0].fatFood, 1)
+
+		self.assertEqual(self.playerWithFat.species[1].body, 3)
+		self.assertEqual(self.playerWithFat.species[1].population, 4)
+		self.assertEqual(self.playerWithFat.species[1].food, 4)
+		self.assertEqual(self.playerWithFat.species[1].fatFood, 1)
+
+		self.playerWithFat.transferFatFood()
+
+		self.assertEqual(self.playerWithFat.species[0].body, 3)
+		self.assertEqual(self.playerWithFat.species[0].population, 4)
+		self.assertEqual(self.playerWithFat.species[0].food, 3)
+		self.assertEqual(self.playerWithFat.species[0].fatFood, 0)
+
+		self.assertEqual(self.playerWithFat.species[1].body, 3)
+		self.assertEqual(self.playerWithFat.species[1].population, 4)
+		self.assertEqual(self.playerWithFat.species[1].food, 4)
+		self.assertEqual(self.playerWithFat.species[1].fatFood, 1)
+		
 
 	def testReplaceTrait(self):
-		pass
+		# specIdx, oldTraitIdx, newTraitIdx -> Void
+		"""
+		self.playerWithCards = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], 
+												[TraitCard("foraging", 2), TraitCard("carnivore", -7),
+												TraitCard("scavenger", 3), TraitCard("horns", 1)])
+		"""
+		# food 1, body 2, population 3, "cooperation", fat food 0
+		self.assertEqual(self.playerWithCards.species[0].body, 2)
+		self.assertEqual(self.playerWithCards.species[0].population, 3)
+		self.assertEqual(self.playerWithCards.species[0].food, 1)
+		self.assertEqual(self.playerWithCards.species[0].fatFood, 0)
+		self.assertTrue(self.playerWithCards.species[0].hasTrait("cooperation"))
+		self.assertFalse(self.playerWithCards.species[0].hasTrait("foraging"))
+
+		self.playerWithCards.replaceTrait(0, 0, 0)
+		self.assertEqual(self.playerWithCards.species[0].body, 2)
+		self.assertEqual(self.playerWithCards.species[0].population, 3)
+		self.assertEqual(self.playerWithCards.species[0].food, 1)
+		self.assertEqual(self.playerWithCards.species[0].fatFood, 0)
+		self.assertFalse(self.playerWithCards.species[0].hasTrait("cooperation"))
+		self.assertTrue(self.playerWithCards.species[0].hasTrait("foraging"))
+
+	def testReplaceTraitFat(self):
+		# self.fat = Species(4, 3, 4, [TraitCard("fat-tissue")], 3)
+		self.assertEqual(self.playerWithCards.species[1].body, 3)
+		self.assertEqual(self.playerWithCards.species[1].population, 4)
+		self.assertEqual(self.playerWithCards.species[1].food, 4)
+		self.assertEqual(self.playerWithCards.species[1].fatFood, 3)
+		self.assertTrue(self.playerWithCards.species[1].hasTrait("fat-tissue"))
+
+		self.playerWithCards.replaceTrait(1, 0, 2)
+		self.assertEqual(self.playerWithCards.species[1].body, 3)
+		self.assertEqual(self.playerWithCards.species[1].population, 4)
+		self.assertEqual(self.playerWithCards.species[1].food, 4)
+		self.assertEqual(self.playerWithCards.species[1].fatFood, 0)
+		self.assertFalse(self.playerWithCards.species[1].hasTrait("fat-tissue"))
+		self.assertTrue(self.playerWithCards.species[1].hasTrait("scavenger"))
+
 
 
 if __name__ == "__main__":

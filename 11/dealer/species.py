@@ -100,6 +100,7 @@ class Species:
 
 	"""
 		Replace the trait at the given index with a new trait card
+		IF FAT-TISSUE is replaced, drop any fatFood
 		ASSUME: TraitCards are always placed in discard by the dealer when assigned
 		@param oldTraitIdx: the index of the trait to be replaced
 		@param newTrait: the trait to replace the old one with
@@ -107,15 +108,16 @@ class Species:
 	"""
 	def replaceTrait(self, oldTraitIdx, newTrait):
 		self.traits[oldTraitIdx] = newTrait
+		if not self.hasTrait("fat-tissue"):
+			self.fatFood = 0
 
 	"""
 		Transfer fat food to regular food
-		Assumes that this species has not eaten yet (should only be called at beginning of step 4)
-		TODO: do you keep fatfood that is uneaten?
+		If a species can't eat all of it's stored fat-food, continue to store it.
 		Void -> Void
 	"""
 	def transferFatFood(self):
-		amountToEat = min(self.population, self.fatFood)
+		amountToEat = min(self.population - self.food, self.fatFood)
 		self.eatFood(amountToEat)
 		self.fatFood -= amountToEat
 
