@@ -16,12 +16,8 @@ class GainBodySize:
 	@staticmethod
 	def fromJson(GB):
 		GainBodySize.validate(GB)
-		if GB:
-			key, spec, card = GB
-			return GainBodySize(spec, card)
-		else:
-			return []
-
+		key, spec, card = GB
+		return GainBodySize(spec, card)
 
 	"""
 	Check if a given list of JSON GainBodySizes is valid

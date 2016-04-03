@@ -21,12 +21,8 @@ class ReplaceTrait:
 	@staticmethod
 	def fromJson(RT):
 		ReplaceTrait.validate(RT)
-		if RT:
-			specIdx, oldTraitIdx, newTraitIdx = RT
-			return ReplaceTrait(specIdx, oldTraitIdx, newTraitIdx)
-		else:
-			return []
-
+		specIdx, oldTraitIdx, newTraitIdx = RT
+		return ReplaceTrait(specIdx, oldTraitIdx, newTraitIdx)
 
 	"""
 	Check if a given list of JSON ReplaceTraits is valid

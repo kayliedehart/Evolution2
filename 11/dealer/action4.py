@@ -35,8 +35,10 @@ class Action4:
 		Action4.validate(action4)
 		cardIdx, GP, GB, BT, RT = action4
 
-		return Action4(cardIdx, GainPopulation.fromJson(GP), GainBodySize.fromJson(GB), 
-							BuySpeciesBoard.fromJson(BT), ReplaceTrait.fromJson(RT))
+		return Action4(cardIdx, [GainPopulation.fromJson(p) for p in GP], 
+								[GainBodySize.fromJson(b) for b in GB], 
+								[BuySpeciesBoard.fromJson(buyt) for buyt in BT], 
+								[ReplaceTrait.fromJson(rept) for rept in RT])
 
 	"""
 		Validate a JSON Action4
