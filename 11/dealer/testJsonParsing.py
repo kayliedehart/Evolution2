@@ -12,32 +12,32 @@ class testJsonParsing(unittest.TestCase):
 					["body", 4],
 					["population", 5],
 					["traits", ["carnivore"]]]
-		self.species1 = Species(3, 4, 5, ["carnivore"], 0)
+		self.species1 = Species(3, 4, 5, [TraitCard("carnivore")], 0)
 		self.species2J = [["food", 1],
 					["body", 3],
 					["population", 4],
 					["traits", ["warning-call", "fat-tissue"]],
 					["fat-food", 1]]
-		self.species2 = Species(1, 3, 4, ["warning-call", "fat-tissue"], 1)
+		self.species2 = Species(1, 3, 4, [TraitCard("warning-call"), TraitCard("fat-tissue")], 1)
 
 		self.avgSpeciesJ = [["food", 3],
 					   ["body", 4],
 					   ["population", 5],
 					   ["traits", ["carnivore"]]]
-		self.avgSpecies = Species(3, 4, 5, ["carnivore"], 0)
+		self.avgSpecies = Species(3, 4, 5, [TraitCard("carnivore")], 0)
 
 		self.fatTissueSpeciesJ = [["food", 1],
 							 ["body", 3],
 							 ["population", 4],
 							 ["traits", ["warning-call", "fat-tissue"]],
 							 ["fat-food", 1]]
-		self.fatTissueSpecies = Species(1, 3, 4, ["warning-call", "fat-tissue"], 1)
+		self.fatTissueSpecies = Species(1, 3, 4, [TraitCard("warning-call"), TraitCard("fat-tissue")], 1)
 
 		self.fatTraitNoFoodJ = [["food", 1],
 							["body", 3],
 							["population", 4],
 							["traits", ["warning-call", "fat-tissue"]]]
-		self.fatTraitNoFood = Species(1, 3, 4, ["warning-call", "fat-tissue"], 0)		
+		self.fatTraitNoFood = Species(1, 3, 4, [TraitCard("warning-call"), TraitCard("fat-tissue")], 0)		
 
 		self.onePlayerJ = [["id", 1],
 					 ["species", [self.species1J, self.species2J]],
@@ -120,25 +120,25 @@ class testJsonParsing(unittest.TestCase):
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
 					  False,
 					  False]
-		situation1 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, ["carnivore"], 0), False, False)
+		situation1 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, [TraitCard("carnivore")], 0), False, False)
 
 		situation2J = [[["food", 1], ["body", 0], ["population", 1], ["traits", []]],
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", []]],
 					  False]
-		situation2 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, ["carnivore"], 0), Species(1, 0, 1, [], 0), False)
+		situation2 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, [TraitCard("carnivore")], 0), Species(1, 0, 1, [], 0), False)
 
 		situation3J = [[["food", 1], ["body", 0], ["population", 1], ["traits", []]],
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
 					  False,
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", []]]]
-		situation3 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, ["carnivore"], 0), False, Species(1, 0, 1, [], 0))
+		situation3 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, [TraitCard("carnivore")], 0), False, Species(1, 0, 1, [], 0))
 
 		situation4J = [[["food", 1], ["body", 0], ["population", 1], ["traits", []]],
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", ["carnivore"]]],
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", []]],
 					  [["food", 1], ["body", 0], ["population", 1], ["traits", []]]]
-		situation4 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, ["carnivore"], 0), Species(1, 0, 1, [], 0), Species(1, 0, 1, [], 0))
+		situation4 = (Species(1, 0, 1, [], 0), Species(1, 0, 1, [TraitCard("carnivore")], 0), Species(1, 0, 1, [], 0), Species(1, 0, 1, [], 0))
 
 		badSituation1 = [False, False, [["food", 1], ["body", 0], ["population", 1], ["traits", []]], False]
 
@@ -155,7 +155,7 @@ class testJsonParsing(unittest.TestCase):
 
 	def testDealerParsing(self):
 		self.assertEqual(Dealer.dealerFromJson(self.config), self.deal)
-		self.assertEqual(deal.dealerToJson(), self.config)
+		self.assertEqual(self.deal.dealerToJson(), self.config)
 
 	def testCheckTrait(self):
 		self.assertTrue(TraitCard.checkTrait(self.goodTrait))
