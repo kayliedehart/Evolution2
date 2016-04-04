@@ -132,18 +132,88 @@ Players will know that the game has started under two conditions:
 
 CALL-BACK API OF THE DEALER
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-- registerPlayer(String playerName)
+- register(String playerName)
 	-> Boolean
   PURPOSE: a player calls this to register their name and intent to play with the
   dealer; the dealer returns whether this player has joined the game
+  NOTE: the proxy will buffer player registrations until there are enough players
+  to start a game, at which point the dealer will call modifySpecies on the 
+  external player
   
 
 
+DIAGRAM - BEGINNING OF GAME
+-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
++------+                      +----+           +---------------+
+|Dealer|                      |Main|           |External Player|
++--+---+                      +-+--+           +-------+-------+
+   |                            |                      |
+   |                            | <--------------------+
+   |                            |     register("name") |
+   |                            +- - - -  - - - - - -> |
+   | <--------------------------+            true      |
+   |    registerPlayers(["name",|...])                 |
+   |       +-----------+        |                      |
+   |       |PlayerState|        |                      |
+   |       +-----+-----+        |                      |
+   |             |              |                      |
+   +-----------> |              |                      |
+   | init()      |              |                      |
+   |             |              |                      |
+   |             |              |                      |
+   |             |              |                      |
+   +             +              +                      +
+
+  
+
+DIAGRAM - ONE AVERAGE TURN
+-=-=-=-=-=-=-=-=-=-=-=-=-=-
  
++------+         +-----------+          +----+           +---------------+
+|Dealer|         |PlayerState|          |Main|           |External Player|
++--+---+         +-----+-----+          +-+--+           +-------+-------+
+   |                   |                  |                      |
+   |  addCards([TraitCard ...])           |                      |
+   +-----------------> |                  |                      |
+   |                   |                  |                      |
+   |   modifySpecies(PlayerState, Nat)    |  modifySpecies(PS, N)|
+   +-------------------+----------------> +--------------------> |
+   |                   |                  |                      |
+   | <--- -- -- - -- -- - - --- --- --- --+ <- - --- -- -- -- ---+
+   |                Action4               |     Action4          |
+   |                   +                  |                      |
+   | Step4 actions...  |                  |                      |
+   +-----------------> |                  |                      |
+   |                   |                  |                      |
+   |feed(PlayerState, Nat, [PlayerState ...]) feed(PS, N, [PS...]|
+   +-------------------+----------------> |--------------------> |
+   |                   |                  |                      |
+   | < - - - - - - - - - - - - - - - - - -+ < - - - - - - - - - -+
+   |              FeedingAction           |     FeedingAction    |
+   |                   +                  |                      |
+   +                   +                  +                      +
 
+   
   
+DIAGRAM - END OF GAME
+-=-=-=-=-=-=-=-=-=-
 
-
++------+         +-----------+          +----+           +---------------+
+|Dealer|         |PlayerState|          |Main|           |External Player|
++--+---+         +-----+-----+          +-+--+           +-------+-------+
+   |                   |                  |                      |
+   |  gameOver([(String, Nat) ...])       | gameOver([(Str, N)]) |
+   +-------------------+----------------> +--------------------> |
+   |                   |                  |      FIN             |
+   |                   |                  +--------------------> |
+   |                   |                  |                      |
+   |                   |                  | < - - - - - - - - - -+
+   |                   |                  |      FIN             |
+   |                   |                  |                      |
+   |                   |                  |                      |
+   |                   |                  |                      |
+   +                   +                  +                      +
 
 
 

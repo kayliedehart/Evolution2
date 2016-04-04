@@ -204,7 +204,8 @@ class TestDealer(unittest.TestCase):
 	def testPrelimAutoFeedings(self):
 		dealerForAutoFeeds = Dealer([PlayerState(1, 0, [Species(0, 2, 3, [TraitCard("fertile"), TraitCard("fat-tissue")], 0)], []),
 									PlayerState(1, 0, [Species(0, 2, 3, [TraitCard("fat-tissue")], 0)], []),
-									PlayerState(3, 0, [Species(0, 2, 3, [TraitCard("fertile"), TraitCard("long-neck")], 0)], [])])
+									PlayerState(3, 0, [Species(0, 2, 3, [TraitCard("fertile"), TraitCard("long-neck")], 0)], [])], 
+									10, [])
 
 	def testReplaceTraits(self):
 		playerForReplacingTraits = PlayerState(1, 0, [Species(0, 0, 1, [TraitCard("foraging"), TraitCard("herding")], 0)], 

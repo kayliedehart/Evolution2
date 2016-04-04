@@ -170,7 +170,7 @@ class Dealer:
 	"""
 	def distributeCards(self, player, numCards):
 		for i in range(min(numCards, len(self.deck))):
-			player.hand.append(self.deck.pop(0))
+			player.addCards([self.deck.pop(0)])
 
 	"""
 		Try to automatically feed a species of the given player.
@@ -330,7 +330,7 @@ class Dealer:
 
 		for player in self.players:
 			self.wateringHole -= player.longNeck(self.wateringHole)
-		
+
 		for player in self.players:
 			player.transferFatFood()
 

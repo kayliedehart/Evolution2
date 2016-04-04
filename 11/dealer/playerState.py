@@ -213,6 +213,15 @@ class PlayerState:
 		self.hand = [self.hand[i] for i in range(len(self.hand)) if i not in cardIdcs]
 
 	"""
+		Adds the given TraitCards to the end of this player's hand
+		@param cards: the cards to add
+		ListOf(TraitCard) -> Void 
+
+	"""
+	def addCards(self, cards):
+		self.hand += cards
+
+	"""
 		Tell whether the species at the given index has the given trait
 		@param specIdx: the index of the species to check
 		@param traitName: the name of the trait to check for
