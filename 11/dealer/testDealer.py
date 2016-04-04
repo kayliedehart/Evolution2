@@ -182,16 +182,7 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(len(self.dealerForRevokingCards.players[2].hand), 0)
 
 	def testPlayerGains(self):
-		# self.dealerManyActions = Dealer([PlayerState(1, 0, [self.defSpec], 
-		# 										[self.t1, self.t2]), 
-		# 								PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], 
-		# 										[self.t3, self.t4, self.t5]),
-		# 								PlayerState(3, 0, [self.vegCoop, self.carnCoop, self.carnForage1], 
-		# 										[self.t6])], 
-		# 								0, [])
 
-		# self.actGP = Action4(0, [GainPopulation(0, 0)], [], [], [])
-		# self.actGB = Action4(0, [], [GainBodySize(0, 1)], [], [])
 		self.assertEqual(self.dealerManyActions.players[0].species[0].body, 0)
 		self.assertEqual(self.dealerManyActions.players[0].species[0].population, 1)
 		self.assertEqual(len(self.dealerManyActions.discard), 0)

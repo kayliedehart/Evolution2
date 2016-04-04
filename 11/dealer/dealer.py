@@ -28,6 +28,8 @@ class Dealer:
 		self.players = playersList
 		self.currentlyFeeding = playersList[:]
 		self.deck = deck
+		self.discard = []
+		self.cardsPlayed = []
 
 	""" 
 		override equality
