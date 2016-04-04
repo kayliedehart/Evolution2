@@ -14,10 +14,10 @@ class PlayerState:
 
 	""" 
 		Internal representation of a json player
-		@param num: ID number
-		@param foodbag: yep
-		@param species: this player's species boards
-		@param hand: traitcards in this player's hand (not on boards/haven't been traded in)
+		@param num: Nat+ representing this player's unique ID number
+		@param foodbag: Nat representing this player's foodbag
+		@param species: A List of this player's Species boards
+		@param hand: A List of TraitCards in this player's hand (not on boards/haven't been traded in)
 		@param player: the external player with strategic functionality
 		Nat, Nat, ListOf(Species), ListOf(TraitCard), Player -> PlayerState
 	"""
