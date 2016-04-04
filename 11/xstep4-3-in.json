@@ -1,15 +1,13 @@
 [[[[
 ["id",1],
-["species",
-	[[["food",0],["body",0],["population",5],["traits",["foraging","cooperation"]]],
-	[["food",0],["body",0],["population",5],["traits",["foraging","cooperation"]]],
-	[["food",0],["body",0],["population",3],["traits",["long-neck"]]]]],
+["species", []],
 ["bag",0],
-["cards", [[-8, "carnivore"],
-		   [2, "foraging"],
-		   [0, "herding"],
-		   [-7, "carnivore"], 
-		   [0, "warning-call"]]]],
+["cards", [[3, "horns"],
+		   [1, "ambush"],
+		   [2, "carnivore"],
+		   [0, "fat-tissue"], 
+		   [3, "foraging"],
+		   [0, "herding"]]]],
 
 [["id",2],
 ["species",
@@ -28,10 +26,12 @@
 ["cards", [[-6, "carnivore"],
 			[1, "long-neck"],
 			[0, "fat-tissue"]]]]],
-10,
+			
+0,
 []],
 
-[[0, ["population", 3, 2], [], [1], []],
- [0, [], ["body", 0, 1], [], []],
- [0, [], [], [], [0, 0, 1]]]
+[[0, [["population", 0, 1]], [["body", 0, 2]], [[4, 5]], [[0, 0, 3]]],
+ [0, [], [["body", 0, 1]], [], []],
+ [0, [], [], [], [[0, 0, 1]]]]
 ]
+

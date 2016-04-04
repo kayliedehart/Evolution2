@@ -1,9 +1,8 @@
 [[[
 ["id", 1], 
 ["species", 
-	[[["food", 0], ["body", 0], ["population", 1], ["traits", ["carnivore", "fat-tissue", "foraging"]]]]], 
-["bag", 0], 
-["cards", [[0, "herding"]]]], 
+	[[["food", 0], ["body", 1], ["population", 2], ["traits", ["fat-tissue"]]]]], 
+["bag", 0]], 
 
 [["id", 2], 
 ["species", 

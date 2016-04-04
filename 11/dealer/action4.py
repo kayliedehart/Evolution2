@@ -36,8 +36,8 @@ class Action4:
 		Action4.validate(action4, player)
 		cardIdx, GP, GB, BT, RT = action4
 
-		return Action4(cardIdx, [GainPopulation.fromJson(p, player) for p in GP[1:]], 
-								[GainBodySize.fromJson(b, player) for b in GB[1:]], 
+		return Action4(cardIdx, [GainPopulation.fromJson(p, player) for p in GP, 
+								[GainBodySize.fromJson(b, player) for b in GB], 
 								[BuySpeciesBoard.fromJson(buyt, player) for buyt in BT], 
 								[ReplaceTrait.fromJson(rept, player) for rept in RT])
 
