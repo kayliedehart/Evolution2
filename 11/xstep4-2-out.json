@@ -2,12 +2,7 @@
 ["id",1],
 ["species", []],
 ["bag",0],
-["cards", [[3, "horns"],
-		   [1, "ambush"],
-		   [2, "carnivore"],
-		   [0, "fat-tissue"], 
-		   [3, "foraging"],
-		   [0, "herding"]]]],
+["cards", [[0, "herding"]]]],
 
 [["id",2],
 ["species",
