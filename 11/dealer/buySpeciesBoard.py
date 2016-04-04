@@ -16,8 +16,8 @@ class BuySpeciesBoard:
 	@staticmethod
 	def fromJson(BT, player):
 		BuySpeciesBoard.validate(BT, player)
-		payment = BT.pop(0)
-		return BuySpeciesBoard(payment, BT)
+		traitIdcs = [item for item in BT[1:]]
+		return BuySpeciesBoard(BT[0], traitIdcs)
 
 
 

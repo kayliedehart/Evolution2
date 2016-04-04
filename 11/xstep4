@@ -11,7 +11,7 @@ try:
 	if len(testInput) == 2:
 		curDealer = Dealer.dealerFromJson(testInput[0])
 		jsonActions = testInput[1]
-		actions = [Action4.actionFromJson(jsonActions[i], curDealer.players[i]) i in range(len(curDealer.players))]
+		actions = [Action4.actionFromJson(jsonActions[i], curDealer.players[i]) for i in range(len(curDealer.players))]
 		curDealer.step4(actions)
 		result = curDealer.dealerToJson()
 		print json.dumps(result)
