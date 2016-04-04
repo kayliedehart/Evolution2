@@ -215,7 +215,16 @@ class TestDealer(unittest.TestCase):
 
 
 	def testBuyUpgrades(self):
-		pass
+		self.assertEqual(len(self.dealerManyActions.discard), 0)
+		self.assertEqual(len(self.dealerManyActions.players[1].species), 3)
+		self.dealerManyActions.buyUpgrades(1, self.actBT3t)
+
+		self.assertEqual(len(self.dealerManyActions.discard), 4)
+		self.assertEqual(len(self.dealerManyActions.players[1].species), 4)
+		self.assertTrue(self.dealerManyActions.players[1].species[3].hasTrait("herding"))
+		self.assertTrue(self.dealerManyActions.players[1].species[3].hasTrait("foraging"))
+		self.assertTrue(self.dealerManyActions.players[1].species[3].hasTrait("horns"))
+		self.assertFalse(self.dealerManyActions.players[1].species[3].hasTrait("fat-tissue"))
 
 	def testGetPlayerCards(self):
 		# self.dealerForRevokingCards = Dealer([PlayerState(1, 0, [], [self.t1, self.t2]), 
@@ -235,14 +244,58 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.dealerForRevokingCards.cardsPlayed, [(0, 1), (1, 1), (1, 0)])
 
 	def testReplenishWateringHole(self):
-		pass
+		self.assertEqual(len(self.dealerManyActions.discard), 0)
+		self.assertEqual(self.dealerManyActions.wateringHole, 0)
+		
+		self.dealerManyActions.replenishWateringHole([(0,0), (1,0), (2, 0)])
+
+		self.assertEqual(len(self.dealerManyActions.discard), 3)
+		self.assertEqual(self.dealerManyActions.wateringHole, 5)
+		
 
 	def testPrelimAutoFeedings(self):
-		dealerForAutoFeeds = Dealer([PlayerState(1, 0, [Species(0, 2, 3, [TraitCard("fertile"), TraitCard("fat-tissue")], 0)], []),
+		self.dealerForAutoFeeds = Dealer([PlayerState(1, 0, [Species(0, 2, 3, [TraitCard("fertile"), TraitCard("fat-tissue")], 2)], []),
 									PlayerState(1, 0, [Species(0, 2, 3, [TraitCard("fat-tissue")], 0)], []),
 									PlayerState(3, 0, [Species(0, 2, 3, [TraitCard("fertile"), TraitCard("long-neck")], 0)], [])], 
 									10, [])
-		pass
+		self.assertEqual(len(self.dealerForAutoFeeds.discard), 0)
+		self.assertEqual(self.dealerForAutoFeeds.wateringHole, 10)
+		self.assertEqual(self.dealerForAutoFeeds.players[0].species[0].population, 3)
+		self.assertEqual(self.dealerForAutoFeeds.players[0].species[0].fatFood, 2)
+		self.assertEqual(self.dealerForAutoFeeds.players[0].species[0].food, 0)
+		self.assertEqual(self.dealerForAutoFeeds.players[0].species[0].body, 2)
+
+		self.assertEqual(self.dealerForAutoFeeds.players[1].species[0].population, 3)
+		self.assertEqual(self.dealerForAutoFeeds.players[1].species[0].fatFood, 0)
+		self.assertEqual(self.dealerForAutoFeeds.players[1].species[0].food, 0)
+		self.assertEqual(self.dealerForAutoFeeds.players[1].species[0].body, 2)
+
+		self.assertEqual(self.dealerForAutoFeeds.players[2].species[0].population, 3)
+		self.assertEqual(self.dealerForAutoFeeds.players[2].species[0].fatFood, 0)
+		self.assertEqual(self.dealerForAutoFeeds.players[2].species[0].food, 0)
+		self.assertEqual(self.dealerForAutoFeeds.players[2].species[0].body, 2)
+
+		self.dealerForAutoFeeds.prelimAutoFeedings()
+
+		self.assertEqual(len(self.dealerForAutoFeeds.discard), 0)
+		self.assertEqual(self.dealerForAutoFeeds.wateringHole, 9)
+		self.assertEqual(self.dealerForAutoFeeds.players[0].species[0].population, 4)
+		self.assertEqual(self.dealerForAutoFeeds.players[0].species[0].fatFood, 0)
+		self.assertEqual(self.dealerForAutoFeeds.players[0].species[0].food, 2)
+		self.assertEqual(self.dealerForAutoFeeds.players[0].species[0].body, 2)
+
+		self.assertEqual(self.dealerForAutoFeeds.players[1].species[0].population, 3)
+		self.assertEqual(self.dealerForAutoFeeds.players[1].species[0].fatFood, 0)
+		self.assertEqual(self.dealerForAutoFeeds.players[1].species[0].food, 0)
+		self.assertEqual(self.dealerForAutoFeeds.players[1].species[0].body, 2)
+
+		self.assertEqual(self.dealerForAutoFeeds.players[2].species[0].population, 4)
+		self.assertEqual(self.dealerForAutoFeeds.players[2].species[0].fatFood, 0)
+		self.assertEqual(self.dealerForAutoFeeds.players[2].species[0].food, 1)
+		self.assertEqual(self.dealerForAutoFeeds.players[2].species[0].body, 2)
+
+
+		
 
 	def testReplaceTraits(self):
 		playerForReplacingTraits = PlayerState(1, 0, [Species(0, 0, 1, [TraitCard("foraging"), TraitCard("herding")], 0)], 
