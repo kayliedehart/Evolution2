@@ -62,7 +62,7 @@ class TestDealer(unittest.TestCase):
 		self.playerForDefSpec = PlayerState(1, 0, [self.defSpec], [self.t5, self.t6])
 		self.playerForBodyNewSpec = PlayerState(1, 0, [self.specWGrownBody], [self.t3, self.t4, self.t5, self.t6])
 		self.noAct = Action4(0, [], [], [], [])
-		self.actGP = Action4(0, [GainPopulation(0, 1)], [], [], [])
+		self.actGP = Action4(0, [GainPopulation(0, 0)], [], [], [])
 		self.actGB = Action4(0, [], [GainBodySize(0, 1)], [], [])
 		self.actRT = Action4(0, [], [], [], [ReplaceTrait(0, 1, 1)])
 		self.actBT0t = Action4(0, [], [], [BuySpeciesBoard(1, [])], [])
@@ -76,6 +76,14 @@ class TestDealer(unittest.TestCase):
 		self.dealerForRevokingCards = Dealer([PlayerState(1, 0, [], [self.t1, self.t2]), 
 											  PlayerState(2, 0, [], [self.t3, self.t4, self.t5]),
 											  PlayerState(3, 0, [], [self.t6])], 0, [])
+
+		self.dealerManyActions = Dealer([PlayerState(1, 0, [self.defSpec], 
+												[self.t1, self.t2]), 
+										PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], 
+												[self.t3, self.t4, self.t5, self.t6, self.t1]),
+										PlayerState(3, 0, [self.vegCoop, self.carnCoop, self.carnForage1], 
+												[self.t6])], 
+										0, [])
 
 	def tearDown(self):
 		del self.vegHorns 
@@ -136,6 +144,7 @@ class TestDealer(unittest.TestCase):
 		del self.actAll	
 		del self.simpleDealerForStep4
 		del self.dealerForRevokingCards
+		del self.dealerManyActions
 
 	def testStep4(self):
 		# successfully adding three traits to a new species
@@ -173,10 +182,46 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(len(self.dealerForRevokingCards.players[2].hand), 0)
 
 	def testPlayerGains(self):
-		pass
+		# self.dealerManyActions = Dealer([PlayerState(1, 0, [self.defSpec], 
+		# 										[self.t1, self.t2]), 
+		# 								PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], 
+		# 										[self.t3, self.t4, self.t5]),
+		# 								PlayerState(3, 0, [self.vegCoop, self.carnCoop, self.carnForage1], 
+		# 										[self.t6])], 
+		# 								0, [])
+
+		# self.actGP = Action4(0, [GainPopulation(0, 0)], [], [], [])
+		# self.actGB = Action4(0, [], [GainBodySize(0, 1)], [], [])
+		self.assertEqual(self.dealerManyActions.players[0].species[0].body, 0)
+		self.assertEqual(self.dealerManyActions.players[0].species[0].population, 1)
+		self.assertEqual(len(self.dealerManyActions.discard), 0)
+		
+		self.dealerManyActions.playerGains(0, self.actGB.GB, self.dealerManyActions.players[0].addBody)
+
+		self.assertEqual(self.dealerManyActions.players[0].species[0].body, 1)
+		self.assertEqual(self.dealerManyActions.players[0].species[0].population, 1)
+		self.assertEqual(len(self.dealerManyActions.discard), 1)
+
+		self.dealerManyActions.playerGains(0, self.actGP.GP, self.dealerManyActions.players[0].addPopulation)
+
+		self.assertEqual(self.dealerManyActions.players[0].species[0].body, 1)
+		self.assertEqual(self.dealerManyActions.players[0].species[0].population, 2)
+		self.assertEqual(len(self.dealerManyActions.discard), 2)
 
 	def testCreateSpecBoard(self):
-		pass
+		# self.actBT3t = Action4(0, [], [], [BuySpeciesBoard(1, [2, 3, 4])], [])
+		self.assertEqual(len(self.dealerManyActions.discard), 0)
+		self.assertEqual(len(self.dealerManyActions.players[1].species), 3)
+
+		self.dealerManyActions.createSpecBoard(1, self.actBT3t.BT)
+
+		self.assertEqual(len(self.dealerManyActions.discard), 4)
+		self.assertEqual(len(self.dealerManyActions.players[1].species), 4)
+		self.assertTrue(self.dealerManyActions.players[1].species[3].hasTrait("herding"))
+		self.assertTrue(self.dealerManyActions.players[1].species[3].hasTrait("foraging"))
+		self.assertTrue(self.dealerManyActions.players[1].species[3].hasTrait("horns"))
+		self.assertFalse(self.dealerManyActions.players[1].species[3].hasTrait("fat-tissue"))	
+
 
 	def testBuyUpgrades(self):
 		pass
@@ -206,6 +251,7 @@ class TestDealer(unittest.TestCase):
 									PlayerState(1, 0, [Species(0, 2, 3, [TraitCard("fat-tissue")], 0)], []),
 									PlayerState(3, 0, [Species(0, 2, 3, [TraitCard("fertile"), TraitCard("long-neck")], 0)], [])], 
 									10, [])
+		pass
 
 	def testReplaceTraits(self):
 		playerForReplacingTraits = PlayerState(1, 0, [Species(0, 0, 1, [TraitCard("foraging"), TraitCard("herding")], 0)], 
