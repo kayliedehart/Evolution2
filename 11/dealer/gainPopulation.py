@@ -27,4 +27,9 @@ class GainPopulation:
 	"""
 	@staticmethod
 	def validate(GP, player):
-		pass
+		key, spec, card = GP
+		if not(len(GP) == 3 and key == "population" 
+							and type(spec) == int 
+							and type(card) == int):
+			quit()
+

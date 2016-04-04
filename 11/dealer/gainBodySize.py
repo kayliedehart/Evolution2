@@ -25,6 +25,11 @@ class GainBodySize:
 	JSON, PlayerState -> Void
 	"""
 	@staticmethod
-	def validate(GP, player):
-		pass
+	def validate(GB, player):
+		key, spec, card = GB
+		if not(len(GB) == 3 and key == "body" 
+							and type(spec) == int 
+							and type(card) == int):
+			quit()
+
 

@@ -31,4 +31,8 @@ class ReplaceTrait:
 	"""
 	@staticmethod
 	def validate(RT, player):
-		pass
+		specIdx, oldTraitIdx, newTraitIdx = RT
+		if not(len(RT) == 3 and type(specIdx) == int 
+							and type(oldTraitIdx) == int 
+							and type(newTraitIdx) == int):
+			quit()

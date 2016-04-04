@@ -50,4 +50,11 @@ class Action4:
 	"""
 	@staticmethod
 	def validate(action4, player):
-		pass
+		cardIdx, GP, GB, BT, RT = action4
+		if not (len(action4) == 5 and type(cardIdx) == int):
+			quit()
+		else:
+			GainPopulation.validate(p, player) for p in GP
+			GainBodySize.validate(b, player) for b in GB
+			BuySpeciesBoard.validate(buyt, player) for buyt in BT
+			ReplaceTrait.validate(rept, player) for rept in RT

@@ -19,8 +19,6 @@ class BuySpeciesBoard:
 		traitIdcs = [item for item in BT[1:]]
 		return BuySpeciesBoard(BT[0], traitIdcs)
 
-
-
 	"""
 	Check if a given list of JSON BuySpeciesBoard is valid
 	EFFECT: If the list is invalid, quit
@@ -28,4 +26,6 @@ class BuySpeciesBoard:
 	"""
 	@staticmethod
 	def validate(BT, player):
-		pass
+		for item in BT:
+			if not (type(item) == int):
+				quit()
