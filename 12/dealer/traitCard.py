@@ -74,4 +74,4 @@ class TraitCard():
 	"""
 	@staticmethod
 	def generateDeck():
-		return [TraitCard(TraitCard.allTraits(i % len(TraitCard.allTraits)), 0) for i in range(122)]
+		return [TraitCard(TraitCard.allTraits[i % len(TraitCard.allTraits)], 0) for i in range(122)]

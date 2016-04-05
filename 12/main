@@ -1,9 +1,8 @@
-#!/bin/env python2.7
+#!/usr/bin/env python2.7
 import sys
-from dealer import *
-from playerState import PlayerState
-from sillyPlayer import SillyPlayer
-from traitCard import generateDeck
+from dealer.dealer import *
+from dealer.playerState import PlayerState
+from dealer.sillyPlayer import SillyPlayer
 
 def main(numPlayers):
 	if numPlayers >= 3 and numPlayers <= 8:
