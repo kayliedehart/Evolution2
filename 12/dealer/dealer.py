@@ -23,11 +23,11 @@ class Dealer:
 		@param wateringHole: the number of food tokens remaining in the watering hole
 		@param deck: the cards in the deck that have not yet been dealt to players
 	"""
-	def __init__(self, playersList, wateringHole, deck):
+	def __init__(self, playersList, wateringHole, deck=None):
 		self.wateringHole = wateringHole
 		self.players = playersList
 		self.currentlyFeeding = playersList[:]
-		self.deck = deck
+		self.deck = deck or TraitCard.generateDeck()
 		self.discard = []
 		self.cardsPlayed = []
 
@@ -390,7 +390,11 @@ class Dealer:
 
 
 
-
+	"""
+	run a game
+	"""
+	def runGame(self):
+		print "you're running a game!"
 
 
 

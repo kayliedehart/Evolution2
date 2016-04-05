@@ -66,3 +66,12 @@ class TraitCard():
 	@staticmethod
 	def checkTrait(trait):
 		return trait in TraitCard.allTraits
+
+	"""
+		Generate a full Evolution deck
+		Void -> ListOf(TraitCard)
+		TODO: what are the actual specs for this
+	"""
+	@staticmethod
+	def generateDeck():
+		return [TraitCard(TraitCard.allTraits(i % len(TraitCard.allTraits)), 0) for i in range(122)]

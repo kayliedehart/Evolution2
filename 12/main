@@ -1,0 +1,17 @@
+#!/bin/env python2.7
+import sys
+from dealer import *
+from playerState import PlayerState
+from sillyPlayer import SillyPlayer
+from traitCard import generateDeck
+
+def main(numPlayers):
+	if numPlayers >= 3 and numPlayers <= 8:
+		dealer = Dealer([PlayerState(i+1, 0, [], [], SillyPlayer()) for i in range(numPlayers)], 0)
+		dealer.runGame()
+	else:
+		print "Number of players must be between 3 and 8 inclusive"
+
+
+if __name__ == "__main__":
+	main(int(sys.argv[1]))
