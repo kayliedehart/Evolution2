@@ -1,5 +1,10 @@
 # An external Player strategy implementation
 from species import *
+from action4 import Action4
+from buySpeciesBoard import BuySpeciesBoard
+from replaceTrait import ReplaceTrait
+from gainPopulation import GainPopulation
+from gainBodySize import GainBodySize
 
 
 class SillyPlayer:
@@ -27,8 +32,37 @@ class SillyPlayer:
 		@param curState: PlayerState representing us
 		PlayerState -> Void
 	"""
+	@staticmethod
 	def start(curState):
 		pass
+
+	"""
+		Choose an action for steps 2 and 3 of the game
+		SillyPlayer just picks the biggest cards in order
+		@param befores: all the players who went before this one
+		@param curState: the current state of this player
+		@param afters: all the players who go before this one
+		@return the card to place at the watering hole and what trades to make
+		ListOf(PlayerState), PlayerState, ListOf(PlayerState) -> Action4
+		TODO: why
+	"""
+	@staticmethod
+	def choose(befores, curState, afters):
+		cardsWIdx = [(i, curState.hand[i]) for i in range(len(curState.hand))]
+		cards = sorted(cardsWIdx, key=lambda x: x[1], cmp=compare) 
+		print cards
+
+		maxCardIdx = len(cards) - 1
+		newSpecIdx = len(curState.species)
+		curCardIdx = 3
+		while curCardIdx <= maxCardIdx:
+			gp = [GainPopulation(newSpecIdx, cards[curCardIdx][0])]
+			curCardIdx += 1
+			gb = [GainBodySize(newSpecIdx, cards[curCardIdx][0])]
+			curCardIdx += 1
+			rt = [ReplaceTrait(newSpecIdx, 0, cards[curCardIdx][0])]
+
+		return Action4(cards[0][0], gp or [], gb or [], [BuySpeciesBoard(cards[1][0], cards[2][0])], rt or []) 
 		
 	"""
 		Sorts a list of species from largest to smallest, giving precedence to population, then food eaten, then body size

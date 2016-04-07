@@ -22,6 +22,31 @@ class Action4:
 		self.BT = BT
 		self.RT = RT
 
+	"""
+		Gets all card indexes referenced in this action. Used for cheating checks
+		@return a list of every card index within this action
+		Void -> ListOf(Nat)
+	"""
+	def getAllCardIdcs(self):
+		idcs = [self.tribute]
+		idcs += [p.cardIdx for p in self.GP]
+		idcs += [b.cardIdx for b in self.GB]
+		idcs += [bt.payment for bt in self.BT]
+		for bt in self.BT:
+			idcs += bt.traitList
+		idcs += [rt.newTraitIdx for rt in self.RT]
+		return idcs
+
+	"""
+		Gets all species indexes referenced in this action. Used for cheating checks
+		@return a list of every species index within this action
+		Void -> ListOf(Nat)
+	"""
+	def getAllSpecIdcs(self):
+		idcs = [p.specIdx for p in self.GP]
+		idcs += [b.specIdx for b in self.GB]
+		idcs += [rt.specIdx for rt in self.RT]
+		return idcs
 
 	"""
 	Construct an Action4 from the given JSON input

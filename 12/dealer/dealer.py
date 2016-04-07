@@ -397,14 +397,25 @@ class Dealer:
 			player.start(spec, cards)
 
 	"""
+		If an internal PlayerState identified an external player's action as cheating (ie by reporting
+			their action as False), remove the cheater from the game/actions
+		EFFECT: may remove players who have tried to cheat
+		@param actions: actions that players have tried to take
+		@return actions with any Falses filtered out
+		ListOf(Action4) -> ListOf(Action4)
+	"""
+	def filterCheatActions(self, actions):
+		self.players = [self.players[i] for i in range(len(actions)) if actions[i] is not False]
+		return [actions[i] for i in range(len(actions)) if actions[i] is not False]
+
+	"""
 		For each player, get their choices for the upcoming feeding round
 		That is, get their tribute card for the watering hole and any trades they wish to make
 		@return every player's choice; length is always the same as the number of players still in-game 
 		Void -> ListOf(Action4)
 	"""
 	def steps2and3(self):
-		pass
-
+		return self.filterCheatActions([player.choose(self.players) for player in self.players])
 
 	"""
 	EFFECT: based on player actions, update PlayerStates, replenish wateringHole, 
@@ -436,12 +447,12 @@ class Dealer:
 	def numCardsThisTurn(self):
 		return sum([player.numCardsNeeded() for player in self.players])
 
-
 	"""
 	print scoreboard
 	Void -> Void
 	"""
 	def endGame(self):
+		print "game over!"
 		scores = sorted([[player, player.getScore()] for player in self.players], key=lambda x: x[1], reverse=True)
 		for i in range(len(scores)):
 			print "{} player id: {} score: {}".format(i, scores[i][0], scores[i][1])
@@ -454,7 +465,7 @@ class Dealer:
 	"""
 	def runGame(self):
 		print "you're running a game!"
-		while len(self.deck > self.numCardsThisTurn()):
+		while len(self.deck > self.numCardsThisTurn() and len(self.players > 0)):
 			self.step1()
 			actions = self.steps2and3()
 			self.step4(actions)

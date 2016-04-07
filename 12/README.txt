@@ -55,5 +55,8 @@ READING THE CODE:
 Start by reading the code in dealer.py and playerState.py for a broad overview and context.
 Read into subsequent files as needed.
 
-The code for task 3 is in TODO. The code for task 4 is in TODO. 
+The code for task 2 is in dealer.py as runGame() and all methods referenced within
+    its methods and submethods.
+	
+The code for task 3 is in sillyPlayer.py, residing in the function choose(). 
 

@@ -3,7 +3,7 @@ from species import *
 from drawing import Drawing 
 from traitCard import *
 from sillyPlayer import SillyPlayer
-
+from action4 import *
 
 
 class PlayerState:
@@ -56,6 +56,51 @@ class PlayerState:
 			self.species.append(spec)
 		self.hand.append(cards)
 		self.player.start(self)
+
+
+	"""
+		Check if an action from our external player would be a cheating move
+		Following conditions must pass:
+			- All card indexes acted on must exist in our hand and be unique 
+			- The highest species index referenced should exist after addition of new species boards
+			- Should only be able to replace trait cards that already exist (ie no adding of new trait cards)
+		@param action: the action the external player wishes to take
+		@return the action or, if it was cheating, False
+		Action4 -> Action4 or False
+		TODO: refactor maybe
+	"""
+	def checkCheatAction(self, action):
+		cardIdcs = action.getAllCardIdcs()
+		if len(cardIdcs) != len(set(cardIdcs)): # no duplicates
+			return False
+		if (max(cardIdcs) > (len(self.hand) - 1)) or min(cardIdcs) < 0: # only use cards we have
+			return False
+
+		specIdcs = action.getAllSpecIdcs()
+		maxSpecIdx = len(self.species) + len(action.BT) - 1 
+		if max(specIdcs) > maxSpecIdx or min(specIdcs) < 0:
+			return False
+
+		for rt in action.RT:
+			if (oldTraitIdx > (len(self.species.traits) - 1)) or (oldTraitIdx < 0):
+				return False 
+
+		return action
+
+	"""
+		Choose actions for watering hole tributes and trading and check for cheating
+		assumption: list of players is ordered such that players before this one in the list
+					play before us, and those after this one in the list play after us
+		@param allPlayers: the states of all players currently in the game
+		@return an Action4 from the external player or, if that move was cheating, False
+		ListOf(PlayerState) -> Action4 or False
+	"""
+	def choose(self, allPlayers):
+		splitIdx = allPlayers.index(self)
+		befores = allPlayers[:splitIdx]
+		afters = allPlayers[splitIdx+1:]
+
+		return self.checkCheatAction(self.player.choose(befores, self, afters))
 
 	"""
 		create dictionary 

@@ -45,6 +45,24 @@ class TraitCard():
 				"food": self.food}
 
 	"""
+		Compare this card to a given card
+		Output is as follows
+			if self is lexicographically larger than given, return is positive
+			if self is the same as as given, return is 0
+			if self is lexicographically smaller than given, return is negative
+		@param other: the card to compare against
+		TraitCard -> Nat
+	"""
+	def compare(self, other):
+		if self.name < other.name or (self.name == other.name and self.food < other.food):
+			return -1
+		elif self.name > other.name or (self.name == other.name and self.food > other.food):
+			return 1
+		else:
+			return 0
+
+
+	"""
 		creates a trait card from a json array
 		JsonArray -> TraitCard
 	"""
