@@ -18,14 +18,19 @@ class Dealer:
 
 	"""
 		Create a Dealer
-		@param playersList: list of all players still in the game
+		@param playersList: PlayerState OR External Players list of all players still in the game
 		@param currentlyFeeding: list of all players who are still being fed this turn
 		@param wateringHole: the number of food tokens remaining in the watering hole
 		@param deck: the cards in the deck that have not yet been dealt to players
 	"""
 	def __init__(self, playersList, wateringHole, deck=None):
 		self.wateringHole = wateringHole
-		self.players = playersList
+
+		if isinstance(playersList[0], PlayerState):
+			self.players = playersList
+		else:
+			self.players = [PlayerState(i+1, 0, [], [], playersList[i]) for i in range(len(playersList))]
+
 		self.currentlyFeeding = playersList[:]
 		self.deck = deck or TraitCard.generateDeck()
 		self.discard = []
@@ -389,12 +394,24 @@ class Dealer:
 			self.feed1()
 
 
+	"""
+	print scoreboard
+	Void -> Void
+	"""
+	def endGame(self):
+		scores = sorted([[player, player.getScore()] for player in self.players], key=lambda x: x[1], reverse=True)
+		for i in range(len(scores)):
+			print "{} player id: {} score: {}".format(i, scores[i][0], scores[i][1])
+		quit()
 
 	"""
 	run a game
 	"""
 	def runGame(self):
 		print "you're running a game!"
+		# do game stuff
+		self.endGame()
+
 
 
 

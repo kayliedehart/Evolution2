@@ -6,7 +6,7 @@ from dealer.sillyPlayer import SillyPlayer
 
 def main(numPlayers):
 	if numPlayers >= 3 and numPlayers <= 8:
-		dealer = Dealer([PlayerState(i+1, 0, [], [], SillyPlayer()) for i in range(numPlayers)], 0)
+		dealer = Dealer([SillyPlayer() for i in range(numPlayers)], 0)
 		dealer.runGame()
 	else:
 		print "Number of players must be between 3 and 8 inclusive"

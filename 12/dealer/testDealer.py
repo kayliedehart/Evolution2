@@ -313,6 +313,7 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(self.xstep3deal.wateringHole, 3)
 
 	def testToDict(self):		
+		self.p2dealer.deck = []
 		self.assertEqual(self.p2dealer.toDict(), {"wateringHole": 3, "deck": [], 
 			"players": [{"num": 6, "species": 
 							[{"food": 3, "body": 4, "population": 5, "traits": [{"name":"carnivore", "food": 0}, {"name":"cooperation", "food":0}], "fatFood": 0}], 

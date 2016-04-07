@@ -116,6 +116,20 @@ class PlayerState:
 		return self.player.feed(self, wateringHole, player)
 
 	"""
+		Get this player's score -- a combo of their foodbag, total population 
+		for all species, and total trait cards placed on species
+		@return the player's score based on the above
+		Void -> Nat
+	"""
+	def getScore(self):
+		score = self.foodbag
+		for spec in self.species:
+			score += spec.population
+			score += len(spec.traits)
+			
+		return score
+
+	"""
 		Filter out all fed species to get a list of species that can be fed
 		@return a list of (Species' index, Species) for hungry species this player has
 		Void -> ListOf((Nat, Species))
