@@ -20,6 +20,15 @@ class SillyPlayer:
 	"""
 	def __ne__(self, other):
 		return not self.__eq__(other)
+
+	"""
+		Get our own state at the end of step 1 of a game (new species/cards added)
+		SillyPlayer does nothing with this
+		@param curState: PlayerState representing us
+		PlayerState -> Void
+	"""
+	def start(curState):
+		pass
 		
 	"""
 		Sorts a list of species from largest to smallest, giving precedence to population, then food eaten, then body size

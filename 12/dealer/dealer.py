@@ -25,16 +25,23 @@ class Dealer:
 	"""
 	def __init__(self, playersList, wateringHole, deck=None):
 		self.wateringHole = wateringHole
+		self.discard = []
+		self.cardsPlayed = []
+
+		if deck is not None:
+			self.deck = deck 
+		else:
+			self.deck = TraitCard.generateDeck()
 
 		if isinstance(playersList[0], PlayerState):
 			self.players = playersList
 		else:
 			self.players = [PlayerState(i+1, 0, [], [], playersList[i]) for i in range(len(playersList))]
 
-		self.currentlyFeeding = playersList[:]
-		self.deck = deck or TraitCard.generateDeck()
-		self.discard = []
-		self.cardsPlayed = []
+		self.currentlyFeeding = self.players[:]
+
+
+
 
 	""" 
 		override equality
@@ -372,6 +379,34 @@ class Dealer:
 		self.cardsPlayed = []
 
 	"""
+		For each player, check if any players need species (ie if they have none right now)
+		Then deal in each player based on number of species owned
+		Void -> Void
+	"""
+	def step1(self):
+		for player in self.players:
+			if player.hasNoSpecies():
+				spec = Species(0, 0, 1, [], 0)
+			else:
+				spec = False
+			# TODO: can we use our existing methods s.t. this doesn't suck so much
+			cards = self.deck[:player.numCardsNeeded()]
+			self.discard += self.deck[:player.numCardsNeeded()]
+			self.deck = self.deck[player.numCardsNeeded():]
+
+			player.start(spec, cards)
+
+	"""
+		For each player, get their choices for the upcoming feeding round
+		That is, get their tribute card for the watering hole and any trades they wish to make
+		@return every player's choice; length is always the same as the number of players still in-game 
+		Void -> ListOf(Action4)
+	"""
+	def steps2and3(self):
+		pass
+
+
+	"""
 	EFFECT: based on player actions, update PlayerStates, replenish wateringHole, 
 	carry out automatic feedings from the wateringHole, and then initialize the
 	round-robin feeding cycle. 
@@ -393,6 +428,14 @@ class Dealer:
 		while (self.wateringHole > 0) and (len(self.currentlyFeeding) > 0):
 			self.feed1()
 
+	"""
+		Gets the number of cards needed to deal everyone in to the next turn
+		@return the number of cards to run a turn
+		Void -> Nat
+	"""
+	def numCardsThisTurn(self):
+		return sum([player.numCardsNeeded() for player in self.players])
+
 
 	"""
 	print scoreboard
@@ -404,12 +447,18 @@ class Dealer:
 			print "{} player id: {} score: {}".format(i, scores[i][0], scores[i][1])
 		quit()
 
+
 	"""
 	run a game
+	Void -> Void
 	"""
 	def runGame(self):
 		print "you're running a game!"
-		# do game stuff
+		while len(self.deck > self.numCardsThisTurn()):
+			self.step1()
+			actions = self.steps2and3()
+			self.step4(actions)
+
 		self.endGame()
 
 

@@ -46,6 +46,18 @@ class PlayerState:
 		return not self.__eq__(other)
 
 	"""
+		start a game (step 1) -- set cards and species, inform external player
+		@param spec: an OptSpecies (given if this player didn't already have a species)
+		@param cards: cards to be added to this player's hand
+		OptSpecies, ListOf(TraitCard) -> Void
+	"""
+	def start(self, spec, cards):
+		if spec:
+			self.species.append(spec)
+		self.hand.append(cards)
+		self.player.start(self)
+
+	"""
 		create dictionary 
 		None -> Dict
 	"""
@@ -126,8 +138,17 @@ class PlayerState:
 		for spec in self.species:
 			score += spec.population
 			score += len(spec.traits)
-			
+
 		return score
+
+	"""
+		Number of cards this player needs dealt at the beginning of a turn
+		Based on their number of species
+		@return num cards needed
+		Void -> Nat
+	"""
+	def numCardsNeeded(self):
+		return 3 + len(self.species)
 
 	"""
 		Filter out all fed species to get a list of species that can be fed
