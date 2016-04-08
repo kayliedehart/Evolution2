@@ -121,10 +121,10 @@ class PlayerState:
 	"""
 	def choose(self, allPlayers):
 		splitIdx = allPlayers.index(self)
-		befores = allPlayers[:splitIdx]
-		afters = allPlayers[splitIdx+1:]
+		befores = [player.species for player in allPlayers[:splitIdx]]
+		afters = [player.species for player in allPlayers[splitIdx+1:]]
 
-		return self.checkCheatAction(self.player.choose(befores, self, afters))
+		return self.checkCheatAction(self.player.choose(befores, afters))
 
 	"""
 		create dictionary 

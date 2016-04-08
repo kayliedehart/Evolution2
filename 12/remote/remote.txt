@@ -1,0 +1,241 @@
+DATA DEFINITIONS
+-=-=-=-=-=-=-=-=-
+PlayerState:
+	num: Nat+ representing this player's unique ID number
+	foodbag: Nat representing this player's foodbag
+	species: A List of this player's Species boards
+	hand: A List of TraitCards in this player's hand 
+		(traits that are not on boards/haven't been traded in)
+	player: the external Player with strategic functionality
+
+	A json example of a PlayerState:
+	{"num": 8, 
+	"species": 
+		[{"food": 3, 
+		  "body": 4, 
+		  "population": 5, 
+		  "traits": 
+			[{"name":"carnivore", "food":0}, 
+			 {"name":"cooperation", "food":0}], 
+		  "fatFood": 0}], 
+	"hand": [], 
+	"foodbag": 0}
+
+	NOTE: When the state of other players is sent to this player, their hand 
+	will instead be set to a Nat representing the length of that player's hand;
+	this is the most similar to a real-life game.
+	
+Species:
+	food: Nat representing how much food this species has eaten this turn
+	body: Nat representing this species' body size
+	population: Nat+ population size -- above zero unless species is extinct
+	traits: A List of TraitCards on this species board (up to 3)
+	fatFood: a Nat of how much food has been stored on a fat tissue card
+			 Can only be non-zero when a fat tissue card is in self.traits
+			
+	A json example of a Species:
+	{"food": 3, 
+	 "body": 3, 
+	 "population": 5, 
+	 "traits": 
+		[{"name": "carnivore", "food": 0}, 
+		 {"name": "ambush", "food": 0}], 
+	 "fatFood": 0}
+			
+			
+TraitCard:
+	name: a String of the trait this card represents 
+		 (ex. "carnivore", "climbing", ...)
+	food: a Nat of the amount of food this TraitCard represents
+	
+	A json example of a TraitCard:
+	{"name": "carnivore", "food": 0}
+	
+
+FeedingAction:
+	One of:
+	- [Nat, Nat] - index of fat-tissue Species to feed, amount of fatFood to feed it
+	- Nat - index of an herbivore Species to feed
+	- [Nat, Nat, Nat] - index of this Player's carnivore that should attack, 
+					    index of player whose species should be attacked, 
+						index of species to attack
+	- False - this player does not wish to feed any more species this turn
+	
+	NOTE: A player may choose to have one of its species attack another of its
+	species, but a species cannot attack itself.
+	
+	
+Action4:
+	cardIdx: index of the TraitCard in this player's hand to donate to the wateirng hole
+	GP: a list of zero or more of an object containing a specIdx (index of species 
+		to give a higher population to) and a cardIdx (index in hand of the TraitCard 
+		to trade for the modification)
+	GB: a list of zero or more of an object containing a specIdx (index of species 
+		to give a higher body size to) and a cardIdx (index in hand of the TraitCard 
+		to trade for the modification)
+	BT: a list of zero or more of an object containing a paymentIdx (index of the card
+		to trade for a new species board) and a traitList (a list of indexes of cards
+		to apply to the new species board)
+	RT: a list of zero or more of an object containing a specIdx (index of species 
+		to replace a TraitCard of), an oldTraitIdx (index of the old trait that
+		ought to be replaced), and a newTraitIdx (index in hand of the card that
+		will replace the old TraitCard on the species)
+	
+	If a player wishes not to make a certain action, it should set the field 
+	of that action to be an empty list.
+
+	NOTE: Although the requirements state that a card must be chosen for the watering 
+	hole first, the specifications ask for data in this format, meaning it is 
+	chosen at the same time as other actions -- instead, it is enforced that there
+	must be a watering hole card while other decisions are optional.
+		
+	A json example of a complex Action4:
+	{"cardIdx":0,
+	 "GP": [{"specIdx": 0,
+			"cardIdx": 1}],
+	 "GB": [{"specIdx": 0,
+			"cardIdx": 2}],
+	 "BT": [{"paymentIdx": 4,
+			"traitList": [5]}],
+	 "RT": [{"specIdx": 0,
+			"oldTraitIdx": 0,
+			"newTraitIdx": 3}]
+	}
+
+
+
+DIAGRAM - BEGINNING OF GAME
+-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
++------+                      +----+           +---------------+
+|Dealer|                      |Main|           |External Player|
++--+---+                      +-+--+           +-------+-------+
+   |                            |                      |
+   |                            | <--------------------+
+   |                            |     register()       | loop for # of external players
+   |                            +- - - -  - - - - - -> |
+   | <--------------------------+            true      |
+   |    new([int, ...])         |                      |
+   |       +-----------+        |                      |
+   |       |PlayerState|        |                      |
+   |       +-----+-----+        |                      |
+   |             |              |                      |
+   +-----------> |              |                      |
+   | new(player) |              |                      |
+   |             |              |                      |
+   |             |              |                      |
+   |             |              |                      |
+   +             +              +                      +
+
+  
+
+DIAGRAM - STEP 1
+-=-=-=-=-=-=-=-=-
+ 
++------+         +-----------+          +----+           +---------------+
+|Dealer|         |PlayerState|          |Main|           |External Player|
++--+---+         +-----+-----+          +-+--+           +-------+-------+
+   |                   |                  |                      |
+   |  addCards([TraitCard ...])           |                      |
+   +-----------------> |                  |                      |
+   | start(OptSpecies) |      start(PlayerState)                 |
+   +------------------>|---------------------------------------> |
+   |                   |                  |                      |
+   |                   +                  |                      |
+   +                   +                  +                      +
+
+
+DIAGRAM - STEPS 2 & 3
+-=-=-=-=-=-=-=-=-=-=-
+ 
++------+         +-----------+          +----+           +---------------+
+|Dealer|         |PlayerState|          |Main|           |External Player|
++--+---+         +-----+-----+          +-+--+           +-------+-------+
+   |                   |                  |                      |
+   |                   |                  |                      |
+   | choose([PlayerState, ...])           |                      |
+   +------------------>|                  |                      |
+   |                   | choose([[Species, ...], ...], [[Species, ...], ...])
+   |                   |---------------------------------------->|
+   |                   |                  |                      |
+   | <--- -- -- - -- -- - - --- --- --- -- --  - --- -- -- -- ---+
+   |                Action4               |     Action4          |
+   |                   |                  |                      |
+   | Step4 actions...  |                  |                      |
+   +-----------------> |                  |                      |
+   |                   |                  |                      |
+   |feed(PlayerState, Nat, [PlayerState ...]) feed(PS, N, [PS...]|
+   +-------------------+----------------> |--------------------> |
+   |                   |                  |                      |
+   | < - - - - - - - - - - - - - - - - - -+ < - - - - - - - - - -+
+   |              FeedingAction           |     FeedingAction    |
+   |                   |                  |                      |
+   +                   +                  +                      +   
+  
+
+DIAGRAM - STEP 4
+-=-=-=-=-=-=-=-=-
+ 
++------+         +-----------+          +----+           +---------------+
+|Dealer|         |PlayerState|          |Main|           |External Player|
++--+---+         +-----+-----+          +-+--+           +-------+-------+
+   |                   |                  |                      |
+   |                   |                  |                      |
+   |feed(PlayerState, Nat, [PlayerState ...])                    |
+   +-------------------+----------------> |  feed(ys)            |
+   |                   |                  |--------------------> |
+   |                   |                  |                      |
+   | < - - - - - - - - - - - - - - - - - - -  - - - - - - - - - -+
+   |              return(FeedingAction)   |return(FeedingAction) |
+   |                   |                  |                      |
+   +                   +                  +                      +   
+  
+ys: (Nat, [[Species, ...], ...], PlayerState)
+    watering hole, lists of other players' species, current state
+  
+  
+DIAGRAM - END OF GAME
+-=-=-=-=-=-=-=-=-=-
+
++------+         +-----------+          +----+           +---------------+
+|Dealer|         |PlayerState|          |Main|           |External Player|
++--+---+         +-----+-----+          +-+--+           +-------+-------+
+   |                   |                  |                      |
+   |  gameOver([(String, Nat) ...])       | gameOver([(Str, N)]) |
+   +-------------------+----------------> +--------------------> |
+   |                   |                  |      FIN             |
+   |                   |                  +--------------------> |
+   |                   |                  |                      |
+   |                   |                  | < - - - - - - - - - -+
+   |                   |                  |      FIN             |
+   |                   |                  |                      |
+   |                   |                  |                      |
+   |                   |                  |                      |
+   +                   +                  +                      +
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

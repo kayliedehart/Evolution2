@@ -49,13 +49,13 @@ class SillyPlayer:
 		TODO: why
 	"""
 	@staticmethod
-	def choose(befores, curState, afters):
-		cardsWIdx = [(i, curState.hand[i]) for i in range(len(curState.hand))]
+	def choose(befores, afters):
+		cardsWIdx = [(i, self.state.hand[i]) for i in range(len(self.state.hand))]
 		cards = sorted(cardsWIdx, key=lambda x: x[1], cmp=compare) 
-		print cards
+		print cards # TODO delete after debug
 
 		maxCardIdx = len(cards) - 1
-		newSpecIdx = len(curState.species)
+		newSpecIdx = len(self.state.species)
 		curCardIdx = 3
 		while curCardIdx <= maxCardIdx:
 			gp = [GainPopulation(newSpecIdx, cards[curCardIdx][0])]
