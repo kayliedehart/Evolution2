@@ -8,6 +8,9 @@ from gainBodySize import GainBodySize
 
 
 class SillyPlayer:
+	# Current PlayerState that corresponds to this player
+	# Supplied in start()
+	self.state = False
 
 	""" 
 		override equality
@@ -32,9 +35,8 @@ class SillyPlayer:
 		@param curState: PlayerState representing us
 		PlayerState -> Void
 	"""
-	@staticmethod
-	def start(curState):
-		pass
+	def start(self, curState):
+		self.state = curState
 
 	"""
 		Choose an action for steps 2 and 3 of the game

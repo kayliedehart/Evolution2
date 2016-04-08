@@ -46,17 +46,14 @@ class PlayerState:
 		return not self.__eq__(other)
 
 	"""
-		start a game (step 1) -- set cards and species, inform external player
-		@param spec: an OptSpecies (given if this player didn't already have a species)
-		@param cards: cards to be added to this player's hand
-		OptSpecies, ListOf(TraitCard) -> Void
+		start a game (step 1) -- if given a new species, add it, and inform external player of current state
+		@param spec: an OptSpecies (given if this player didn't already have a species; otherwise False)
+		OptSpecies -> Void
 	"""
-	def start(self, spec, cards):
-		if spec:
+	def start(self, spec):
+		if spec is not False:
 			self.species.append(spec)
-		self.hand.append(cards)
 		self.player.start(self)
-
 
 	"""
 		Check if an action from our external player would be a cheating move
@@ -67,25 +64,52 @@ class PlayerState:
 		@param action: the action the external player wishes to take
 		@return the action or, if it was cheating, False
 		Action4 -> Action4 or False
-		TODO: refactor maybe
 	"""
 	def checkCheatAction(self, action):
-		cardIdcs = action.getAllCardIdcs()
+		if self.checkLegalCards(action.getAllCardIdcs()) and self.checkLegalSpecies(action.getAllSpecIdcs())
+														 and self.checkTraitReplacement(action.RT):
+			return action
+		else:
+			return False
+
+	"""
+		Check that all species indexes passed correspond to species that
+		the player will own by the end of the action
+		Used to check for cheating in Action4
+		@param specIdcs: indexes of the species the external player asked to modify
+		@return True if moves are legal, False otherwise
+		ListOf(Nat) -> Boolean
+	"""
+	def checkLegalSpecies(self, specIdcs):
+		return not ((max(specIdcs) > (len(self.species) + len(action.BT) - 1)) or (min(specIdcs) < 0))
+
+	"""
+		Check that trait replacement uses legal cards and tries to replace existing traits
+		Used to check for cheating in Action4
+		@param RTs: the ReplaceTrait actions to check
+		@return True if moves are legal, False otherwise
+		ListOf(ReplaceTrait) -> Boolean
+	"""
+	def checkTraitReplacement(self, RTs):
+		for rt in RTs:
+			if (rt.oldTraitIdx > (len(self.species.traits) - 1)) or (rt.oldTraitIdx < 0):
+				return False
+		return True 
+
+	"""
+		Check that the card indexes passed all correspond to cards we own
+		and that each index is unique
+		Used to check for cheating in an Action4
+		@param cardIdcs: the indexes of the cards the external player asked to use
+		@return True if the moves are legal, False otherwise
+		ListOf(Nat) -> Boolean
+	"""
+	def checkLegalCards(self, cardIdcs):
 		if len(cardIdcs) != len(set(cardIdcs)): # no duplicates
 			return False
 		if (max(cardIdcs) > (len(self.hand) - 1)) or min(cardIdcs) < 0: # only use cards we have
 			return False
-
-		specIdcs = action.getAllSpecIdcs()
-		maxSpecIdx = len(self.species) + len(action.BT) - 1 
-		if max(specIdcs) > maxSpecIdx or min(specIdcs) < 0:
-			return False
-
-		for rt in action.RT:
-			if (oldTraitIdx > (len(self.species.traits) - 1)) or (oldTraitIdx < 0):
-				return False 
-
-		return action
+		return True
 
 	"""
 		Choose actions for watering hole tributes and trading and check for cheating

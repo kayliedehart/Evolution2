@@ -385,16 +385,9 @@ class Dealer:
 	"""
 	def step1(self):
 		for player in self.players:
-			if player.hasNoSpecies():
-				spec = Species(0, 0, 1, [], 0)
-			else:
-				spec = False
-			# TODO: can we use our existing methods s.t. this doesn't suck so much
-			cards = self.deck[:player.numCardsNeeded()]
-			self.discard += self.deck[:player.numCardsNeeded()]
-			self.deck = self.deck[player.numCardsNeeded():]
-
-			player.start(spec, cards)
+			spec = Species(0, 0, 1, [], 0) if player.hasNoSpecies() else False
+			self.distributeCards(player, player.numCardsNeeded())
+			player.start(spec)
 
 	"""
 		If an internal PlayerState identified an external player's action as cheating (ie by reporting
