@@ -46,7 +46,6 @@ class SillyPlayer:
 		@param afters: all the players who go before this one
 		@return the card to place at the watering hole and what trades to make
 		ListOf(PlayerState), PlayerState, ListOf(PlayerState) -> Action4
-		TODO: why
 	"""
 	@staticmethod
 	def choose(befores, afters):

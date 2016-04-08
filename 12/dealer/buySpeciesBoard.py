@@ -11,6 +11,15 @@ class BuySpeciesBoard:
 		self.traitList = traitIdces
 
 	"""
+	Void -> JsonArray
+	"""
+	def toJson(self):
+		result = [self.paymentIdx]
+		for trait in self.traitList:
+			result.append(trait)
+		return result
+
+	"""
 	JSON, PlayerState -> BuySpeciesBoard
 	"""
 	@staticmethod

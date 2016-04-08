@@ -11,6 +11,12 @@ class GainPopulation:
 		self.cardIdx = cardIdx
 
 	"""
+	Void -> JsonArray
+	"""
+	def toJson(self):
+		return ["population", self.specIdx, self.cardIdx]
+
+	"""
 	JSON, PlayerState -> GainPopulation
 	"""
 	@staticmethod
