@@ -14,6 +14,11 @@ class ReplaceTrait:
 		self.oldTraitIdx = oldTraitIdx
 		self.newTraitIdx = newTraitIdx
 
+	"""
+	Void -> JsonArray
+	"""
+	def toJson(self):
+		return [self.specIdx, self.oldTraitIdx, self.newTraitIdx]
 
 	"""
 	JSON, PlayerState -> ReplaceTrait

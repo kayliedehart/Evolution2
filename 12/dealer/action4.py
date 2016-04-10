@@ -49,6 +49,18 @@ class Action4:
 		return idcs
 
 	"""
+		Creates a json representation of this action
+		@return a JsonArray representing an action
+		Void -> JsonArray
+	"""
+	def actionToJson(self):
+		return [self.tribute, 
+				[p.toJson() for p in self.GP],
+				[b.toJson() for b in self.GB],
+				[bt.toJson() for bt in self.BT],
+				[rt.toJson() for rt in self.RT]]
+
+	"""
 	Construct an Action4 from the given JSON input
 	EFFECT: if the input is invalid, quit
 	@param action4: JSON representation of an Action4

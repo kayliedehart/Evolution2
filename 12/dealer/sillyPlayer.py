@@ -8,6 +8,9 @@ from gainBodySize import GainBodySize
 
 
 class SillyPlayer:
+	# Current PlayerState that corresponds to this player
+	# Supplied in start()
+	self.state = False
 
 	""" 
 		override equality
@@ -32,9 +35,8 @@ class SillyPlayer:
 		@param curState: PlayerState representing us
 		PlayerState -> Void
 	"""
-	@staticmethod
-	def start(curState):
-		pass
+	def start(self, curState):
+		self.state = curState
 
 	"""
 		Choose an action for steps 2 and 3 of the game
@@ -44,16 +46,15 @@ class SillyPlayer:
 		@param afters: all the players who go before this one
 		@return the card to place at the watering hole and what trades to make
 		ListOf(PlayerState), PlayerState, ListOf(PlayerState) -> Action4
-		TODO: why
 	"""
 	@staticmethod
-	def choose(befores, curState, afters):
-		cardsWIdx = [(i, curState.hand[i]) for i in range(len(curState.hand))]
+	def choose(befores, afters):
+		cardsWIdx = [(i, self.state.hand[i]) for i in range(len(self.state.hand))]
 		cards = sorted(cardsWIdx, key=lambda x: x[1], cmp=compare) 
-		print cards
+		print cards # TODO delete after debug
 
 		maxCardIdx = len(cards) - 1
-		newSpecIdx = len(curState.species)
+		newSpecIdx = len(self.state.species)
 		curCardIdx = 3
 		while curCardIdx <= maxCardIdx:
 			gp = [GainPopulation(newSpecIdx, cards[curCardIdx][0])]
