@@ -23,8 +23,8 @@ class BuySpeciesBoard:
 	JSON, PlayerState -> BuySpeciesBoard
 	"""
 	@staticmethod
-	def fromJson(BT, player):
-		BuySpeciesBoard.validate(BT, player)
+	def fromJson(BT):
+		BuySpeciesBoard.validate(BT)
 		traitIdcs = [item for item in BT[1:]]
 		return BuySpeciesBoard(BT[0], traitIdcs)
 
@@ -34,7 +34,7 @@ class BuySpeciesBoard:
 	JSON -> Void
 	"""
 	@staticmethod
-	def validate(BT, player):
+	def validate(BT):
 		for item in BT:
 			if not (type(item) == int):
 				quit()

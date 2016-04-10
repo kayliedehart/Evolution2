@@ -17,11 +17,11 @@ class GainPopulation:
 		return ["population", self.specIdx, self.cardIdx]
 
 	"""
-	JSON, PlayerState -> GainPopulation
+	JSON -> GainPopulation
 	"""
 	@staticmethod
-	def fromJson(GP, player):
-		GainPopulation.validate(GP, player)
+	def fromJson(GP):
+		GainPopulation.validate(GP)
 		key, spec, card = GP
 		return GainPopulation(spec, card)
 
@@ -29,10 +29,10 @@ class GainPopulation:
 	"""
 	Check if a given list of JSON GainPopulations is valid
 	EFFECT: If the list is invalid, quit
-	JSON, PlayerState -> Void
+	JSON -> Void
 	"""
 	@staticmethod
-	def validate(GP, player):
+	def validate(GP):
 		key, spec, card = GP
 		if not(len(GP) == 3 and key == "population" 
 							and type(spec) == int 

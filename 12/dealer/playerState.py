@@ -66,8 +66,8 @@ class PlayerState:
 		Action4 -> Action4 or False
 	"""
 	def checkCheatAction(self, action):
-		if self.checkLegalCards(action.getAllCardIdcs()) and self.checkLegalSpecies(action.getAllSpecIdcs())
-														 and self.checkTraitReplacement(action.RT):
+		if (self.checkLegalCards(action.getAllCardIdcs()) and self.checkLegalSpecies(action.getAllSpecIdcs())
+														  and self.checkTraitReplacement(action.RT)):
 			return action
 		else:
 			return False
@@ -180,7 +180,9 @@ class PlayerState:
 				return PlayerState(num, bag, speciesList, cards)
 
 		except Exception as e:
-			quit()
+			print state
+			raise e
+			#quit()
 
 	"""
 		Proxy to call the feed method in the external player

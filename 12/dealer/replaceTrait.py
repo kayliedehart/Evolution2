@@ -21,21 +21,21 @@ class ReplaceTrait:
 		return [self.specIdx, self.oldTraitIdx, self.newTraitIdx]
 
 	"""
-	JSON, PlayerState -> ReplaceTrait
+	JSON -> ReplaceTrait
 	"""
 	@staticmethod
-	def fromJson(RT, player):
-		ReplaceTrait.validate(RT, player)
+	def fromJson(RT):
+		ReplaceTrait.validate(RT)
 		specIdx, oldTraitIdx, newTraitIdx = RT
 		return ReplaceTrait(specIdx, oldTraitIdx, newTraitIdx)
 
 	"""
 	Check if a given list of JSON ReplaceTraits is valid
 	EFFECT: If the list is invalid, quit
-	JSON, PlayerState -> Void
+	JSON -> Void
 	"""
 	@staticmethod
-	def validate(RT, player):
+	def validate(RT):
 		specIdx, oldTraitIdx, newTraitIdx = RT
 		if not(len(RT) == 3 and type(specIdx) == int 
 							and type(oldTraitIdx) == int 

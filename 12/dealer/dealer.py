@@ -93,7 +93,8 @@ class Dealer:
 			return Dealer(players, wateringHole, cards)
 
 		except Exception as e:
-			quit()
+			raise e
+			#quit()
 
 	"""
 		creates a json array describing a given internal Dealer

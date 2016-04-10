@@ -66,32 +66,32 @@ class Action4:
 	@param action4: JSON representation of an Action4
 	@param player: PlayerState that this action corresponds 
 	@return an Action4 equivalent to the JSON
-	JSON, PlayerState -> Action4
+	JSON -> Action4
 	"""
 	@staticmethod
-	def actionFromJson(action4, player):
-		Action4.validate(action4, player)
+	def actionFromJson(action4):
+		Action4.validate(action4)
 		cardIdx, GP, GB, BT, RT = action4
 
-		return Action4(cardIdx, [GainPopulation.fromJson(p, player) for p in GP], 
-								[GainBodySize.fromJson(b, player) for b in GB], 
-								[BuySpeciesBoard.fromJson(buyt, player) for buyt in BT], 
-								[ReplaceTrait.fromJson(rept, player) for rept in RT])
+		return Action4(cardIdx, [GainPopulation.fromJson(p) for p in GP], 
+								[GainBodySize.fromJson(b) for b in GB], 
+								[BuySpeciesBoard.fromJson(buyt) for buyt in BT], 
+								[ReplaceTrait.fromJson(rept) for rept in RT])
 
 	"""
 		Validate a JSON Action4
 		EFFECT: if not valid, quit
 		@param action4: JSON representation of an Action4
 		@param player: PlayerState that this action corresponds 
-		JSON, PlayerState -> Void
+		JSON -> Void
 	"""
 	@staticmethod
-	def validate(action4, player):
+	def validate(action4):
 		cardIdx, GP, GB, BT, RT = action4
 		if not (len(action4) == 5 and type(cardIdx) == int):
 			quit()
 		else:
-			[GainPopulation.validate(p, player) for p in GP]
-			[GainBodySize.validate(b, player) for b in GB]
-			[BuySpeciesBoard.validate(buyt, player) for buyt in BT]
-			[ReplaceTrait.validate(rept, player) for rept in RT]
+			[GainPopulation.validate(p) for p in GP]
+			[GainBodySize.validate(b) for b in GB]
+			[BuySpeciesBoard.validate(buyt) for buyt in BT]
+			[ReplaceTrait.validate(rept) for rept in RT]

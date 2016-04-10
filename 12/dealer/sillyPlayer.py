@@ -10,7 +10,7 @@ from gainBodySize import GainBodySize
 class SillyPlayer:
 	# Current PlayerState that corresponds to this player
 	# Supplied in start()
-	self.state = False
+	state = False
 
 	""" 
 		override equality
