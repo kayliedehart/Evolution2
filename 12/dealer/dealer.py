@@ -325,13 +325,15 @@ class Dealer:
 	"""
 	Update the wateringHole with the food value of all donated cards, 
 	and then discard cards. 
+	NOTE: Done in sequence due to test 8179-2198-1; were just doing sum(cards.food) before 
 	@param tributes = list of (player index, card player wants to play)
 	ListOf(Nat, Nat) -> Void
 	"""
 	def replenishWateringHole(self, tributes):
 		tributeCards = self.getPlayerCards(tributes)
-		self.wateringHole += sum([tribute.food for tribute in tributeCards])
-		self.wateringHole = max(0, self.wateringHole)
+		for card in tributeCards:
+			self.wateringHole += card.food
+			self.wateringHole = max(0, self.wateringHole)
 		self.updateDiscards(tributes)
 
 	"""
