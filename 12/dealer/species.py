@@ -69,6 +69,18 @@ class Species:
 		return self.population <= 0
 
 	"""
+		Sets the population to the maximum amount, given how much food this species ate this turn
+		Then, move food tokens from this species board and inform the player to add that amount to their foodbag
+		Assumption: called at the very end of a turn
+		@return the amount of food this species ate this turn
+		Void -> Nat
+	"""
+	def cullStarving(self):
+		self.population = self.food
+		self.food = 0
+		return self.population
+
+	"""
 		Tell if this species is hungry aka:
 		- its food is less than its population
 		- if it has fat tissue, its fat food is less than its body size

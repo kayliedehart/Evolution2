@@ -55,6 +55,29 @@ class PlayerState:
 			self.species.append(spec)
 		self.player.start(self)
 
+
+	"""
+		Do post-turn cleanup:
+		- square up species' populations with what they ate
+		- remove starving species
+		- move food from species boards to player foodbags
+		@return the number of species we removed for being extinct (so that dealer can give us cards)
+		Void -> Nat
+	"""
+	def endOfTurn(self):
+		numExtinct = 0
+		speciesToRemove = []
+		for specIdx in range(len(self.species)):
+			self.foodbag += self.species[specIdx].cullStarving()
+			if self.isExtinct(specIdx):
+				speciesToRemove.append(specIdx)
+				numExtinct += 1
+
+		self.species = [self.species[i] for i in range(len(self.species)) if i not in speciesToRemove]
+
+		return numExtinct
+
+
 	"""
 		Check if an action from our external player would be a cheating move
 		Following conditions must pass:

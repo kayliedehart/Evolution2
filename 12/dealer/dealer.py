@@ -455,6 +455,19 @@ class Dealer:
 
 
 	"""
+		Do post-turn cleanup:
+		- square up species' populations with what they ate
+		- remove starving species
+		- distribute cards based on extinctions
+		- move food from species boards to player foodbags
+		Note that cards on species boards are viewed as discarded as soon as they're attached to the board
+		Void -> Void
+	"""
+	def endOfTurn(self):
+		for player in self.players:
+			self.distributeCards(player, player.endOfTurn())
+
+	"""
 	run a game
 	Void -> Void
 	"""
@@ -464,6 +477,7 @@ class Dealer:
 			self.step1()
 			actions = self.steps2and3()
 			self.step4(actions)
+			self.endOfTurn()
 
 		self.endGame()
 
