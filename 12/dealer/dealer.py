@@ -184,8 +184,7 @@ class Dealer:
 		PlayerState, Nat -> Void
 	"""
 	def distributeCards(self, player, numCards):
-		for i in range(min(numCards, len(self.deck))):
-			player.addCards([self.deck.pop(0)])
+		player.addCards([self.deck.pop(0) for i in range(min(numCards, len(self.deck)))])
 
 	"""
 		Try to automatically feed a species of the given player.

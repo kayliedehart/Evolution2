@@ -325,7 +325,7 @@ class PlayerState:
 
 	"""
 	def addCards(self, cards):
-		self.hand += cards
+		self.hand = cards + self.hand
 
 	"""
 		Tell whether the species at the given index has the given trait
