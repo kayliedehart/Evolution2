@@ -205,11 +205,19 @@ class TestDealer(unittest.TestCase):
 	def testRunGame(self):
 		gameDealer = Dealer([self.p1, self.p2, self.p3], 0)
 		[self.assertEqual(player.foodbag, 0) for player in gameDealer.players]
-		gameDealer.runGame()
+		try: 
+			gameDealer.runGame()
+		except SystemExit: # because gameOver() quits
+			self.assertTrue(len(gameDealer.deck) < 6)
+
 		del gameDealer
 
 	def testNumCardsThisTurn(self):
-		pass
+		self.assertEqual(len(self.dealer.players), 3)
+		self.assertEqual(len(self.p1.species), 3)
+		self.assertEqual(len(self.p2.species), 3)
+		self.assertEqual(len(self.p3.species), 3)
+		self.assertEqual(self.dealer.numCardsThisTurn(), 18)
 
 	def testSteps2and3(self):
 		gameDealer = Dealer([self.p1, self.p2, self.p3], 0)
@@ -220,10 +228,45 @@ class TestDealer(unittest.TestCase):
 		del gameDealer
 
 	def testFilterCheatActions(self):
-		pass
+		noCheaters = [self.p1, self.p2]
+		allGoodActions = [self.addBodyToNewSpec, self.actAll]
+		goodDeal = Dealer(noCheaters, 0)
+		noCheats = goodDeal.filterCheatActions(allGoodActions)
+		self.assertEqual(goodDeal.players, noCheaters)
+		self.assertEqual(noCheats, allGoodActions)
+
+		someCheaters = [self.p1, self.p3, self.p2, self.p4]
+		someBadActions = [self.addBodyToNewSpec, False, self.actAll, False]
+		cheatDeal = Dealer(someCheaters, 0)
+		cheatsGone = cheatDeal.filterCheatActions(someBadActions)
+		self.assertEqual(cheatsGone, allGoodActions)
+		self.assertEqual(cheatDeal.players, noCheaters)
+
+		del someCheaters
+		del someBadActions
+		del cheatDeal
+		del noCheaters
+		del allGoodActions
+		del goodDeal
+
 
 	def testStep1(self):
-		pass
+		dealEarlyOn = Dealer([PlayerState(1, 0, [], []), PlayerState(2, 0, [], []), PlayerState(2, 0, [], [])], 0)
+		dealEarlyOn.step1()
+		for player in dealEarlyOn.players:
+			self.assertEqual(len(player.species), 1)
+			self.assertEqual(len(player.hand), 3)
+		del dealEarlyOn
+
+		dealLaterOn = Dealer([PlayerState(1, 0, [self.vegHorns, self.vegCoop], []), PlayerState(2, 0, [self.carnForage], []), PlayerState(2, 0, [], [])], 0)
+		dealLaterOn.step1()
+		self.assertEqual(len(dealLaterOn.players[0].species), 2)
+		self.assertEqual(len(dealLaterOn.players[0].hand), 5)	
+		self.assertEqual(len(dealLaterOn.players[1].species), 1)
+		self.assertEqual(len(dealLaterOn.players[1].hand), 4)	
+		self.assertEqual(len(dealLaterOn.players[2].species), 1)
+		self.assertEqual(len(dealLaterOn.players[2].hand), 3)	
+		del dealLaterOn	
 
 	def testStep4(self):
 		# successfully adding three traits to a new species

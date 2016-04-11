@@ -245,7 +245,7 @@ class PlayerState:
 		for spec in self.species:
 			score += spec.population
 			score += len(spec.traits)
-
+		
 		return score
 
 	"""
