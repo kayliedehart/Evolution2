@@ -251,11 +251,13 @@ class PlayerState:
 	"""
 		Number of cards this player needs dealt at the beginning of a turn
 		Based on their number of species
+		If they have no species, then they should ask for 1 card, as they'll be receiving a new species
+		at the beginning of the round
 		@return num cards needed
 		Void -> Nat
 	"""
 	def numCardsNeeded(self):
-		return 3 + len(self.species)
+		return 3 + max(1, len(self.species))
 
 	"""
 		Filter out all fed species to get a list of species that can be fed

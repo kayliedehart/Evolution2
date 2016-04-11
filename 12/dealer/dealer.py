@@ -471,7 +471,7 @@ class Dealer:
 	Void -> Void
 	"""
 	def runGame(self):
-		while (len(self.deck) > self.numCardsThisTurn()) and (len(self.players) > 0):
+		while (len(self.deck) >= self.numCardsThisTurn()) and (len(self.players) > 0):
 			self.step1()
 			actions = self.steps2and3()
 			self.step4(actions)

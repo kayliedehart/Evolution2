@@ -208,7 +208,7 @@ class TestDealer(unittest.TestCase):
 		try: 
 			gameDealer.runGame()
 		except SystemExit: # because gameOver() quits
-			self.assertTrue(len(gameDealer.deck) < 6)
+			self.assertTrue(len(gameDealer.deck) < 12)
 
 		del gameDealer
 
@@ -255,7 +255,7 @@ class TestDealer(unittest.TestCase):
 		dealEarlyOn.step1()
 		for player in dealEarlyOn.players:
 			self.assertEqual(len(player.species), 1)
-			self.assertEqual(len(player.hand), 3)
+			self.assertEqual(len(player.hand), 4)
 		del dealEarlyOn
 
 		dealLaterOn = Dealer([PlayerState(1, 0, [self.vegHorns, self.vegCoop], []), PlayerState(2, 0, [self.carnForage], []), PlayerState(2, 0, [], [])], 0)
@@ -265,7 +265,7 @@ class TestDealer(unittest.TestCase):
 		self.assertEqual(len(dealLaterOn.players[1].species), 1)
 		self.assertEqual(len(dealLaterOn.players[1].hand), 4)	
 		self.assertEqual(len(dealLaterOn.players[2].species), 1)
-		self.assertEqual(len(dealLaterOn.players[2].hand), 3)	
+		self.assertEqual(len(dealLaterOn.players[2].hand), 4)	
 		del dealLaterOn	
 
 	def testStep4(self):
