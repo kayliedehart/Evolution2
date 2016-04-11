@@ -174,6 +174,40 @@ class TestDealer(unittest.TestCase):
 	# 	self.assertEqual(tf11_2deal.players[1].species[0].population, 7)
 
 
+	def testEndOfTurn(self):
+		self.carnForage.food = 0
+		self.assertEqual(self.p1.foodbag, 0)
+		self.assertEqual(self.p2.foodbag, 0)
+		self.assertEqual(self.p3.foodbag, 0)
+		self.assertEqual(self.fat.food, 4)
+		self.assertEqual(self.vegHorns.food, 1)
+		self.assertEqual(self.fat.population, 4)
+		self.assertEqual(self.vegHorns.population, 3)
+		self.assertEqual(len(self.dealer.deck), 5)
+		self.assertEqual(len(self.p1.species), 3)
+		self.assertEqual(len(self.p2.species), 3)
+		self.assertEqual(len(self.p3.species), 3)
+		self.dealer.endOfTurn()
+		self.assertEqual(self.p1.foodbag, 5)
+		self.assertEqual(self.p2.foodbag, 6)
+		# self.assertEqual(self.p3.foodbag, 7) p3 shares a species w/p1 and thus this breaks
+		self.assertEqual(self.fat.food, 0)
+		self.assertEqual(self.vegHorns.food, 0)
+		self.assertEqual(self.fat.population, 4)
+		self.assertEqual(self.vegHorns.population, 1)
+		self.assertEqual(len(self.dealer.deck), 0)
+		self.assertEqual(len(self.p1.species), 2)
+		self.assertEqual(len(self.p2.species), 3)
+		self.assertEqual(len(self.p3.species), 1)
+		self.assertEqual(self.p1.hand, [self.t1, self.t2])
+		self.assertEqual(self.p3.hand, [self.t3, self.t4, self.t5])
+
+	def testRunGame(self):
+		gameDealer = Dealer([self.p1, self.p2, self.p3], 0)
+		[self.assertEqual(player.foodbag, 0) for player in gameDealer.players]
+		gameDealer.runGame()
+		del gameDealer
+
 	def testStep4(self):
 		# successfully adding three traits to a new species
 		self.playerWithManyCards = PlayerState(1, 0, [], [self.t1, self.t2, self.t3, self.t4, self.t5, self.t6])

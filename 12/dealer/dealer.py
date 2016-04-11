@@ -447,7 +447,6 @@ class Dealer:
 	Void -> Void
 	"""
 	def endGame(self):
-		print "game over!"
 		scores = sorted([[player, player.getScore()] for player in self.players], key=lambda x: x[1], reverse=True)
 		for i in range(len(scores)):
 			print "{} player id: {} score: {}".format(i, scores[i][0], scores[i][1])
@@ -465,15 +464,14 @@ class Dealer:
 	"""
 	def endOfTurn(self):
 		for player in self.players:
-			self.distributeCards(player, player.endOfTurn())
+			self.distributeCards(player, 2 * (player.endOfTurn()))
 
 	"""
 	run a game
 	Void -> Void
 	"""
 	def runGame(self):
-		print "you're running a game!"
-		while len(self.deck > self.numCardsThisTurn() and len(self.players > 0)):
+		while (len(self.deck) > self.numCardsThisTurn()) and (len(self.players) > 0):
 			self.step1()
 			actions = self.steps2and3()
 			self.step4(actions)

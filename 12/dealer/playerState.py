@@ -74,7 +74,6 @@ class PlayerState:
 				numExtinct += 1
 
 		self.species = [self.species[i] for i in range(len(self.species)) if i not in speciesToRemove]
-
 		return numExtinct
 
 
@@ -89,8 +88,8 @@ class PlayerState:
 		Action4 -> Action4 or False
 	"""
 	def checkCheatAction(self, action):
-		if (self.checkLegalCards(action.getAllCardIdcs()) and self.checkLegalSpecies(action.getAllSpecIdcs())
-														  and self.checkTraitReplacement(action.RT)):
+		if (self.checkLegalCards(action.getAllCardIdcs()) and self.checkLegalSpecies(action.getAllSpecIdcs(), len(action.BT))
+														  and self.checkTraitReplacement(action.RT, action.BT)):
 			return action
 		else:
 			return False
@@ -100,23 +99,35 @@ class PlayerState:
 		the player will own by the end of the action
 		Used to check for cheating in Action4
 		@param specIdcs: indexes of the species the external player asked to modify
+		@param numBT: the number of BuyTrait actions being requested
 		@return True if moves are legal, False otherwise
 		ListOf(Nat) -> Boolean
 	"""
-	def checkLegalSpecies(self, specIdcs):
-		return not ((max(specIdcs) > (len(self.species) + len(action.BT) - 1)) or (min(specIdcs) < 0))
+	def checkLegalSpecies(self, specIdcs, numBT):
+		return not ((max(specIdcs) > (numBT + len(self.species) - 1)) or (min(specIdcs) < 0))
 
 	"""
 		Check that trait replacement uses legal cards and tries to replace existing traits
 		Used to check for cheating in Action4
 		@param RTs: the ReplaceTrait actions to check
+		@param BTs: the BuySpeciesBoards
 		@return True if moves are legal, False otherwise
 		ListOf(ReplaceTrait) -> Boolean
 	"""
-	def checkTraitReplacement(self, RTs):
+	def checkTraitReplacement(self, RTs, BTs):
 		for rt in RTs:
-			if (rt.oldTraitIdx > (len(self.species.traits) - 1)) or (rt.oldTraitIdx < 0):
+			if (rt.oldTraitIdx < 0) or (rt.specIdx > (len(self.species) + len(BTs) - 1)):
 				return False
+
+			traitLen = False
+			if rt.specIdx < len(self.species):
+				traitLen = len(self.species[rt.specIdx].traits)
+			elif rt.specIdx < (len(self.species) + len(BTs)):
+				traitLen = len(BTs[rt.specIdx - len(self.species) - 1].traitList)
+
+			if traitLen is False or rt.oldTraitIdx >= traitLen:
+				return False
+
 		return True 
 
 	"""
@@ -144,8 +155,8 @@ class PlayerState:
 	"""
 	def choose(self, allPlayers):
 		splitIdx = allPlayers.index(self)
-		befores = [player.species for player in allPlayers[:splitIdx]]
-		afters = [player.species for player in allPlayers[splitIdx+1:]]
+		befores = [play.species for play in allPlayers[:splitIdx]]
+		afters = [play.species for play in allPlayers[splitIdx+1:]]
 
 		return self.checkCheatAction(self.player.choose(befores, afters))
 

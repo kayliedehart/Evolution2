@@ -47,23 +47,21 @@ class SillyPlayer:
 		@return the card to place at the watering hole and what trades to make
 		ListOf(PlayerState), PlayerState, ListOf(PlayerState) -> Action4
 	"""
-	@staticmethod
-	def choose(befores, afters):
+	def choose(self, befores, afters):
 		cardsWIdx = [(i, self.state.hand[i]) for i in range(len(self.state.hand))]
-		cards = sorted(cardsWIdx, key=lambda x: x[1], cmp=compare) 
-		print cards # TODO delete after debug
+		cards = sorted(cardsWIdx, key=lambda x: x[1], cmp=TraitCard.compare) 
 
 		maxCardIdx = len(cards) - 1
 		newSpecIdx = len(self.state.species)
 		curCardIdx = 3
-		while curCardIdx <= maxCardIdx:
-			gp = [GainPopulation(newSpecIdx, cards[curCardIdx][0])]
-			curCardIdx += 1
-			gb = [GainBodySize(newSpecIdx, cards[curCardIdx][0])]
-			curCardIdx += 1
-			rt = [ReplaceTrait(newSpecIdx, 0, cards[curCardIdx][0])]
+		
+		gp = [GainPopulation(newSpecIdx, cards[curCardIdx][0])] if curCardIdx <= maxCardIdx else []
+		curCardIdx += 1
+		gb = [GainBodySize(newSpecIdx, cards[curCardIdx][0])] if curCardIdx <= maxCardIdx else []
+		curCardIdx += 1
+		rt = [ReplaceTrait(newSpecIdx, 0, cards[curCardIdx][0])] if curCardIdx <= maxCardIdx else []
 
-		return Action4(cards[0][0], gp or [], gb or [], [BuySpeciesBoard(cards[1][0], cards[2][0])], rt or []) 
+		return Action4(cards[0][0], gp, gb, [BuySpeciesBoard(cards[1][0], [cards[2][0]])], rt) 
 		
 	"""
 		Sorts a list of species from largest to smallest, giving precedence to population, then food eaten, then body size
