@@ -154,7 +154,9 @@ class PlayerState:
 		ListOf(PlayerState) -> Action4 or False
 	"""
 	def choose(self, allPlayers):
-		splitIdx = allPlayers.index(self)
+		for i in range(len(allPlayers)):
+			if allPlayers[i] is self:
+				splitIdx = i
 		befores = [play.species for play in allPlayers[:splitIdx]]
 		afters = [play.species for play in allPlayers[splitIdx+1:]]
 

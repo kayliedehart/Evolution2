@@ -447,9 +447,9 @@ class Dealer:
 	Void -> Void
 	"""
 	def endGame(self):
-		scores = sorted([[player, player.getScore()] for player in self.players], key=lambda x: x[1], reverse=True)
+		scores = sorted([[player.num, player.getScore()] for player in self.players], key=lambda x: x[1], reverse=True)
 		for i in range(len(scores)):
-			print "{} player id: {} score: {}".format(i, scores[i][0], scores[i][1])
+			print "{} player id: {} score: {}".format(i+1, scores[i][0], scores[i][1])
 		quit()
 
 

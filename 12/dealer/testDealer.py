@@ -208,6 +208,23 @@ class TestDealer(unittest.TestCase):
 		gameDealer.runGame()
 		del gameDealer
 
+	def testNumCardsThisTurn(self):
+		pass
+
+	def testSteps2and3(self):
+		gameDealer = Dealer([self.p1, self.p2, self.p3], 0)
+		[player.start(False) for player in gameDealer.players]
+		gameDealer.step1()
+		[self.assertEqual(player.foodbag, 0) for player in gameDealer.players]
+		gameDealer.steps2and3()
+		del gameDealer
+
+	def testFilterCheatActions(self):
+		pass
+
+	def testStep1(self):
+		pass
+
 	def testStep4(self):
 		# successfully adding three traits to a new species
 		self.playerWithManyCards = PlayerState(1, 0, [], [self.t1, self.t2, self.t3, self.t4, self.t5, self.t6])
