@@ -41,8 +41,6 @@ class Dealer:
 		self.currentlyFeeding = self.players[:]
 
 
-
-
 	""" 
 		override equality
 		Any -> Boolean
@@ -222,8 +220,13 @@ class Dealer:
 			if type(decision) == int:
 				self.feedFromWateringHole(queryPlayer, decision, 1)
 				return False
-			if len(decision) == 2:
-				self.feedFromWateringHole(queryPlayer, decision[0], foodCount=decision[1], fatFood=True)
+			if len(decision) == 2: 
+				# TODO: is this a good place for this?
+				if decision[1] <= self.wateringHole:
+					self.feedFromWateringHole(queryPlayer, decision[0], foodCount=decision[1], fatFood=True)
+				else: # cheater
+					self.removePlayerFromTurn(queryPlayer) 
+					del self.players[self.players.index(queryPlayer)]
 				return False
 			if len(decision) == 3:
 				defender = self.players[decision[1]]
@@ -476,9 +479,7 @@ class Dealer:
 			actions = self.steps2and3()
 			self.step4(actions)
 			self.endOfTurn()
-
 		self.endGame()
-
 
 
 
