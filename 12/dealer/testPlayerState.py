@@ -411,7 +411,8 @@ class TestPlayerState(unittest.TestCase):
 
 
 	def testNumCardsNeeded(self):
-		pass
+		self.assertEqual(self.p3.numCardsNeeded(), 6)
+		self.assertEqual(self.p7.numCardsNeeded(), 4)
 
 
 

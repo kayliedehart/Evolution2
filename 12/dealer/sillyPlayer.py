@@ -10,7 +10,12 @@ from gainBodySize import GainBodySize
 class SillyPlayer:
 	# Current PlayerState that corresponds to this player
 	# Supplied in start()
-	#state = False
+	state = False
+
+
+	def __init__(self):
+		self.state = False
+
 
 	""" 
 		override equality
@@ -41,11 +46,10 @@ class SillyPlayer:
 	"""
 		Choose an action for steps 2 and 3 of the game
 		SillyPlayer just picks the biggest cards in order
-		@param befores: all the players who went before this one
-		@param curState: the current state of this player
-		@param afters: all the players who go before this one
+		@param befores: all the species of players who went before this one
+		@param afters: all the species of players who go before this one
 		@return the card to place at the watering hole and what trades to make
-		ListOf(PlayerState), PlayerState, ListOf(PlayerState) -> Action4
+		ListOf(ListOf(Species)), ListOf(ListOf(Species)) -> Action4
 	"""
 	def choose(self, befores, afters):
 		cardsWIdx = [(i, self.state.hand[i]) for i in range(len(self.state.hand))]

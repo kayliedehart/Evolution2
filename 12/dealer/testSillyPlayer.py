@@ -22,6 +22,11 @@ class TestPlayer(unittest.TestCase):
 		self.noVeg = [self.big, self.aCarnivore]
 		self.noVegIndexed = [(0, self.big), (1, self.aCarnivore)]
 		self.aPlayerState = PlayerState(1, 0, self.ourSpecies, [])
+		self.tCarn = TraitCard("carnivore", -5)
+		self.tCoop = TraitCard("cooperation", 2)
+		self.tHerd = TraitCard("herding", 3)
+		self.tForg = TraitCard("foraging", 0)
+		self.cardsPlayerState = PlayerState(1, 0, self.ourSpecies, [self.tCarn, self.tCoop, self.tHerd, self.tForg])
 		self.big_json = self.big.speciesToJson()
 		self.aCarnivore_json = self.aCarnivore.speciesToJson()
 		self.fedVeg_json = self.fedVeg.speciesToJson()
@@ -53,9 +58,15 @@ class TestPlayer(unittest.TestCase):
 		del self.smallerVeg_json
 		del self.bPlayerState
 		del self.cPlayerState
+		del self.cardsPlayerState
+		del self.tCoop
+		del self.tCarn
+		del self.tHerd
+		del self.tForg
 
 	def test0067_6(self):
-		p1 = PlayerState(1, 0, [Species(0, 1, 1, [TraitCard("carnivore")], 0), Species(1, 1, 1, [TraitCard("horns"), TraitCard("cooperation")], 0), Species(1, 1, 1, [], 0)], [])
+		p1 = PlayerState(1, 0, 
+			[Species(0, 1, 1, [TraitCard("carnivore")], 0), Species(1, 1, 1, [TraitCard("horns"), TraitCard("cooperation")], 0), Species(1, 1, 1, [], 0)], [])
 		p2 = PlayerState(2, 0, [Species(0, 1, 1, [], 0)], [])
 		p3 = PlayerState(3, 0, [Species(0, 1, 1, [TraitCard("cooperation"), TraitCard("scavenger"), TraitCard("climbing")], 0), Species(0, 1, 2, [TraitCard("scavenger"), TraitCard("cooperation"), TraitCard("climbing")], 0), Species(0, 1, 4, [TraitCard("foraging"), TraitCard("climbing")], 0)], [])
 		self.assertEqual(SillyPlayer.feed(p1, 10, [p1, p2, p3]), [0, 1, 0])
@@ -104,10 +115,27 @@ class TestPlayer(unittest.TestCase):
 		self.assertEqual(SillyPlayer.feed(PlayerState(1, 0, [self.fedVeg, self.aCarnivore], []), 5, [self.bPlayerState]), [1, 0, 0])
 
 	def testStart(self):
-		pass
+		silly = SillyPlayer()
+		silly.start(self.aPlayerState)
+		self.assertEqual(self.aPlayerState, silly.state)
+
+		silly.start(self.bPlayerState)
+		self.assertEqual(self.bPlayerState, silly.state)
 
 	def testChoose(self):
-		pass
+		silly = SillyPlayer()
+		silly.start(self.cardsPlayerState)
+
+		# self.tCarn = TraitCard("carnivore", -5)
+		# self.tCoop = TraitCard("cooperation", 2)
+		# self.tHerd = TraitCard("herding", 3)
+		# self.tForg = TraitCard("foraging", 0)
+		print silly.choose([[self.big, self.aCarnivore]], [[self.fedVeg, self.smallerVeg]]).actionToJson()
+		
+		self.assertEqual(silly.choose([[self.big, self.aCarnivore]], [[self.fedVeg, self.smallerVeg]]).actionToJson(), 
+			Action4(0, [GainPopulation(5, 2)], [], [BuySpeciesBoard(1, 3)], []).actionToJson())
+
+		# Action4(cards[0][0], gp, gb, [BuySpeciesBoard(cards[1][0], [cards[2][0]])], rt)
 
 
 if __name__ == "__main__":
