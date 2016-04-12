@@ -103,6 +103,11 @@ class TestPlayer(unittest.TestCase):
 		self.assertEqual(SillyPlayer.feed(PlayerState(1, 0, [self.aCarnivore], []), 5, [self.bPlayerState, self.cPlayerState]), [0, 1, 0])
 		self.assertEqual(SillyPlayer.feed(PlayerState(1, 0, [self.fedVeg, self.aCarnivore], []), 5, [self.bPlayerState]), [1, 0, 0])
 
+	def testStart(self):
+		pass
+
+	def testChoose(self):
+		pass
 
 
 if __name__ == "__main__":

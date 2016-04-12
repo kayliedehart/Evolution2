@@ -28,6 +28,7 @@ class TestPlayerState(unittest.TestCase):
 		self.p7 = PlayerState(7, 0, [], [])
 		self.p8 = PlayerState(8, 0, [self.carnCoop], [])
 		self.p9 = PlayerState(9, 0, [self.vegHorns], [])
+		self.p10 = PlayerState(10, 0, [self.noTraits], [])
 
 		self.playerWithCards = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], 
 												[TraitCard("foraging", 2), TraitCard("carnivore", -7),
@@ -352,6 +353,65 @@ class TestPlayerState(unittest.TestCase):
 		self.assertEqual(self.playerWithCards.species[1].fatFood, 0)
 		self.assertFalse(self.playerWithCards.species[1].hasTrait("fat-tissue"))
 		self.assertTrue(self.playerWithCards.species[1].hasTrait("scavenger"))
+
+	def testStart(self):
+		self.assertEqual(len(self.p7.species), 0)
+		self.assertEqual(len(self.p3.species), 3)
+		self.p7.start(Species(0, 1, 0, [], 0))
+		self.p3.start(False)
+
+		self.assertEqual(len(self.p7.species), 1)
+		self.assertEqual(len(self.p3.species), 3)
+
+
+	def testEndOfTurn(self):
+		self.assertEqual(len(self.p10.species), 1)
+		self.assertEqual(len(self.p3.species), 3)
+		self.assertEqual(self.p10.foodbag, 0)
+		self.assertEqual(self.p3.foodbag, 0)
+		self.assertEqual(self.p3.species[0].population, 3)
+		self.assertEqual(self.p3.species[0].food, 1)
+		self.assertEqual(self.p3.species[1].population, 5)
+		self.assertEqual(self.p3.species[1].food, 3)
+		self.assertEqual(self.p3.species[2].population, 5)
+		self.assertEqual(self.p3.species[2].food, 3)
+
+		self.assertEqual(self.p10.endOfTurn(), 1)
+		self.assertEqual(self.p3.endOfTurn(), 0)
+
+		self.assertEqual(len(self.p10.species), 0)
+		self.assertEqual(len(self.p3.species), 3)
+		self.assertEqual(self.p10.foodbag, 0)
+		self.assertEqual(self.p3.foodbag, 7)
+		self.assertEqual(self.p3.species[0].population, 1)
+		self.assertEqual(self.p3.species[0].food, 0)
+		self.assertEqual(self.p3.species[1].population, 3)
+		self.assertEqual(self.p3.species[1].food, 0)
+		self.assertEqual(self.p3.species[2].population, 3)
+		self.assertEqual(self.p3.species[2].food, 0)
+
+	def testCheckCheatAction(self):
+		pass
+
+	def testCheckLegalSpecies(self):
+		pass
+
+	def testCheckTraitReplacement(self):
+		pass
+
+	def testCheckLegalCards(self):
+		pass
+
+	def testChoose(self):
+		pass
+
+	def testGetScore(self):
+		self.assertEqual(self.p3.getScore(), 0+13+5)
+		self.assertEqual(self.p7.getScore(), 0)
+
+
+	def testNumCardsNeeded(self):
+		pass
 
 
 
