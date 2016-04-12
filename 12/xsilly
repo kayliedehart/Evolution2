@@ -18,5 +18,4 @@ try:
 		print json.dumps(Action4.actionToJson(action))
 
 except Exception as e:
-	raise e
 	quit()

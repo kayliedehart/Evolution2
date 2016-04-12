@@ -54,9 +54,9 @@ class TraitCard():
 		TraitCard -> Nat
 	"""
 	def compare(self, other):
-		if self.name < other.name or (self.name == other.name and self.food < other.food):
+		if self.name < other.name or (self.name == other.name and self.food > other.food):
 			return -1
-		elif self.name > other.name or (self.name == other.name and self.food > other.food):
+		elif self.name > other.name or (self.name == other.name and self.food < other.food):
 			return 1
 		else:
 			return 0

@@ -50,7 +50,6 @@ class SillyPlayer:
 	def choose(self, befores, afters):
 		cardsWIdx = [(i, self.state.hand[i]) for i in range(len(self.state.hand))]
 		cards = sorted(cardsWIdx, key=lambda x: x[1], cmp=TraitCard.compare) 
-
 		maxCardIdx = len(cards) - 1
 		newSpecIdx = len(self.state.species)
 		curCardIdx = 3
