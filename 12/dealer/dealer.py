@@ -479,6 +479,7 @@ class Dealer:
 			actions = self.steps2and3()
 			self.step4(actions)
 			self.endOfTurn()
+
 		self.endGame()
 
 
