@@ -1,5 +1,5 @@
 #!/usr/bin/env python2.7
-# A test harness for the Dealer's step4 method
+# A test harness for the PlayerState + SillyPlayer's choose method
 
 import sys
 import json
