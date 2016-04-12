@@ -130,10 +130,9 @@ class TestPlayer(unittest.TestCase):
 		# self.tCoop = TraitCard("cooperation", 2)
 		# self.tHerd = TraitCard("herding", 3)
 		# self.tForg = TraitCard("foraging", 0)
-		print silly.choose([[self.big, self.aCarnivore]], [[self.fedVeg, self.smallerVeg]]).actionToJson()
 		
 		self.assertEqual(silly.choose([[self.big, self.aCarnivore]], [[self.fedVeg, self.smallerVeg]]).actionToJson(), 
-			Action4(0, [GainPopulation(5, 2)], [], [BuySpeciesBoard(1, 3)], []).actionToJson())
+			Action4(0, [GainPopulation(5, 2)], [], [BuySpeciesBoard(1, [3])], []).actionToJson())
 
 		# Action4(cards[0][0], gp, gb, [BuySpeciesBoard(cards[1][0], [cards[2][0]])], rt)
 
