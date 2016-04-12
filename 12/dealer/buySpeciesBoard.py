@@ -14,7 +14,7 @@ class BuySpeciesBoard:
 	Void -> JsonArray
 	"""
 	def toJson(self):
-		result = [self.paymentIdx]
+		result = [self.payment]
 		for trait in self.traitList:
 			result.append(trait)
 		return result

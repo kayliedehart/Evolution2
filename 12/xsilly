@@ -13,9 +13,10 @@ try:
 		ps = PlayerState.playerStateFromJson(testInput[0])
 		befores = [[Species.speciesFromJson(specJson) for specJson in specList] for specList in testInput[1]]
 		afters = [[Species.speciesFromJson(specJson) for specJson in specList] for specList in testInput[2]]
+		ps.start(False)
 		action = ps.player.choose(befores, afters)
 		print json.dumps(Action4.actionToJson(action))
 
 except Exception as e:
-#	raise e
+	raise e
 	quit()
