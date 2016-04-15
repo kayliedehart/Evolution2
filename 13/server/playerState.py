@@ -19,7 +19,7 @@ class PlayerState:
 		@param species: A List of this player's Species boards
 		@param hand: A List of TraitCards in this player's hand (not on boards/haven't been traded in)
 		@param player: the external player with strategic functionality
-		Nat, Nat, ListOf(Species), ListOf(TraitCard), Player -> PlayerState
+		Nat, Nat, ListOf(Species), ListOf(TraitCard), ProxyPlayer -> PlayerState
 	"""
 	def __init__(self, id, bag, speciesList, cards, player=None):
 		self.num = id
@@ -88,8 +88,9 @@ class PlayerState:
 		Action4 -> Action4 or False
 	"""
 	def checkCheatAction(self, action):
-		if (self.checkLegalCards(action.getAllCardIdcs()) and self.checkLegalSpecies(action.getAllSpecIdcs(), len(action.BT))
-														  and self.checkTraitReplacement(action.RT, action.BT)):
+		if action is not False and (self.checkLegalCards(action.getAllCardIdcs()) 
+							   and self.checkLegalSpecies(action.getAllSpecIdcs(), len(action.BT))
+							   and self.checkTraitReplacement(action.RT, action.BT)):
 			return action
 		else:
 			return False

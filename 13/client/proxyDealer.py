@@ -66,7 +66,7 @@ class ProxyDealer:
 	def choose(self, otherPlayers):
 		befores = [[Species.speciesFromJson(spec) for spec in player] for player in otherPlayers[0]]
 		afters = [[Species.speciesFromJson(spec) for spec in player] for player in otherPlayers[1]]
-		return Action4.toJson(self.player.choose(befores, afters))
+		return Action4.actionToJson(self.player.choose(befores, afters))
 
 	"""
 		JsonArray -> JsonArray

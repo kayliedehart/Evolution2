@@ -1,16 +1,39 @@
 #!/usr/bin/env python2.7
 import sys
-from dealer.dealer import *
-from dealer.playerState import PlayerState
-from dealer.sillyPlayer import SillyPlayer
+import socket
+from server.dealer import *
+from server.playerState import PlayerState
+from server.sillyPlayer import SillyPlayer
+
+HOST_IP = 172.0.0.1
+HOST_PORT = 56789
+TIMEOUT = 1
+
+def setUpSock():
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	sock.bind((HOST_IP, HOST_PORT))
+	sock.listen(1)
+	sock.settimeout(TIMEOUT)
+	return sock
 
 def main(numPlayers):
-	if numPlayers >= 3 and numPlayers <= 8:
-		dealer = Dealer([SillyPlayer() for i in range(numPlayers)], 0)
-		dealer.runGame()
-	else:
-		print "Number of players must be between 3 and 8 inclusive"
+	masterSock = setUpSock()
+	players = []
+	while len(players) < numPlayers: # TODO: time out when we haven't received enough players in a reasonable amt of time
+		conn, addr = sock.accept()
+		ping = conn.recv(512)
+		conn.sendall("ok")
+		player = PlayerState(len(socketMap) + 1, 0, [], [], ProxyPlayer(conn))
+		players.append(player) 
+
+	deal = Dealer(players, 0)
+	deal.runGame()
 
 
 if __name__ == "__main__":
-	main(int(sys.argv[1]))
+	numPlayers = int(sys.argv[1])
+	if numPlayers >= 3 and numPlayers <= 8:
+		main(numPlayers)
+	else:
+		print "Number of players must be between 3 and 8 inclusive"
+		quit()
