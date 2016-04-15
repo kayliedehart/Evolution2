@@ -196,6 +196,22 @@ class PlayerState:
 
 		return result
 
+	""" 
+	   creates a json array of a PlayerState object
+	   Void -> JsonArray
+	"""
+	def stateToJson(self):
+		species = [Species.speciesToJson(animal) for animal in self.species]
+		cards = [TraitCard.traitCardToJson(card) for card in self.hand]
+
+		result = [self.num,
+				  [species]]
+
+		if cards:
+			result.append([cards])
+
+		return result
+
 	"""
 	   creates a PlayerState from a json array
 	   JsonArray -> PlayerState

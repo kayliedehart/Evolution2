@@ -1,13 +1,14 @@
 # An external Player strategy implementation
 from species import *
 from action4 import Action4
+from playerState import PlayerState
 import json
 from buySpeciesBoard import BuySpeciesBoard
 from replaceTrait import ReplaceTrait
 from gainPopulation import GainPopulation
 from gainBodySize import GainBodySize
 
-TIMEOUT = 1
+TIMEOUT = 10
 MAX_JSON_SIZE = 2048
 
 class ProxyPlayer:
@@ -29,6 +30,7 @@ class ProxyPlayer:
 		PlayerState -> Void
 	"""
 	def start(self, curState):
+		print "start"
 		self.state = curState
 		self.sock.sendall(json.dumps(PlayerState.playerStateToJson(self.state)))
 
@@ -41,6 +43,7 @@ class ProxyPlayer:
 		ListOf(ListOf(Species)), ListOf(ListOf(Species)) -> Action4
 	"""
 	def choose(self, befores, afters):
+		print "choose"
 		befores = [[Species.speciesToJson(spec) for spec in player] for player in befores]
 		afters = [[Species.speciesToJson(spec) for spec in player] for player in afters]
 		self.sock.sendall(json.dumps([befores, afters]))
@@ -63,6 +66,7 @@ class ProxyPlayer:
 		PlayerState, Nat, ListOf(PlayerState) -> FeedingAction
 	"""
 	def feed(self, curState, wateringHole, players):
+		print "Feed"
 		jsonState = PlayerState.playerStateToJson(curState)
 		jsonState.append(wateringHole)
 		jsonState.append([[Species.speciesToJson(spec) for spec in player.species] for player in players]) #

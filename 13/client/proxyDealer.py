@@ -2,7 +2,7 @@
 from playerState import *
 import json
 
-TIMEOUT = 1
+TIMEOUT = 10
 MAX_JSON_SIZE = 2048
 
 class ProxyDealer:
@@ -31,6 +31,8 @@ class ProxyDealer:
 				if resp:
 					self.sock.sendall(json.dumps(resp))
 			except Exception as e: # find the actual exception when json tries to load an incomplete thing
+				print e
+				print message
 				print "Unexpected end of message"
 				quit()
 

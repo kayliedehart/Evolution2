@@ -7,7 +7,7 @@ from client.sillyPlayer import SillyPlayer
 
 HOST_IP = "127.0.0.1"
 HOST_PORT = 56789
-TIMEOUT = 1
+TIMEOUT = 30
 
 """
 Player -> Socket or False

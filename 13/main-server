@@ -7,7 +7,7 @@ from server.proxyPlayer import ProxyPlayer
 
 HOST_IP = "127.0.0.1"
 HOST_PORT = 56789
-TIMEOUT = 10
+TIMEOUT = 30
 
 def setUpSock():
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -23,7 +23,7 @@ def main(numPlayers):
 		conn, addr = sock.accept()
 		ping = conn.recv(512)
 		conn.sendall("ok")
-		player = PlayerState(len(socketMap) + 1, 0, [], [], ProxyPlayer(conn))
+		player = PlayerState(len(players) + 1, 0, [], [], ProxyPlayer(conn))
 		players.append(player) 
 
 	deal = Dealer(players, 0)
