@@ -2,7 +2,6 @@
 from species import *
 from drawing import Drawing 
 from traitCard import *
-from sillyPlayer import SillyPlayer
 from action4 import *
 
 
@@ -26,7 +25,7 @@ class PlayerState:
 		self.foodbag = bag
 		self.species = speciesList
 		self.hand = cards
-		self.player = SillyPlayer()
+		self.player = player
 
 	""" 
 		override equality

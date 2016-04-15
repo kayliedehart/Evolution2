@@ -3,7 +3,7 @@ import sys
 import socket
 from server.dealer import *
 from server.playerState import PlayerState
-from server.sillyPlayer import SillyPlayer
+from server.proxyPlayer import ProxyPlayer
 
 HOST_IP = 172.0.0.1
 HOST_PORT = 56789
