@@ -25,6 +25,7 @@ class ProxyDealer:
 		message = "ok"
 		while message != "":
 			message = self.sock.recv(MAX_JSON_SIZE)
+			print "message {}".format(message)
 			try:
 				message = json.loads(message)
 				resp = self.delegateMessage(message)
@@ -34,7 +35,7 @@ class ProxyDealer:
 				print e
 				print message
 				print "Unexpected end of message"
-				quit()
+				#quit()
 
 		print "Game over!"
 
@@ -44,27 +45,33 @@ class ProxyDealer:
 	"""
 	def delegateMessage(self, message):
 		if len(message) == 3:
+			print "3"
 			if type(message[0]) == int and type(message[1]) == list and type(message[2]) == list: #PlayerState
 				self.start(message)
 		elif len(message) == 2:
+			print "2"
 			if type(message[0]) == list and type(message[1]) == list: #[[[Species, Species, ...], [Species, Species, ...]], [[Species, Species, ...], [Species, Species, ...]]]
 				return self.choose(message)
 		elif len(message) == 5:
+			print "5"
 			if type(message[0]) == int and type(message[1]) == list and type(message[2]) == list and type(message[3]) == int and type(message[4]) == list: # PlayerState, WateringHole, [[Species, Species, ...],[Species, Species, ...]]
 				return self.feedNext(message)
 		else:
+			print "bad msg validation in delegate"
 			quit()
 
 	"""
 		JsonArray(PlayerState) -> Void
 	"""
 	def start(self, state):
+		print "Start"
 		self.player.start(self.stateFromJson(state))
 
 	"""
 		JsonArray -> JsonArray
 	"""
 	def choose(self, otherPlayers):
+		print "choose"
 		befores = [[Species.speciesFromJson(spec) for spec in player] for player in otherPlayers[0]]
 		afters = [[Species.speciesFromJson(spec) for spec in player] for player in otherPlayers[1]]
 		return Action4.actionToJson(self.player.choose(befores, afters))
@@ -73,6 +80,7 @@ class ProxyDealer:
 		JsonArray -> JsonArray
 	"""
 	def feedNext(self, gameState):
+		print "feedNext"
 		curState = self.stateFromJson(gameState[0], gameState[1], gameState[2])
 		otherPlayers = [[PlayerState(0, 0, [Species.speciesFromJson(spec)], []) for spec in player] for player in gameState[4]]
 		otherPlayers.append(curState)

@@ -48,6 +48,7 @@ class ProxyPlayer:
 		afters = [[Species.speciesToJson(spec) for spec in player] for player in afters]
 		self.sock.sendall(json.dumps([befores, afters]))
 		resp = self.sock.recv(MAX_JSON_SIZE)
+		print "choose resp {}".format(resp)
 		if resp:
 			return Action4.actionFromJson(json.loads(resp)) # validate me
 		else:
