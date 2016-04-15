@@ -59,7 +59,7 @@ class ProxyDealer:
 		JsonArray(PlayerState) -> Void
 	"""
 	def start(self, state):
-		self.player.start(PlayerState.playerStateFromJson(state))
+		self.player.start(self.stateFromJson(state))
 
 	"""
 		JsonArray -> JsonArray
@@ -73,7 +73,16 @@ class ProxyDealer:
 		JsonArray -> JsonArray
 	"""
 	def feedNext(self, gameState):
-		curState = PlayerState.playerStateFromJson(gameState[0], gameState[1], gameState[2])
+		curState = self.stateFromJson(gameState[0], gameState[1], gameState[2])
 		otherPlayers = [[PlayerState(0, 0, [Species.speciesFromJson(spec)], []) for spec in player] for player in gameState[4]]
 		otherPlayers.append(curState)
 		return self.player.feedNext(curState, gameState[3], otherPlayers)
+
+	"""
+		JsonArray -> PlayerState
+	"""
+	def stateFromJson(self, state):
+		species = [Species.speciesFromJson(animal) for animal in state[1]]
+		cards = [TraitCard.traitCardFromJson(card) for card in state[2]]
+		# TODO: this is probably why everything is breaking
+		return PlayerState(state[0], 0, species, cards, self)

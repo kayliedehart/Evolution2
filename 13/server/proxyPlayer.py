@@ -32,7 +32,7 @@ class ProxyPlayer:
 	def start(self, curState):
 		print "start"
 		self.state = curState
-		self.sock.sendall(json.dumps(PlayerState.playerStateToJson(self.state)))
+		self.sock.sendall(json.dumps(PlayerState.stateToJson(self.state)))
 
 	"""
 		Choose an action for steps 2 and 3 of the game
@@ -67,7 +67,7 @@ class ProxyPlayer:
 	"""
 	def feed(self, curState, wateringHole, players):
 		print "Feed"
-		jsonState = PlayerState.playerStateToJson(curState)
+		jsonState = PlayerState.stateToJson(curState)
 		jsonState.append(wateringHole)
 		jsonState.append([[Species.speciesToJson(spec) for spec in player.species] for player in players]) #
 		# factor out all that vvvvvv

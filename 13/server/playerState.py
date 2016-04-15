@@ -212,6 +212,7 @@ class PlayerState:
 
 		return result
 
+
 	"""
 	   creates a PlayerState from a json array
 	   JsonArray -> PlayerState
