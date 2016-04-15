@@ -6,8 +6,8 @@ TIMEOUT = 1
 MAX_JSON_SIZE = 2048
 
 class ProxyDealer:
-	self.player = False
-	self.sock = False
+	player = False
+	sock = False
 
 	"""
 		Player, Socket -> ProxyDealer
@@ -30,7 +30,7 @@ class ProxyDealer:
 				resp = self.delegateMessage(message)
 				if resp:
 					self.sock.sendall(json.dumps(resp))
-			except Exception e: # find the actual exception when json tries to load an incomplete thing
+			except Exception as e: # find the actual exception when json tries to load an incomplete thing
 				print "Unexpected end of message"
 				quit()
 
@@ -48,8 +48,7 @@ class ProxyDealer:
 			if type(message[0]) == list and type(message[1]) == list: #[[[Species, Species, ...], [Species, Species, ...]], [[Species, Species, ...], [Species, Species, ...]]]
 				return self.choose(message)
 		elif len(message) == 5:
-			if type(message[0]) == int and type(message[1]) == list and type(message[2]) == list
-				and type(message[3]) == int and type(message[4]) == list: # PlayerState, WateringHole, [[Species, Species, ...],[Species, Species, ...]]
+			if type(message[0]) == int and type(message[1]) == list and type(message[2]) == list and type(message[3]) == int and type(message[4]) == list: # PlayerState, WateringHole, [[Species, Species, ...],[Species, Species, ...]]
 				return self.feedNext(message)
 		else:
 			quit()

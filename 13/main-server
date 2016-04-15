@@ -5,9 +5,9 @@ from server.dealer import *
 from server.playerState import PlayerState
 from server.proxyPlayer import ProxyPlayer
 
-HOST_IP = 172.0.0.1
+HOST_IP = "127.0.0.1"
 HOST_PORT = 56789
-TIMEOUT = 1
+TIMEOUT = 10
 
 def setUpSock():
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -17,7 +17,7 @@ def setUpSock():
 	return sock
 
 def main(numPlayers):
-	masterSock = setUpSock()
+	sock = setUpSock()
 	players = []
 	while len(players) < numPlayers: # TODO: time out when we haven't received enough players in a reasonable amt of time
 		conn, addr = sock.accept()

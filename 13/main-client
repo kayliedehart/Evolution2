@@ -3,8 +3,9 @@
 import sys
 import socket
 from client.proxyDealer import ProxyDealer
+from client.sillyPlayer import SillyPlayer
 
-HOST_IP = 172.0.0.1
+HOST_IP = "127.0.0.1"
 HOST_PORT = 56789
 TIMEOUT = 1
 
@@ -26,7 +27,7 @@ def register(player):
 Nat -> Void
 """
 def main(numPlayers):
-	players = SillyPlayer()
+	player = SillyPlayer()
 	resp = register(player)
 	if resp is not False:
 		dealerProxy = ProxyDealer(player, resp)
