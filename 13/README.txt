@@ -1,51 +1,41 @@
 PURPOSE:
 
-Create a program that can run a multiplayer game of Evolution.
-Implement an API for "external" players. 
-Develop test harnesses for these.
-Specify a new remote-communication interaction protocol.
+Make our Evolutiong game runnable in a distributed fashion.
 
 FILES:
+13/main-client will run client players
 
-12/xsilly is the test harness for the step4 method in dealer
+13/main-server will run the server
 
-12/xsilly-[n]-[in|out].json is a [Player, [LoS], [LoS]], [Action4] in/expected 
-							output pair to be run with xsilly
+13/[client|server]/dealer.py is the dealer of the Evolution game
 
-12/dealer/dealer.py is the dealer of the Evolution game
+13/server/proxyPlayer.py is an external player proxy
 
-12/dealer/drawing.py is the view component of the dealer
+13/client/proxyDealer.py is an external dealer proxy
 
-12/dealer/ham.gif is an image resource used in the dealer
+13/[client|server]/playerState.py is the player data representation
 
-12/dealer/SillyPlayer.py is a player implementation with the current silly player strategy
+13/[client|server]/species.py represents a Species Board
 
-12/dealer/playerState.py is the player data representation
+13/[client|server]/traitCard.py represents a TraitCard
 
-12/dealer/species.py represents a Species Board
+13/[client|server]/action4.py represents an Action4
 
-12/dealer/traitCard.py represents a TraitCard
+13/[client|server]/replaceTrait.py represents a ReplaceTrait (RT) action
 
-12/dealer/action4.py represents an Action4
+13/[client|server]/buySpeciesBoard.py represents a BuySpeciesBoard (BT) action
 
-12/dealer/replaceTrait.py represents a ReplaceTrait (RT) action
+13/[client|server]/gainBodySize.py represents a GainBodySize(GB) action
 
-12/dealer/buySpeciesBoard.py represents a BuySpeciesBoard (BT) action
+13/[client|server]/gainPopulation.py represents a GainPopulation(GP) action
 
-12/dealer/gainBodySize.py represents a GainBodySize(GB) action
-
-12/dealer/gainPopulation.py represents a GainPopulation(GP) action
-
-12/dealer/test[fileName].py are the unit tests for the given fileName
-
-12/remote/remote.txt is the specification for a remote interaction API for the Evolution game
+13/[client|server]/test[fileName].py are the unit tests for the given fileName
 
 
 RUNNING THE CODE:
 
-To run main, run ./main
-
-To run the test harness, run ./xsilly < <json-input> 
+To run the game, first run ./main-server N where N is the number of external players you wish to accept.
+Then, run ./main-client N. 
 
 To run the unit tests, run python test<FileName>.py
 
@@ -54,9 +44,3 @@ READING THE CODE:
 
 Start by reading the code in dealer.py and playerState.py for a broad overview and context.
 Read into subsequent files as needed.
-
-The code for task 2 is in dealer.py as runGame() and all methods referenced within
-    its methods and submethods.
-	
-The code for task 3 is in sillyPlayer.py, residing in the function choose(). 
-
