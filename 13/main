@@ -1,0 +1,16 @@
+#!/usr/bin/env python2.7
+import sys
+from dealer.dealer import *
+from dealer.playerState import PlayerState
+from dealer.sillyPlayer import SillyPlayer
+
+def main(numPlayers):
+	if numPlayers >= 3 and numPlayers <= 8:
+		dealer = Dealer([SillyPlayer() for i in range(numPlayers)], 0)
+		dealer.runGame()
+	else:
+		print "Number of players must be between 3 and 8 inclusive"
+
+
+if __name__ == "__main__":
+	main(int(sys.argv[1]))
