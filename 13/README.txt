@@ -34,8 +34,9 @@ FILES:
 
 RUNNING THE CODE:
 
+Before running, first change HOST_IP and HOST_PORT in main-client and main-server to match your own.
 To run the game, first run ./main-server N where N is the number of external players you wish to accept.
-Then, run ./main-client N. 
+Then, run ./main-client to create 1 player 
 
 To run the unit tests, run python test<FileName>.py
 

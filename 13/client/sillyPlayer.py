@@ -7,7 +7,7 @@ from gainPopulation import GainPopulation
 from gainBodySize import GainBodySize
 
 
-class ProxyPlayer:
+class SillyPlayer:
 	# Current PlayerState that corresponds to this player
 	# Supplied in start()
 	state = False
