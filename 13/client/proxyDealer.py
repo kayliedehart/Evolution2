@@ -35,7 +35,7 @@ class ProxyDealer:
 				ourResp = json.loads(message)
 				resp = self.delegateMessage(ourResp)
 				print "client resp {}".format(resp)
-				if resp:
+				if resp is not "" and resp is not None:
 					self.sock.sendall(json.dumps(resp))
 			except Exception as e: # find the actual exception when json tries to load an incomplete thing
 				print e
@@ -82,9 +82,7 @@ class ProxyDealer:
 		befores = [[Species.speciesFromJson(spec) for spec in player] for player in otherPlayers[0]]
 		afters = [[Species.speciesFromJson(spec) for spec in player] for player in otherPlayers[1]]
 		choice = self.player.choose(befores, afters)
-		print "choice {}".format(choice)
 		act = Action4.actionToJson(choice)
-		print "act {}".format(act)
 		return act
 
 	"""
@@ -92,17 +90,17 @@ class ProxyDealer:
 	"""
 	def feedNext(self, gameState):
 		print "feedNext"
-		curState = self.stateFromJson(gameState[0], gameState[1], gameState[2])
-		otherPlayers = [[PlayerState(0, 0, [Species.speciesFromJson(spec)], []) for spec in player] for player in gameState[4]]
+		curState = self.stateFromJson(gameState[0:3])
+		otherPlayers = []
+		for player in gameState[4]: 
+			otherPlayers.append(PlayerState(0, 0, [Species.speciesFromJson(spec) for spec in player], []))
 		otherPlayers.append(curState)
-		return self.player.feedNext(curState, gameState[3], otherPlayers)
+		return self.player.feed(curState, gameState[3], otherPlayers)
 
 	"""
 		JsonArray -> PlayerState
 	"""
 	def stateFromJson(self, state):
-		print "st2 {}".format(state[2])
 		species = [Species.speciesFromJson(animal) for animal in state[1]]
 		cards = [TraitCard.traitCardFromJson(card) for card in state[2]]
-		print cards
 		return PlayerState(state[0], 0, species, cards, self)

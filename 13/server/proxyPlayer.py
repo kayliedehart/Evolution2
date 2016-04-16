@@ -75,8 +75,10 @@ class ProxyPlayer:
 		jsonState.append([[Species.speciesToJson(spec) for spec in player.species] for player in players]) #
 		# factor out all that vvvvvv
 		self.sock.sendall(json.dumps(jsonState))
+		time.sleep(.01)
 		resp = self.sock.recv(MAX_JSON_SIZE)
-		if resp:
+		print "resp for feed {}".format(resp)
+		if resp is not "":
 			return json.loads(resp) # validate me
 		else:
 			return False # actually throw me out if i took too long
