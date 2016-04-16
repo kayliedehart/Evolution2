@@ -13,7 +13,7 @@ def setUpSock():
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.bind((HOST_IP, HOST_PORT))
 	sock.listen(1)
-	#sock.settimeout(TIMEOUT)
+	sock.settimeout(TIMEOUT)
 	return sock
 
 def main(numPlayers):

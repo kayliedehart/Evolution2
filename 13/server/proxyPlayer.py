@@ -22,7 +22,7 @@ class ProxyPlayer:
 	def __init__(self, socket):
 		self.state = False
 		self.sock = socket
-		#self.sock.settimeout(TIMEOUT)
+		self.sock.settimeout(TIMEOUT)
 
 	"""
 		Get our own state at the end of step 1 of a game (new species/cards added)
@@ -50,7 +50,6 @@ class ProxyPlayer:
 		self.sock.sendall(json.dumps([befores, afters]))
 		time.sleep(.01)
 		resp = self.sock.recv(MAX_JSON_SIZE)
-		print "choose resp {}".format(resp)
 		if resp:
 			return Action4.actionFromJson(json.loads(resp)) # validate me
 		else:
@@ -77,7 +76,6 @@ class ProxyPlayer:
 		self.sock.sendall(json.dumps(jsonState))
 		time.sleep(.01)
 		resp = self.sock.recv(MAX_JSON_SIZE)
-		print "resp for feed {}".format(resp)
 		if resp is not "":
 			return json.loads(resp) # validate me
 		else:

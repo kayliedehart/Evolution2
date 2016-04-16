@@ -19,7 +19,7 @@ class ProxyDealer:
 	def __init__(self, player, socket):
 		self.player = player
 		self.sock = socket
-		#self.sock.settimeout(TIMEOUT)
+		self.sock.settimeout(TIMEOUT)
 		self.main()
 
 	"""
@@ -27,14 +27,12 @@ class ProxyDealer:
 	"""
 	def main(self):
 		message = "ok"
-		while True:
+		while message != "":
 			time.sleep(.01)
 			message = self.sock.recv(MAX_JSON_SIZE)
-			print "message {}".format(message)
 			try:
 				ourResp = json.loads(message)
 				resp = self.delegateMessage(ourResp)
-				print "client resp {}".format(resp)
 				if resp is not "" and resp is not None:
 					self.sock.sendall(json.dumps(resp))
 			except Exception as e: # find the actual exception when json tries to load an incomplete thing
@@ -50,17 +48,13 @@ class ProxyDealer:
 		JsonArray -> Opt: JsonArray
 	"""
 	def delegateMessage(self, message):
-		print "delegatemsg"
 		if len(message) == 3:
-			print "3"
 			if type(message[0]) == int and type(message[1]) == list and type(message[2]) == list: 
 				self.start(message)
 		elif len(message) == 2:
-			print "2"
 			if type(message[0]) == list and type(message[1]) == list: 
 				return self.choose(message)
 		elif len(message) == 5:
-			print "5"
 			if type(message[0]) == int and type(message[1]) == list and type(message[2]) == list and type(message[3]) == int and type(message[4]) == list: 
 				return self.feedNext(message)
 		else:
@@ -71,7 +65,7 @@ class ProxyDealer:
 		JsonArray(PlayerState) -> Void
 	"""
 	def start(self, state):
-		print "Start"
+		print "start"
 		self.player.start(self.stateFromJson(state))
 
 	"""
