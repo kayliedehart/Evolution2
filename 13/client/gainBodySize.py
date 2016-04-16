@@ -14,7 +14,7 @@ class GainBodySize:
 	Void -> JsonArray
 	"""
 	def toJson(self):
-		return ["body", self.specIdx, self.cardIdx]
+		return [self.specIdx, self.cardIdx]
 
 	"""
 	JSON -> GainPopulation
@@ -22,7 +22,7 @@ class GainBodySize:
 	@staticmethod
 	def fromJson(GB):
 		GainBodySize.validate(GB)
-		key, spec, card = GB
+		spec, card = GB
 		return GainBodySize(spec, card)
 
 	"""
@@ -32,9 +32,8 @@ class GainBodySize:
 	"""
 	@staticmethod
 	def validate(GB):
-		key, spec, card = GB
-		if not(len(GB) == 3 and key == "body" 
-							and type(spec) == int 
+		spec, card = GB
+		if not(len(GB) == 2 and type(spec) == int 
 							and type(card) == int):
 			quit()
 

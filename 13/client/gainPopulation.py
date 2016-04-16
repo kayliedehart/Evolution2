@@ -14,7 +14,7 @@ class GainPopulation:
 	Void -> JsonArray
 	"""
 	def toJson(self):
-		return ["population", self.specIdx, self.cardIdx]
+		return [self.specIdx, self.cardIdx]
 
 	"""
 	JSON -> GainPopulation
@@ -22,7 +22,7 @@ class GainPopulation:
 	@staticmethod
 	def fromJson(GP):
 		GainPopulation.validate(GP)
-		key, spec, card = GP
+		spec, card = GP
 		return GainPopulation(spec, card)
 
 
@@ -33,9 +33,8 @@ class GainPopulation:
 	"""
 	@staticmethod
 	def validate(GP):
-		key, spec, card = GP
-		if not(len(GP) == 3 and key == "population" 
-							and type(spec) == int 
+		spec, card = GP
+		if not(len(GP) == 2 and type(spec) == int 
 							and type(card) == int):
 			quit()
 
