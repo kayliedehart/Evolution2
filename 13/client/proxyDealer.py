@@ -1,6 +1,10 @@
 # the internal representation of an external dealer
 from playerState import *
+from species import *
+from action4 import *
+from traitCard import *
 import json
+import time
 
 TIMEOUT = 10
 MAX_JSON_SIZE = 2048
@@ -24,12 +28,12 @@ class ProxyDealer:
 	def main(self):
 		message = "ok"
 		while message != "":
+			time.sleep(.01)
 			message = self.sock.recv(MAX_JSON_SIZE)
-			print "message {}".format(message)
 			try:
-				message = json.loads(message)
-				resp = self.delegateMessage(message)
-				if resp:
+				ourResp = json.loads(message)
+				resp = self.delegateMessage(ourResp)
+				if resp is not "" and resp is not None:
 					self.sock.sendall(json.dumps(resp))
 			except Exception as e: # find the actual exception when json tries to load an incomplete thing
 				print e
@@ -45,16 +49,13 @@ class ProxyDealer:
 	"""
 	def delegateMessage(self, message):
 		if len(message) == 3:
-			print "3"
-			if type(message[0]) == int and type(message[1]) == list and type(message[2]) == list: #PlayerState
+			if type(message[0]) == int and type(message[1]) == list and type(message[2]) == list: 
 				self.start(message)
 		elif len(message) == 2:
-			print "2"
-			if type(message[0]) == list and type(message[1]) == list: #[[[Species, Species, ...], [Species, Species, ...]], [[Species, Species, ...], [Species, Species, ...]]]
+			if type(message[0]) == list and type(message[1]) == list: 
 				return self.choose(message)
 		elif len(message) == 5:
-			print "5"
-			if type(message[0]) == int and type(message[1]) == list and type(message[2]) == list and type(message[3]) == int and type(message[4]) == list: # PlayerState, WateringHole, [[Species, Species, ...],[Species, Species, ...]]
+			if type(message[0]) == int and type(message[1]) == list and type(message[2]) == list and type(message[3]) == int and type(message[4]) == list: 
 				return self.feedNext(message)
 		else:
 			print "bad msg validation in delegate"
@@ -64,7 +65,7 @@ class ProxyDealer:
 		JsonArray(PlayerState) -> Void
 	"""
 	def start(self, state):
-		print "Start"
+		print "start"
 		self.player.start(self.stateFromJson(state))
 
 	"""
@@ -74,17 +75,21 @@ class ProxyDealer:
 		print "choose"
 		befores = [[Species.speciesFromJson(spec) for spec in player] for player in otherPlayers[0]]
 		afters = [[Species.speciesFromJson(spec) for spec in player] for player in otherPlayers[1]]
-		return Action4.actionToJson(self.player.choose(befores, afters))
+		choice = self.player.choose(befores, afters)
+		act = Action4.actionToJson(choice)
+		return act
 
 	"""
 		JsonArray -> JsonArray
 	"""
 	def feedNext(self, gameState):
 		print "feedNext"
-		curState = self.stateFromJson(gameState[0], gameState[1], gameState[2])
-		otherPlayers = [[PlayerState(0, 0, [Species.speciesFromJson(spec)], []) for spec in player] for player in gameState[4]]
+		curState = self.stateFromJson(gameState[0:3])
+		otherPlayers = []
+		for player in gameState[4]: 
+			otherPlayers.append(PlayerState(0, 0, [Species.speciesFromJson(spec) for spec in player], []))
 		otherPlayers.append(curState)
-		return self.player.feedNext(curState, gameState[3], otherPlayers)
+		return self.player.feed(curState, gameState[3], otherPlayers)
 
 	"""
 		JsonArray -> PlayerState
@@ -92,5 +97,4 @@ class ProxyDealer:
 	def stateFromJson(self, state):
 		species = [Species.speciesFromJson(animal) for animal in state[1]]
 		cards = [TraitCard.traitCardFromJson(card) for card in state[2]]
-		# TODO: this is probably why everything is breaking
 		return PlayerState(state[0], 0, species, cards, self)

@@ -3,6 +3,7 @@ from species import *
 from action4 import Action4
 from playerState import PlayerState
 import json
+import time
 from buySpeciesBoard import BuySpeciesBoard
 from replaceTrait import ReplaceTrait
 from gainPopulation import GainPopulation
@@ -47,8 +48,8 @@ class ProxyPlayer:
 		befores = [[Species.speciesToJson(spec) for spec in player] for player in befores]
 		afters = [[Species.speciesToJson(spec) for spec in player] for player in afters]
 		self.sock.sendall(json.dumps([befores, afters]))
+		time.sleep(.01)
 		resp = self.sock.recv(MAX_JSON_SIZE)
-		print "choose resp {}".format(resp)
 		if resp:
 			return Action4.actionFromJson(json.loads(resp)) # validate me
 		else:
@@ -73,8 +74,9 @@ class ProxyPlayer:
 		jsonState.append([[Species.speciesToJson(spec) for spec in player.species] for player in players]) #
 		# factor out all that vvvvvv
 		self.sock.sendall(json.dumps(jsonState))
+		time.sleep(.01)
 		resp = self.sock.recv(MAX_JSON_SIZE)
-		if resp:
+		if resp is not "":
 			return json.loads(resp) # validate me
 		else:
 			return False # actually throw me out if i took too long
