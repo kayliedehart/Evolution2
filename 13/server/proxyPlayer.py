@@ -9,7 +9,7 @@ from replaceTrait import ReplaceTrait
 from gainPopulation import GainPopulation
 from gainBodySize import GainBodySize
 
-TIMEOUT = 10
+TIMEOUT = 30
 MAX_JSON_SIZE = 2048
 
 class ProxyPlayer:

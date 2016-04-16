@@ -6,7 +6,7 @@ from traitCard import *
 import json
 import time
 
-TIMEOUT = 10
+TIMEOUT = 30
 MAX_JSON_SIZE = 2048
 
 class ProxyDealer:
