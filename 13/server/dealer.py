@@ -3,7 +3,6 @@ from drawing import Drawing
 from traitCard import *
 from playerState import *
 from action4 import Action4
-import time
 
 class Dealer:
 	wateringHole = 0
@@ -475,13 +474,9 @@ class Dealer:
 	"""
 	def runGame(self):
 		while (len(self.deck) >= self.numCardsThisTurn()) and (len(self.players) > 0):
-			time.sleep(1)
 			self.step1()
-			time.sleep(1)
 			actions = self.steps2and3()
-			time.sleep(1)
 			self.step4(actions)
-			time.sleep(1)
 			self.endOfTurn()
 
 		self.endGame()
