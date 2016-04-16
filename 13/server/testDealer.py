@@ -2,6 +2,7 @@ import unittest
 from dealer import *
 from species import Species
 from playerState import PlayerState
+from sillyPlayer import SillyPlayer
 from traitCard import TraitCard
 from action4 import Action4
 from gainPopulation import GainPopulation
@@ -26,9 +27,9 @@ class TestDealer(unittest.TestCase):
 		self.carnForage = Species(3, 4, 5, [TraitCard("carnivore"), TraitCard("foraging")], 0)
 		self.carnForage1 = Species(3, 4, 5, [TraitCard("carnivore"), TraitCard("foraging")], 0)
 		self.extinct = Species(0, 0, 0, [], 0)
-		self.p1 = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], [])
-		self.p2 = PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], [])
-		self.p3 = PlayerState(3, 0, [self.vegCoop, self.carnCoop, self.carnForage1], [])
+		self.p1 = PlayerState(1, 0, [self.vegCoop, self.fat, self.carnForage], [], SillyPlayer())
+		self.p2 = PlayerState(2, 0, [self.vegHorns, self.fatScav, self.carnCoop], [], SillyPlayer())
+		self.p3 = PlayerState(3, 0, [self.vegCoop, self.carnCoop, self.carnForage1], [], SillyPlayer())
 		self.p4 = PlayerState(4, 0, [self.vegCoop], [])
 		self.p5 = PlayerState(5, 0, [self.vegHorns], [])
 		self.p6 = PlayerState(6, 0, [self.carnCoop], [])

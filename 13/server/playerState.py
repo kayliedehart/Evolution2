@@ -1,6 +1,7 @@
 # An internal Player in a game of Evolution
 from species import *
 from drawing import Drawing 
+from sillyPlayer import SillyPlayer
 from traitCard import *
 from action4 import *
 
@@ -25,7 +26,7 @@ class PlayerState:
 		self.foodbag = bag
 		self.species = speciesList
 		self.hand = cards
-		self.player = player
+		self.player = player or SillyPlayer()
 
 	""" 
 		override equality
