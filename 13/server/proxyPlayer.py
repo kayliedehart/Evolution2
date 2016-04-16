@@ -3,6 +3,7 @@ from species import *
 from action4 import Action4
 from playerState import PlayerState
 import json
+import time
 from buySpeciesBoard import BuySpeciesBoard
 from replaceTrait import ReplaceTrait
 from gainPopulation import GainPopulation
@@ -21,7 +22,7 @@ class ProxyPlayer:
 	def __init__(self, socket):
 		self.state = False
 		self.sock = socket
-		self.sock.settimeout(TIMEOUT)
+		#self.sock.settimeout(TIMEOUT)
 
 	"""
 		Get our own state at the end of step 1 of a game (new species/cards added)
@@ -47,6 +48,7 @@ class ProxyPlayer:
 		befores = [[Species.speciesToJson(spec) for spec in player] for player in befores]
 		afters = [[Species.speciesToJson(spec) for spec in player] for player in afters]
 		self.sock.sendall(json.dumps([befores, afters]))
+		time.sleep(.01)
 		resp = self.sock.recv(MAX_JSON_SIZE)
 		print "choose resp {}".format(resp)
 		if resp:

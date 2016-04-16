@@ -205,10 +205,10 @@ class PlayerState:
 		cards = [TraitCard.traitCardToJson(card) for card in self.hand]
 
 		result = [self.num,
-				  [species]]
+				  species]
 
 		if cards:
-			result.append([cards])
+			result.append(cards)
 
 		return result
 
