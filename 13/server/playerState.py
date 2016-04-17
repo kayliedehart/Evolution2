@@ -93,7 +93,7 @@ class PlayerState:
 				return feedAct
 			else:
 				return constants.KICK_ME
-		elif (type(feedAct) == int and self.checkLegalSpecies([feedAct]) and self.species[feedAct].canEat()) or \
+		elif (type(feedAct) == int and self.checkLegalSpecies([feedAct]) and self.species[feedAct].canEat() and not self.speciesHasTrait(feedAct, "carnivore")) or \
 																						  		feedAct is False:
 			return feedAct
 		else:

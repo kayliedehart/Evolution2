@@ -8,7 +8,7 @@ from gainBodySize import GainBodySize
 import random
 
 
-class SillyPlayer:
+class CheatFeed:
 	# Current PlayerState that corresponds to this player
 	# Supplied in start()
 	state = False
@@ -37,7 +37,7 @@ class SillyPlayer:
 
 	"""
 		Get our own state at the end of step 1 of a game (new species/cards added)
-		SillyPlayer does nothing with this
+		CheatFeed does nothing with this
 		@param curState: PlayerState representing us
 		PlayerState -> Void
 	"""
@@ -46,7 +46,7 @@ class SillyPlayer:
 
 	"""
 		Choose an action for steps 2 and 3 of the game
-		SillyPlayer just picks the biggest cards in order
+		CheatFeed just picks the biggest cards in order
 		@param befores: all the species of players who went before this one
 		@param afters: all the species of players who go before this one
 		@return the card to place at the watering hole and what trades to make
@@ -111,7 +111,12 @@ class SillyPlayer:
 	@staticmethod
 	def getVegetarian(species, cheat):
 		for index, animal in species:
-			if not animal.hasTrait("carnivore") and ((cheat and not animal.population > animal.food) or ((not cheat) and animal.population > animal.food)):
+			if cheat:
+				if animal.hasTrait("carnivore") or animal.population == animal.food:
+					print "cheating with a non-veg!"
+					return index
+			
+			if not animal.hasTrait("carnivore") and animal.population > animal.food:
 				return index
 
 		return False
@@ -171,7 +176,7 @@ class SillyPlayer:
 		speciesWithIndices = []
 		for i in range(len(curState.species)):
 			speciesWithIndices.append((i, curState.species[i]))
-		return SillyPlayer.sortSpecies(speciesWithIndices)
+		return CheatFeed.sortSpecies(speciesWithIndices)
 
 	"""
 		Choose a species to feed
@@ -187,16 +192,17 @@ class SillyPlayer:
 	"""
 	@staticmethod
 	def feed(curState, wateringHole, players):
-		cheat = random.random() > 0.5
-		species = SillyPlayer.indexSpecies(curState)
-		myIndex, otherPlayers = SillyPlayer.getIndex(curState, players)
+		cheat = (random.random() > 0.5)
+		species = CheatFeed.indexSpecies(curState)
+		myIndex, otherPlayers = CheatFeed.getIndex(curState, players)
 
-		fatTissueSpecies, currentNeed = SillyPlayer.getFatTissueSpecies(species, wateringHole)
-		vegetarian = SillyPlayer.getVegetarian(species, cheat)
-		carnivore, defender, prey = SillyPlayer.getCarnivoreAttack(species, otherPlayers)
+		fatTissueSpecies, currentNeed = CheatFeed.getFatTissueSpecies(species, wateringHole)
+		vegetarian = CheatFeed.getVegetarian(species, cheat)
+		carnivore, defender, prey = CheatFeed.getCarnivoreAttack(species, otherPlayers)
 
 		if fatTissueSpecies is not False:
 			if cheat:
+				print "cheating with a fat tissue species!"
 				return [fatTissueSpecies, wateringHole+1]
 			else:
 				return [fatTissueSpecies, currentNeed]

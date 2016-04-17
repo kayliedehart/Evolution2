@@ -1,0 +1,44 @@
+#!/usr/bin/env python2.7
+# CREATES PLAYERS
+import sys
+import socket
+from client.proxyDealer import ProxyDealer
+from client.cheatFeed import CheatFeed
+import random
+
+HOST_IP = "127.0.0.1"
+HOST_PORT = 56789
+TIMEOUT = 30
+
+"""
+Player -> Socket or False
+"""
+def register(player):
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	sock.settimeout(TIMEOUT)
+	sock.connect((HOST_IP, HOST_PORT))
+	sock.sendall("ping")
+	message = sock.recv(1024)
+	if message == "ok":
+		return sock
+	else:
+		return False
+
+"""
+Nat -> Void
+"""
+def main(numPlayers):
+	player = CheatFeed()
+	resp = register(player)
+	if resp is not False:
+		dealerProxy = ProxyDealer(player, resp)
+	else:
+		print "you failed"
+		quit()
+
+	# TODO
+	#quit()
+
+
+if __name__ == "__main__":
+	main(1)
