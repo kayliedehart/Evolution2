@@ -88,15 +88,30 @@ class PlayerState:
 	def checkFeedCheat(self, feedAct):
 		if type(feedAct) == list: 
 			legalSpec = self.checkLegalSpecies([feedAct[0]])
-			if (len(feedAct) == 2 and self.speciesHasTrait(feedAct[0], "fat-tissue") or \
-			   len(feedAct) == 3) and legalSpec:
+			if ((len(feedAct) == 2 and self.speciesHasTrait(feedAct[0], "fat-tissue") and self.species[feedAct[0]].canAddFat()) or \
+			   																		len(feedAct) == 3) and legalSpec:
 				return feedAct
 			else:
 				return constants.KICK_ME
-		elif type(feedAct) == int and self.checkLegalSpecies([feedAct]) or feedAct is False:
+		elif (type(feedAct) == int and self.checkLegalSpecies([feedAct]) and self.species[feedAct].canEat()) or \
+																						  		feedAct is False:
 			return feedAct
 		else:
 			return constants.KICK_ME
+
+
+	"""
+		Check whether GrowPopulations and GrowBodySizes can succeed
+		@param GPs: the GrowPopulations to check
+		@param GBs: the GrowBodySizes to check
+		@return True if these actions can occur, False otherwise
+	"""
+	def checkAdditiveActions(self, gain, gfunc):
+		for g in gain:
+			if g.specIdx < len(self.species) and not self.species[g.specIdx].gfunc():
+				return False
+		return True
+
 
 	"""
 		Check if an action from our external player would be a cheating move
@@ -111,7 +126,9 @@ class PlayerState:
 	def checkCheatAction(self, action):
 		if action is not False and (self.checkLegalCards(action.getAllCardIdcs()) 
 							   and self.checkLegalSpecies(action.getAllSpecIdcs(), len(action.BT))
-							   and self.checkTraitReplacement(action.RT, action.BT)):
+							   and self.checkTraitReplacement(action.RT, action.BT)
+							   and self.checkAdditiveActions(action.GP, Species.canGrowPopulation)
+							   and self.checkAdditiveActions(action.GB, Species.canGrowBody)):
 			return action
 		else:
 			return False

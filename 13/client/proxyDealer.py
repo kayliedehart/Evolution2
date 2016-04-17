@@ -35,11 +35,9 @@ class ProxyDealer:
 				resp = self.delegateMessage(ourResp)
 				if resp is not "" and resp is not None:
 					self.sock.sendall(json.dumps(resp))
-			except Exception as e: # find the actual exception when json tries to load an incomplete thing
-				print e
-				print message
+			except ValueError as e: # find the actual exception when json tries to load an incomplete thing
 				print "Unexpected end of message"
-				#quit()
+				quit()
 
 		print "Game over!"
 
@@ -65,14 +63,12 @@ class ProxyDealer:
 		JsonArray(PlayerState) -> Void
 	"""
 	def start(self, state):
-		print "start"
 		self.player.start(self.stateFromJson(state))
 
 	"""
 		JsonArray -> JsonArray
 	"""
 	def choose(self, otherPlayers):
-		print "choose"
 		befores = [[Species.speciesFromJson(spec) for spec in player] for player in otherPlayers[0]]
 		afters = [[Species.speciesFromJson(spec) for spec in player] for player in otherPlayers[1]]
 		choice = self.player.choose(befores, afters)
@@ -83,7 +79,6 @@ class ProxyDealer:
 		JsonArray -> JsonArray
 	"""
 	def feedNext(self, gameState):
-		print "feedNext"
 		curState = self.stateFromJson(gameState[0:3])
 		otherPlayers = []
 		for player in gameState[4]: 

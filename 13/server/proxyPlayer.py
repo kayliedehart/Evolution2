@@ -37,7 +37,6 @@ class ProxyPlayer:
 		PlayerState -> Void
 	"""
 	def start(self, curState):
-		print "start"
 		self.state = curState
 		self.sock.sendall(json.dumps(PlayerState.stateToJson(self.state)))
 
@@ -64,13 +63,12 @@ class ProxyPlayer:
 		ListOf(ListOf(Species)), ListOf(ListOf(Species)) -> Action4
 	"""
 	def choose(self, befores, afters):
-		print "choose"
 		befores = [[Species.speciesToJson(spec) for spec in player] for player in befores]
 		afters = [[Species.speciesToJson(spec) for spec in player] for player in afters]
 		self.sock.sendall(json.dumps([befores, afters]))
 		resp = self.getResponse()
 		if resp != constants.KICK_ME:
-			return Action4.actionFromJson(resp) # validate me
+			return Action4.actionFromJson(resp)
 		else:
 			return False
 		
@@ -87,7 +85,6 @@ class ProxyPlayer:
 		PlayerState, Nat, ListOf(PlayerState) -> FeedingAction
 	"""
 	def feed(self, curState, wateringHole, players):
-		print "Feed"
 		jsonState = PlayerState.stateToJson(curState)
 		jsonState.append(wateringHole)
 		jsonState.append([[Species.speciesToJson(spec) for spec in player.species] for player in players]) 

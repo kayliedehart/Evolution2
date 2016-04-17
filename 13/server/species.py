@@ -134,6 +134,34 @@ class Species:
 		self.fatFood -= amountToEat
 
 	"""
+		Check if this can eat more food
+		Void -> Boolean
+	"""
+	def canEat(self):
+		return self.food < self.population
+
+	"""
+		Check if this can eat more fat food
+		Void -> Boolean
+	"""
+	def canAddFat(self):
+		return self.fatFood < self.body
+
+	"""
+		Check if this can grow its body
+		Void -> Boolean
+	"""
+	def canGrowBody(self):
+		return self.body < 7
+
+	"""
+		Check if this can grow its population
+		Void -> Boolean
+	"""
+	def canGrowPopulation(self):
+		return self.population < 7
+
+	"""
 		Add one population to this species
 		Void -> Void
 	"""
