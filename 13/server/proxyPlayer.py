@@ -4,6 +4,7 @@ from action4 import Action4
 from playerState import PlayerState
 import json
 import time
+import socket
 from buySpeciesBoard import BuySpeciesBoard
 from replaceTrait import ReplaceTrait
 from gainPopulation import GainPopulation
@@ -51,8 +52,7 @@ class ProxyPlayer:
 			resp = json.loads(self.sock.recv(MAX_JSON_SIZE))
 		except (socket.timeout, ValueError): # timeout or invalid json
 			resp = constants.KICK_ME
-		finally:
-			return resp
+		return resp
 
 	"""
 		Choose an action for steps 2 and 3 of the game
@@ -65,6 +65,7 @@ class ProxyPlayer:
 	def choose(self, befores, afters):
 		befores = [[Species.speciesToJson(spec) for spec in player] for player in befores]
 		afters = [[Species.speciesToJson(spec) for spec in player] for player in afters]
+		time.sleep(.01)
 		self.sock.sendall(json.dumps([befores, afters]))
 		resp = self.getResponse()
 		if resp != constants.KICK_ME:
@@ -87,7 +88,8 @@ class ProxyPlayer:
 	def feed(self, curState, wateringHole, players):
 		jsonState = PlayerState.stateToJson(curState)
 		jsonState.append(wateringHole)
-		jsonState.append([[Species.speciesToJson(spec) for spec in player.species] for player in players]) 
+		jsonState.append([[Species.speciesToJson(spec) for spec in player.species] for player in players])
+		time.sleep(.01) 
 		self.sock.sendall(json.dumps(jsonState))
 		return self.getResponse()
 

@@ -4,6 +4,7 @@ import socket
 from server.dealer import *
 from server.playerState import PlayerState
 from server.proxyPlayer import ProxyPlayer
+import time
 
 HOST_IP = "127.0.0.1"
 HOST_PORT = 56789
@@ -26,6 +27,7 @@ def main(numPlayers):
 		player = PlayerState(len(players) + 1, 0, [], [], ProxyPlayer(conn))
 		players.append(player) 
 
+	time.sleep(1)
 	deal = Dealer(players, 0)
 	deal.runGame()
 

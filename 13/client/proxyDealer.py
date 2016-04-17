@@ -35,8 +35,10 @@ class ProxyDealer:
 				resp = self.delegateMessage(ourResp)
 				if resp is not "" and resp is not None:
 					self.sock.sendall(json.dumps(resp))
-			except ValueError as e: # find the actual exception when json tries to load an incomplete thing
-				print "Unexpected end of message"
+			except ValueError as e:
+				self.sock.close()
+				#print e
+				#print "Unexpected end of message"
 				quit()
 
 		print "Game over!"
