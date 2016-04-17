@@ -4,7 +4,7 @@ from drawing import Drawing
 from sillyPlayer import SillyPlayer
 from traitCard import *
 from action4 import *
-
+import constants
 
 class PlayerState:
 	num = 0
@@ -76,6 +76,27 @@ class PlayerState:
 		self.species = [self.species[i] for i in range(len(self.species)) if i not in speciesToRemove]
 		return numExtinct
 
+	"""
+		Checks that a feed action from the external player is legal
+		@param feedAct: the feed action given, which SHOULD be one of:
+			[Nat, Nat] - index of fat-tissue Species fed, amount of fatFood
+			Nat - index of an herbivore Species fed
+			[Nat, Nat, Nat] - index of carnivore, index of player to attack, index of species to attack
+			False - no feeding at this time
+		@return the feedAct if it's legal, KICK_ME if it is not
+	"""
+	def checkFeedCheat(self, feedAct):
+		if type(feedAct) == list: 
+			legalSpec = self.checkLegalSpecies([feedAct[0]])
+			if (len(feedAct) == 2 and self.speciesHasTrait(feedAct[0], "fat-tissue") or \
+			   len(feedAct) == 3) and legalSpec:
+				return feedAct
+			else:
+				return constants.KICK_ME
+		elif type(feedAct) == int and self.checkLegalSpecies([feedAct]) or feedAct is False:
+			return feedAct
+		else:
+			return constants.KICK_ME
 
 	"""
 		Check if an action from our external player would be a cheating move
@@ -98,13 +119,13 @@ class PlayerState:
 	"""
 		Check that all species indexes passed correspond to species that
 		the player will own by the end of the action
-		Used to check for cheating in Action4
+		Used to check for cheating 
 		@param specIdcs: indexes of the species the external player asked to modify
 		@param numBT: the number of BuyTrait actions being requested
 		@return True if moves are legal, False otherwise
 		ListOf(Nat) -> Boolean
 	"""
-	def checkLegalSpecies(self, specIdcs, numBT):
+	def checkLegalSpecies(self, specIdcs, numBT=0):
 		return not ((max(specIdcs) > (numBT + len(self.species) - 1)) or (min(specIdcs) < 0))
 
 	"""
@@ -117,7 +138,7 @@ class PlayerState:
 	"""
 	def checkTraitReplacement(self, RTs, BTs):
 		for rt in RTs:
-			if (rt.oldTraitIdx < 0) or (rt.specIdx > (len(self.species) + len(BTs) - 1)):
+			if (rt.oldTraitIdx < 0) or (rt.specIdx  > (len(self.species) + len(BTs) - 1)):
 				return False
 
 			traitLen = False
@@ -162,6 +183,20 @@ class PlayerState:
 		afters = [play.species for play in allPlayers[splitIdx+1:]]
 
 		return self.checkCheatAction(self.player.choose(befores, afters))
+
+	"""
+		Proxy to call the feed method in the external player
+		@param wateringHole: the amount of food that can be eaten
+		@param players: all the players in this round
+		@return FeedingAction -One of:
+			False - no feeding at this time
+			Nat - index of Species fed
+			[Nat, Nat] - index of fat-tissue Species fed, amount of fatFood
+			[Nat, Nat, Nat] - index of carnivore, index of player to attack, index of species to attack
+		Nat, ListOf(PlayerState) -> FeedingAction
+	"""
+	def feed(self, wateringHole, players):
+		return self.checkFeedCheat(self.player.feed(self, wateringHole, players))
 
 	"""
 		create dictionary 
@@ -233,20 +268,6 @@ class PlayerState:
 			print state
 			raise e
 			#quit()
-
-	"""
-		Proxy to call the feed method in the external player
-		@param wateringHole: the amount of food that can be eaten
-		@param players: all the players in this round
-		@return FeedingAction -One of:
-			False - no feeding at this time
-			Nat - index of Species fed
-			[Nat, Nat] - index of fat-tissue Species fed, amount of fatFood
-			[Nat, Nat, Nat] - index of carnivore, index of player to attack, index of species to attack
-		Nat, ListOf(PlayerState) -> FeedingAction
-	"""
-	def feed(self, wateringHole, player):
-		return self.player.feed(self, wateringHole, player)
 
 	"""
 		Get this player's score -- a combo of their foodbag, total population 

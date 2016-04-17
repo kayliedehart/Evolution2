@@ -3,6 +3,7 @@ from drawing import Drawing
 from traitCard import *
 from playerState import *
 from action4 import Action4
+import constants
 
 class Dealer:
 	wateringHole = 0
@@ -215,26 +216,35 @@ class Dealer:
 	#TODO:  Consider making decision an object, decision.execute()
 	def queryFeed(self, queryPlayer):
 		decision = queryPlayer.feed(self.wateringHole, self.players)
-		if decision is not False:
-			if type(decision) == int:
-				self.feedFromWateringHole(queryPlayer, decision, 1)
-				return False
+		if type(decision) == int:
+			self.feedFromWateringHole(queryPlayer, decision, 1)
+		if type(decision) == list:
 			if len(decision) == 2: 
-				# TODO: is this a good place for this?
 				if decision[1] <= self.wateringHole:
 					self.feedFromWateringHole(queryPlayer, decision[0], foodCount=decision[1], fatFood=True)
 				else: # cheater
-					self.removePlayerFromTurn(queryPlayer) 
-					del self.players[self.players.index(queryPlayer)]
-				return False
+					self.kickCheater(queryPlayer)
 			if len(decision) == 3:
 				defender = self.players[decision[1]]
-				if queryPlayer.verifyAttack(defender, decision[0], decision[2]):
-					self.executeAttack(queryPlayer, defender, decision[0], decision[2])
+				if queryPlayer.verifyAttack(self.players[decision[1]], decision[0], decision[2]):
+					self.executeAttack(queryPlayer, self.players[decision[1]], decision[0], decision[2])
 					return True
-		else:
+				else:
+					self.kickCheater(queryPlayer)
+		elif decision is False:
 			self.removePlayerFromTurn(queryPlayer)
-			return False
+		elif decision == constants.KICK_ME:
+			self.kickCheater(queryPlayer)
+		return False
+
+	"""
+		Removes a feed cheater from the game
+		@param cheater: the cheater to kick
+		PlayerState -> Void
+	"""
+	def kickCheater(self, cheater):
+		self.removePlayerFromTurn(cheater) 
+		del self.players[self.players.index(cheater)]
 
 	"""
 		Execute automatic feedings triggered by scavenger traits.

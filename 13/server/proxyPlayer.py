@@ -8,6 +8,7 @@ from buySpeciesBoard import BuySpeciesBoard
 from replaceTrait import ReplaceTrait
 from gainPopulation import GainPopulation
 from gainBodySize import GainBodySize
+import constants
 
 TIMEOUT = 30
 MAX_JSON_SIZE = 2048
@@ -19,6 +20,11 @@ class ProxyPlayer:
 	sock = False
 
 
+	"""
+		Constructor for a proxy player
+		Takes in a socket that is its connection to the client
+		EFFECT: the socket also has its timeout set
+	"""
 	def __init__(self, socket):
 		self.state = False
 		self.sock = socket
@@ -36,6 +42,20 @@ class ProxyPlayer:
 		self.sock.sendall(json.dumps(PlayerState.stateToJson(self.state)))
 
 	"""
+		Gets the response for a query from the client
+		@return the response or, if the socket timed out, the "kick me out" value
+		Void -> JsonValue or KICK_ME
+	"""
+	def getResponse(self):
+		time.sleep(.01) # avoid connection reset by peer problem
+		try:
+			resp = json.loads(self.sock.recv(MAX_JSON_SIZE))
+		except (socket.timeout, ValueError): # timeout or invalid json
+			resp = constants.KICK_ME
+		finally:
+			return resp
+
+	"""
 		Choose an action for steps 2 and 3 of the game
 		SillyPlayer just picks the biggest cards in order
 		@param befores: all the species of players who went before this one
@@ -48,10 +68,9 @@ class ProxyPlayer:
 		befores = [[Species.speciesToJson(spec) for spec in player] for player in befores]
 		afters = [[Species.speciesToJson(spec) for spec in player] for player in afters]
 		self.sock.sendall(json.dumps([befores, afters]))
-		time.sleep(.01)
-		resp = self.sock.recv(MAX_JSON_SIZE)
-		if resp:
-			return Action4.actionFromJson(json.loads(resp)) # validate me
+		resp = self.getResponse()
+		if resp != constants.KICK_ME:
+			return Action4.actionFromJson(resp) # validate me
 		else:
 			return False
 		
@@ -71,12 +90,7 @@ class ProxyPlayer:
 		print "Feed"
 		jsonState = PlayerState.stateToJson(curState)
 		jsonState.append(wateringHole)
-		jsonState.append([[Species.speciesToJson(spec) for spec in player.species] for player in players]) #
-		# factor out all that vvvvvv
+		jsonState.append([[Species.speciesToJson(spec) for spec in player.species] for player in players]) 
 		self.sock.sendall(json.dumps(jsonState))
-		time.sleep(.01)
-		resp = self.sock.recv(MAX_JSON_SIZE)
-		if resp is not "":
-			return json.loads(resp) # validate me
-		else:
-			return False # actually throw me out if i took too long
+		return self.getResponse()
+
