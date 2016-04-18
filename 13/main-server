@@ -10,6 +10,10 @@ HOST_IP = "127.0.0.1"
 HOST_PORT = 56789
 TIMEOUT = 30
 
+"""
+	Create a socket and bind to the global port
+	Void -> Socket
+"""
 def setUpSock():
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.bind((HOST_IP, HOST_PORT))
@@ -17,6 +21,11 @@ def setUpSock():
 	sock.settimeout(TIMEOUT)
 	return sock
 
+"""
+	Create a server that supports the given number of players
+	Then, wait for enough players to connect and run a game
+	Nat -> Void
+"""
 def main(numPlayers):
 	sock = setUpSock()
 	players = []
@@ -33,9 +42,9 @@ def main(numPlayers):
 
 
 if __name__ == "__main__":
-	numPlayers = int(sys.argv[1])
-	if numPlayers >= 3 and numPlayers <= 8:
+	if len(sys.argv) > 1 and int(sys.argv[1]) >= 3 and int(sys.argv[1]) <= 8:
 		main(numPlayers)
 	else:
+		print "Usage: ./main-server N where N is the number of players for this game"
 		print "Number of players must be between 3 and 8 inclusive"
 		quit()

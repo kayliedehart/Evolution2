@@ -26,68 +26,47 @@ class Species:
 		self.traits = traits
 		self.fatFood = fatFood
 
-	""" 
-		override equality
-		Any -> Boolean
+
+	##### SIGNIFICANT METHODS
+	
 	"""
-	def __eq__(self, other):
-		if isinstance(other, self.__class__):
-			return self.__dict__ == other.__dict__
+		Can attack perform an attack against defend, given its two neighbors lNeighbor and rNeighbor?
+		@param defend: the defending species
+		@param attack: the attacking species
+		@param lNeighbor: the defending species' neighbor to the left
+		@param rNeighbor: the defending species' neighbor to the right
+		@return True if attack can perform an attack against defend, False if it cannot
+		Species, Species, OptSpecies, OptSpecies -> Boolean where OptSpecies are one of Species or False
+	"""
+	@staticmethod
+	def isAttackable(defend, attack, lNeighbor, rNeighbor):
+		return attack.hasTrait("carnivore") and defend.population > 0 \
+											and (defend.checkWarningCall(attack, lNeighbor, rNeighbor)
+													and defend.checkBurrowing()
+													and defend.checkClimbing(attack)
+													and defend.checkHardShell(attack)
+													and defend.checkHerding(attack)
+													and defend.checkSymbiosis(rNeighbor)) 
+
+	"""
+		comparator for species/OptSpecies (aka False or Species)
+		decides if a species is larger than the given; precedence is decided in the following order:
+			population size, food eaten, body size
+		output is as follows:
+			if self is larger than given OR given is False, return is positive
+			if self is the same as as given, return is 0
+			if self is smaller than given, return is negative
+		OptSpecies -> Boolean
+	"""
+	def compare(self, other):
+		if other is False:
+			return 1
+		if self.population != other.population:
+			return self.population - other.population
+		elif self.food != other.food:
+			return self.food - other.food
 		else:
-			return False
-
-	""" 
-		override inequality
-		Any -> Boolean
-	"""
-	def __ne__(self, other):
-		return not self.__eq__(other)
-
-	"""
-		Create a dict from this species
-		None -> Dict
-	"""	
-	def toDict(self):
-		return {"food": self.food,
-				"body": self.body,
-				"population": self.population,
-				"traits": [traitCard.toDict() for traitCard in self.traits],
-				"fatFood": self.fatFood}
-
-	""" 
-		tell if this species has a trait card with a certain name
-		String -> Boolean
-	"""
-	def hasTrait(self, name):
-		return name in [traitCard.name for traitCard in self.traits]
-
-	"""
-		Tell if this species is extinct, i.e. its population is 0
-		Void -> Boolean
-	"""
-	def isExtinct(self):
-		return self.population <= 0
-
-	"""
-		Sets the population to the maximum amount, given how much food this species ate this turn
-		Then, move food tokens from this species board and inform the player to add that amount to their foodbag
-		Assumption: called at the very end of a turn
-		@return the amount of food this species ate this turn
-		Void -> Nat
-	"""
-	def cullStarving(self):
-		self.population = self.food
-		self.food = 0
-		return self.population
-
-	"""
-		Tell if this species is hungry aka:
-		- its food is less than its population
-		- if it has fat tissue, its fat food is less than its body size
-		Void -> Boolean
-	"""
-	def isHungry(self):
-		return self.food < self.population or (self.hasTrait("fat-tissue") and self.fatFood < self.body)
+			return self.body - other.body
 
 	"""
 		Drop the population of this species by 1 (as in a carnivore attack)
@@ -103,12 +82,16 @@ class Species:
 			raise ValueError("Population already at 0!")
 
 	"""
-		Eat the given amount of food
-		@param food: the amount to eat
-		Nat -> Void
+		Sets the population to the maximum amount, given how much food this species ate this turn
+		Then, move food tokens from this species board and inform the player to add that amount to their foodbag
+		Assumption: called at the very end of a turn
+		@return the amount of food this species ate this turn
+		Void -> Nat
 	"""
-	def eatFood(self, food):
-		self.food += food
+	def cullStarving(self):
+		self.population = self.food
+		self.food = 0
+		return self.population
 
 	"""
 		Replace the trait at the given index with a new trait card
@@ -132,6 +115,40 @@ class Species:
 		amountToEat = min(self.population - self.food, self.fatFood)
 		self.eatFood(amountToEat)
 		self.fatFood -= amountToEat
+
+
+	##### GENERAL-PURPOSE/DEMETER'S LAW/ATTACKABLE HELPERS
+
+	""" 
+		tell if this species has a trait card with a certain name
+		String -> Boolean
+	"""
+	def hasTrait(self, name):
+		return name in [traitCard.name for traitCard in self.traits]
+
+	"""
+		Tell if this species is extinct, i.e. its population is 0
+		Void -> Boolean
+	"""
+	def isExtinct(self):
+		return self.population <= 0
+
+	"""
+		Tell if this species is hungry aka:
+		- its food is less than its population
+		- if it has fat tissue, its fat food is less than its body size
+		Void -> Boolean
+	"""
+	def isHungry(self):
+		return self.food < self.population or (self.hasTrait("fat-tissue") and self.fatFood < self.body)
+
+	"""
+		Eat the given amount of food
+		@param food: the amount to eat
+		Nat -> Void
+	"""
+	def eatFood(self, food):
+		self.food += food
 
 	"""
 		Check if this can eat more food
@@ -182,97 +199,6 @@ class Species:
 	"""
 	def eatFatFood(self, food):
 		self.fatFood += food
-
-	"""
-		creates a json array fitting the spec from the given species
-		Void -> JsonArray
-	"""
-	def speciesToJson(self):
-		result = [["food", self.food],
-				  ["body", self.body],
-				  ["population", self.population],
-				  ["traits", [trait.name for trait in self.traits]]]
-
-		if self.fatFood > 0:
-			result.append(["fat-food", self.fatFood])
-		return result
-
-
-	"""
-		Get the amount of fat food a json species has
-		JsonSpecies, ListOf(String) -> Nat 
-	"""
-	@staticmethod
-	def jsonFatFood(jsonSpecies, traits):
-		if (len(jsonSpecies) == 5) and ("fat-tissue" in [trait.name for trait in traits]) and (jsonSpecies[4][0] == "fat-food"):
-			return jsonSpecies[4][1]
-		else:
-			return 0
-
-	""" 
-	   Helper to convert json species to internal Species
-	   JSONSpecies = [["food",Nat],
-	   ["body",Nat],
-	   ["population",Nat],
-	   ["traits",LOT],
-	   OPT: ["fat-food",Nat]]
-	   JSONSpecies -> OptSpecies
-	"""
-	@staticmethod
-	def speciesFromJson(jsonSpecies):    
-		try:
-			if jsonSpecies is False:
-				return False
-			if jsonSpecies[0][0] == "food": 
-				food = jsonSpecies[0][1]
-			if jsonSpecies[1][0] == "body":
-				body = jsonSpecies[1][1]
-			if jsonSpecies[2][0] == "population":
-				population = jsonSpecies[2][1]
-			if jsonSpecies[3][0] == "traits":
-				traits = [TraitCard(trait) for trait in jsonSpecies[3][1] if TraitCard.checkTrait(trait)]
-			fatFood = Species.jsonFatFood(jsonSpecies, traits)
-			return Species(food, body, population, traits, fatFood)
-		except Exception as e:
-			quit()
-
-	""" 
-	   convert a json species from spec to a list of species/optspecies
-	   JsonSituation -> [Species, Species, OptSpecies, OptSpecies]
-	"""
-	@staticmethod
-	def situationFromJson(situation):    
-		defend = Species.speciesFromJson(situation[0])
-		attack = Species.speciesFromJson(situation[1])
-
-		if not attack or not defend:
-			quit()
-
-		lNeighbor = Species.speciesFromJson(situation[2])
-		rNeighbor = Species.speciesFromJson(situation[3])
-		
-		return defend, attack, lNeighbor, rNeighbor
-
-	"""
-		comparator for species/OptSpecies (aka False or Species)
-		decides if a species is larger than the given; precedence is decided in the following order:
-			population size, food eaten, body size
-		output is as follows:
-			if self is larger than given OR given is False, return is positive
-			if self is the same as as given, return is 0
-			if self is smaller than given, return is negative
-		OptSpecies -> Boolean
-	"""
-	def compare(self, other):
-		if other is False:
-			return 1
-
-		if self.population != other.population:
-			return self.population - other.population
-		elif self.food != other.food:
-			return self.food - other.food
-		else:
-			return self.body - other.body
 
 	"""
 		Checks if this species can avoid an attack with warning-call
@@ -331,22 +257,102 @@ class Species:
 	def checkSymbiosis(self, rNeighbor):
 		return not (self.hasTrait("symbiosis") and (rNeighbor and (rNeighbor.body > self.body)))
 
+
+	###### EQUALITY, PARSING, PRINTING, AND DISPLAYING
+
+	""" 
+		override equality
+		Any -> Boolean
 	"""
-		Can attack perform an attack against defend, given its two neighbors lNeighbor and rNeighbor?
-		@param defend: the defending species
-		@param attack: the attacking species
-		@param lNeighbor: the defending species' neighbor to the left
-		@param rNeighbor: the defending species' neighbor to the right
-		@return True if attack can perform an attack against defend, False if it cannot
-		Species, Species, OptSpecies, OptSpecies -> Boolean where OptSpecies are one of Species or False
+	def __eq__(self, other):
+		if isinstance(other, self.__class__):
+			return self.__dict__ == other.__dict__
+		else:
+			return False
+
+	""" 
+		override inequality
+		Any -> Boolean
+	"""
+	def __ne__(self, other):
+		return not self.__eq__(other)
+
+	"""
+		Create a dict from this species
+		None -> Dict
+	"""	
+	def toDict(self):
+		return {"food": self.food,
+				"body": self.body,
+				"population": self.population,
+				"traits": [traitCard.toDict() for traitCard in self.traits],
+				"fatFood": self.fatFood}
+
+	"""
+		creates a json array fitting the spec from the given species
+		Void -> JsonArray
+	"""
+	def speciesToJson(self):
+		result = [["food", self.food],
+				  ["body", self.body],
+				  ["population", self.population],
+				  ["traits", [trait.name for trait in self.traits]]]
+
+		if self.fatFood > 0:
+			result.append(["fat-food", self.fatFood])
+		return result
+
+	"""
+		Get the amount of fat food a json species has
+		JsonSpecies, ListOf(String) -> Nat 
 	"""
 	@staticmethod
-	def isAttackable(defend, attack, lNeighbor, rNeighbor):
-		return attack.hasTrait("carnivore") and defend.population > 0 \
-											and (defend.checkWarningCall(attack, lNeighbor, rNeighbor)
-													and defend.checkBurrowing()
-													and defend.checkClimbing(attack)
-													and defend.checkHardShell(attack)
-													and defend.checkHerding(attack)
-													and defend.checkSymbiosis(rNeighbor)) 
+	def jsonFatFood(jsonSpecies, traits):
+		if (len(jsonSpecies) == 5) and ("fat-tissue" in [trait.name for trait in traits]) and (jsonSpecies[4][0] == "fat-food"):
+			return jsonSpecies[4][1]
+		else:
+			return 0
 
+	""" 
+	   Helper to convert json species to internal Species
+	   JSONSpecies = [["food",Nat],
+	   ["body",Nat],
+	   ["population",Nat],
+	   ["traits",LOT],
+	   OPT: ["fat-food",Nat]]
+	   JSONSpecies -> OptSpecies
+	"""
+	@staticmethod
+	def speciesFromJson(jsonSpecies):    
+		try:
+			if jsonSpecies is False:
+				return False
+			if jsonSpecies[0][0] == "food": 
+				food = jsonSpecies[0][1]
+			if jsonSpecies[1][0] == "body":
+				body = jsonSpecies[1][1]
+			if jsonSpecies[2][0] == "population":
+				population = jsonSpecies[2][1]
+			if jsonSpecies[3][0] == "traits":
+				traits = [TraitCard(trait) for trait in jsonSpecies[3][1] if TraitCard.checkTrait(trait)]
+			fatFood = Species.jsonFatFood(jsonSpecies, traits)
+			return Species(food, body, population, traits, fatFood)
+		except Exception as e:
+			quit()
+
+	""" 
+	   convert a json species from spec to a list of species/optspecies
+	   JsonSituation -> [Species, Species, OptSpecies, OptSpecies]
+	"""
+	@staticmethod
+	def situationFromJson(situation):    
+		defend = Species.speciesFromJson(situation[0])
+		attack = Species.speciesFromJson(situation[1])
+
+		if not attack or not defend:
+			quit()
+
+		lNeighbor = Species.speciesFromJson(situation[2])
+		rNeighbor = Species.speciesFromJson(situation[3])
+		
+		return defend, attack, lNeighbor, rNeighbor
