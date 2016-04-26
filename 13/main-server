@@ -32,7 +32,10 @@ def main(port, ip):
 	startTime = time.time()
 
 	while (len(players) < MIN_PLAYERS) or ((time.time() - startTime < TIMEOUT) and (len(players) < MAX_PLAYERS)): 
-		conn, addr = sock.accept()
+		try:
+			conn, addr = sock.accept()
+		except (socket.timeout):
+			break
 		info = conn.recv(512)
 		conn.sendall("ok")
 		player = PlayerState(len(players) + 1, 0, [], [], ProxyPlayer(conn), info)

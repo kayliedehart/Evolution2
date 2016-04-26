@@ -5,6 +5,7 @@ from action4 import *
 from traitCard import *
 import json
 import time
+import socket
 
 TIMEOUT = 30
 MAX_JSON_SIZE = 2048
