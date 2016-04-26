@@ -62,10 +62,12 @@ class ProxyDealer:
 			quit()
 
 	"""
+		@param state: a wateringhole and playerstate
+		(throw away the watering hole because we're bad at this game)
 		JsonArray(PlayerState) -> Void
 	"""
 	def start(self, state):
-		self.player.start(self.stateFromJson(state))
+		self.player.start(self.stateFromJson(state[1:]))
 
 	"""
 		JsonArray -> JsonArray

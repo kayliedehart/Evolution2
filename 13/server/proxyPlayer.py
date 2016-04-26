@@ -40,7 +40,9 @@ class ProxyPlayer:
 	"""
 	def start(self, curState, wateringHole):
 		self.state = curState
-		self.sock.sendall(json.dumps([wateringHole, PlayerState.stateToJson(self.state)]))
+		gameState = [wateringHole]
+		gameState += PlayerState.stateToJson(self.state)
+		self.sock.sendall(json.dumps(gameState))
 
 	"""
 		Gets the response for a query from the client
