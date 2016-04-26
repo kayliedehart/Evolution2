@@ -201,15 +201,8 @@ class PlayerState:
 		Nat -> Nat
 	"""
 	def longNeck(self, wateringHole):
-		amountFed = 0
 		longNeck = self.getSpeciesWithTrait("long-neck")
-		for ln in longNeck:
-			if wateringHole > 0:
-				fedThisSpecies = self.feedSpecies(ln, 1, wateringHole)
-				amountFed += fedThisSpecies
-				wateringHole -= fedThisSpecies
-
-		return amountFed
+		return self.getAmountFed(longNeck, 1, wateringHole)
 
 	"""
 		If the given species has the foraging trait, give it one more food
@@ -223,7 +216,6 @@ class PlayerState:
 		if wateringHole > 0 and spec.hasTrait("foraging") and spec.population > spec.food:
 			spec.eatFood(1)
 			amountFed += 1
-
 		return amountFed
 
 	"""
@@ -235,16 +227,12 @@ class PlayerState:
 		Nat, Nat, Nat -> Nat
 	"""
 	def cooperate(self, specIdx, foodCount, wateringHole):
-		spec = self.species[specIdx]
 		amountFed = 0
+		spec = self.species[specIdx]
 		left, right = self.getNeighbors(specIdx)
 		if spec.hasTrait("cooperation") and right is not False:
 			for i in range(foodCount):
-				if wateringHole > 0:
-					fedThisSpecies = self.feedSpecies(specIdx+1, 1, wateringHole)
-					amountFed += fedThisSpecies
-					wateringHole -= fedThisSpecies
-
+				amountFed += self.getAmountFed([specIdx+1], 1, wateringHole)
 		return amountFed
 
 	"""
@@ -254,11 +242,22 @@ class PlayerState:
 		Nat -> Nat
 	"""
 	def scavenge(self, wateringHole):
-		amountFed = 0
 		scavengers = self.getSpeciesWithTrait("scavenger")
-		for scav in scavengers:
+		return self.getAmountFed(scavengers, 1, wateringHole)
+
+	"""
+		Feeds all species in the given list and returns how much food was eaten overall
+		@param specs: a list of the species to feed (indexes)
+		@param foodCount: how much to feed each species
+		@param wateringHole: how much food can be fed overall
+		@return the amount of food fed overall
+		ListOf(Nat), Nat, Nat -> Nat
+	"""
+	def getAmountFed(self, specs, foodCount, wateringHole):
+		amountFed = 0
+		for specIdx in specs:
 			if wateringHole > 0:
-				fedThisSpecies = self.feedSpecies(scav, 1, wateringHole)
+				fedThisSpecies = self.feedSpecies(specIdx, foodCount, wateringHole)
 				amountFed += fedThisSpecies
 				wateringHole -= fedThisSpecies
 		return amountFed

@@ -38,10 +38,9 @@ class SillyPlayer:
 		Get our own state at the end of step 1 of a game (new species/cards added)
 		SillyPlayer does nothing with this
 		@param curState: PlayerState representing us
-		@param wateringHole: watering hole state of dealer
 		PlayerState, Nat -> Void
 	"""
-	def start(self, curState, wateringHole):
+	def start(self, curState):
 		self.state = curState
 
 	"""
