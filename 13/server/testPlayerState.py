@@ -357,8 +357,8 @@ class TestPlayerState(unittest.TestCase):
 	def testStart(self):
 		self.assertEqual(len(self.p7.species), 0)
 		self.assertEqual(len(self.p3.species), 3)
-		self.p7.start(Species(0, 1, 0, [], 0))
-		self.p3.start(False)
+		self.p7.start(Species(0, 1, 0, [], 0), 0)
+		self.p3.start(False, 0)
 
 		self.assertEqual(len(self.p7.species), 1)
 		self.assertEqual(len(self.p3.species), 3)

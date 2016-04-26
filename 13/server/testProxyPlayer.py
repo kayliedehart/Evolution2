@@ -116,15 +116,15 @@ class TestPlayer(unittest.TestCase):
 
 	def testStart(self):
 		silly = SillyPlayer()
-		silly.start(self.aPlayerState)
+		silly.start(self.aPlayerState, 0)
 		self.assertEqual(self.aPlayerState, silly.state)
 
-		silly.start(self.bPlayerState)
+		silly.start(self.bPlayerState, 0)
 		self.assertEqual(self.bPlayerState, silly.state)
 
 	def testChoose(self):
 		silly = SillyPlayer()
-		silly.start(self.cardsPlayerState)
+		silly.start(self.cardsPlayerState, 0)
 
 		# self.tCarn = TraitCard("carnivore", -5)
 		# self.tCoop = TraitCard("cooperation", 2)

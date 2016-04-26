@@ -222,7 +222,7 @@ class TestDealer(unittest.TestCase):
 
 	def testSteps2and3(self):
 		gameDealer = Dealer([self.p1, self.p2, self.p3], 0)
-		[player.start(False) for player in gameDealer.players]
+		[player.start(False, 0) for player in gameDealer.players]
 		gameDealer.step1()
 		[self.assertEqual(player.foodbag, 0) for player in gameDealer.players]
 		gameDealer.steps2and3()

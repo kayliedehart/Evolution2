@@ -264,7 +264,155 @@ class PlayerState:
 		return amountFed
 
 
+	##### VALIDATION
+
+	"""
+		Check if an action from our external player would be a cheating move
+		Following conditions must pass:
+			- All card indexes acted on must exist in our hand and be unique 
+			- The highest species index referenced should exist after addition of new species boards
+			- Should only be able to replace trait cards that already exist (ie no adding of new trait cards)
+		@param action: the action the external player wishes to take
+		@return the action or, if it was cheating, False
+		Action4 -> Action4 or False
+	"""
+	def checkCheatAction(self, action):
+		if action is not False and (self.checkLegalCards(action.getAllCardIdcs()) 
+							   and self.checkLegalSpecies(action.getAllSpecIdcs(), len(action.BT))
+							   and self.checkTraitReplacement(action.RT, action.BT)
+							   and self.checkTraitAddition(action.BT)
+							   and self.checkAdditiveActions(action.GP, Species.canGrowPopulation)
+							   and self.checkAdditiveActions(action.GB, Species.canGrowBody)):
+			return action
+		else:
+			return False
+
+	"""
+		Check that traits being added to a new species board include no duplicates
+		@param BTs: the BuySpeciesBoard objects to check
+		@return whether the BTs are legal
+		ListOf(BuySpeciesBoard) -> Boolean
+	"""
+	def checkTraitAddition(self, BTs):
+		for bt in BTs:
+			for newCardIdx in bt.traitList:
+				if self.hand[newCardIdx].name == [self.hand[i].name for i in bt.traitList if i != newCardIdx]:
+					return False
+
+		return True
+
+	"""
+		Checks that a feed action from the external player is legal
+		@param feedAct: the feed action given, which SHOULD be one of:
+			[Nat, Nat] - index of fat-tissue Species fed, amount of fatFood
+			Nat - index of an herbivore Species fed
+			[Nat, Nat, Nat] - index of carnivore, index of player to attack, index of species to attack
+			False - no feeding at this time
+		@return the feedAct if it's legal, KICK_ME if it is not
+	"""
+	def checkFeedCheat(self, feedAct):
+		if type(feedAct) == list: 
+			legalSpec = self.checkLegalSpecies([feedAct[0]])
+			if ((len(feedAct) == 2 and self.speciesHasTrait(feedAct[0], "fat-tissue") and self.species[feedAct[0]].canAddFat()) or \
+			   																		len(feedAct) == 3) and legalSpec:
+				return feedAct
+			else:
+				return constants.KICK_ME
+		elif (type(feedAct) == int and self.checkLegalSpecies([feedAct]) and self.species[feedAct].canEat() and not self.speciesHasTrait(feedAct, "carnivore")) or \
+																						  		feedAct is False:
+			return feedAct
+		else:
+			return constants.KICK_ME
+
+	"""
+		Check whether GrowPopulations and GrowBodySizes can succeed
+		@param GPs: the GrowPopulations to check
+		@param GBs: the GrowBodySizes to check
+		@return True if these actions can occur, False otherwise
+	"""
+	def checkAdditiveActions(self, gain, gfunc):
+		for g in gain:
+			if g.specIdx < len(self.species) and not self.species[g.specIdx].gfunc():
+				return False
+		return True
+
+	"""
+		Check that all species indexes passed correspond to species that
+		the player will own by the end of the action
+		Used to check for cheating 
+		@param specIdcs: indexes of the species the external player asked to modify
+		@param numBT: the number of BuyTrait actions being requested
+		@return True if moves are legal, False otherwise
+		ListOf(Nat) -> Boolean
+	"""
+	def checkLegalSpecies(self, specIdcs, numBT=0):
+		return not ((max(specIdcs) > (numBT + len(self.species) - 1)) or (min(specIdcs) < 0))
+
+	"""
+		Check that trait replacement uses legal cards and tries to replace existing traits
+		Used to check for cheating in Action4
+		@param RTs: the ReplaceTrait actions to check
+		@param BTs: the BuySpeciesBoards
+		@return True if moves are legal, False otherwise
+		ListOf(ReplaceTrait) -> Boolean
+	"""
+	def checkTraitReplacement(self, RTs, BTs):
+		for rt in RTs:
+			if (rt.oldTraitIdx < 0) or (rt.specIdx  > (len(self.species) + len(BTs) - 1)):
+				return False
+
+			traitLen = False
+			if rt.specIdx < len(self.species):
+				traitLen = len(self.species[rt.specIdx].traits)
+				if self.speciesHasDuplicateTraits(rt):
+					return False
+			elif rt.specIdx < (len(self.species) + len(BTs)):
+				traitLen = len(BTs[rt.specIdx - len(self.species) - 1].traitList)
+
+			if traitLen is False or rt.oldTraitIdx >= traitLen:
+				return False
+
+		return True 
+
+	"""
+		Tell whether a trait that a player is trying to ReplaceTrait on a species is already on that species
+		Only checked for species who already exist; checkTraitAddition() handles this for BuySpeciesBoards
+		@param rt: the ReplaceTrait to check
+		ReplaceTrait -> Boolean
+	"""
+	def speciesHasDuplicateTraits(self, rt):
+		return self.hand[rt.newTraitIdx].name in [self.species[rt.specIdx].traits[i].name for i in range(len(self.species[rt.specIdx].traits)) if i != rt.oldTraitIdx]
+
+	"""
+		Check that the card indexes passed all correspond to cards we own
+		and that each index is unique
+		Used to check for cheating in an Action4
+		@param cardIdcs: the indexes of the cards the external player asked to use
+		@return True if the moves are legal, False otherwise
+		ListOf(Nat) -> Boolean
+	"""
+	def checkLegalCards(self, cardIdcs):
+		if len(cardIdcs) != len(set(cardIdcs)): # no duplicates
+			return False
+		if (max(cardIdcs) > (len(self.hand) - 1)) or min(cardIdcs) < 0: # only use cards we have
+			return False
+		return True
+
+	"""
+		Verify that this player can use their own chosen species to attack the other given species
+		@param defPlayer: PlayerState of the defending player
+		@param defIdx: index of the defending species
+		@param attIdx: index of the attacking species: should be one of our own
+		PlayerState, Nat, Nat -> Boolean
+	"""
+	def verifyAttack(self, defPlayer, attIdx, defIdx):
+		left, right = defPlayer.getNeighbors(defIdx)
+		return Species.isAttackable(defPlayer.species[defIdx], self.species[attIdx], left, right)
+
+
+
 	##### GENERAL-PURPOSE/DEMETER'S LAW HELPERS
+
 	"""
 		Filter out all fed species to get a list of species that can be fed
 		@return a list of (Species' index, Species) for hungry species this player has
@@ -385,127 +533,6 @@ class PlayerState:
 	"""
 	def addCards(self, cards):
 		self.hand = cards + self.hand
-
-
-	##### VALIDATION
-
-	"""
-		Checks that a feed action from the external player is legal
-		@param feedAct: the feed action given, which SHOULD be one of:
-			[Nat, Nat] - index of fat-tissue Species fed, amount of fatFood
-			Nat - index of an herbivore Species fed
-			[Nat, Nat, Nat] - index of carnivore, index of player to attack, index of species to attack
-			False - no feeding at this time
-		@return the feedAct if it's legal, KICK_ME if it is not
-	"""
-	def checkFeedCheat(self, feedAct):
-		if type(feedAct) == list: 
-			legalSpec = self.checkLegalSpecies([feedAct[0]])
-			if ((len(feedAct) == 2 and self.speciesHasTrait(feedAct[0], "fat-tissue") and self.species[feedAct[0]].canAddFat()) or \
-			   																		len(feedAct) == 3) and legalSpec:
-				return feedAct
-			else:
-				return constants.KICK_ME
-		elif (type(feedAct) == int and self.checkLegalSpecies([feedAct]) and self.species[feedAct].canEat() and not self.speciesHasTrait(feedAct, "carnivore")) or \
-																						  		feedAct is False:
-			return feedAct
-		else:
-			return constants.KICK_ME
-
-	"""
-		Check whether GrowPopulations and GrowBodySizes can succeed
-		@param GPs: the GrowPopulations to check
-		@param GBs: the GrowBodySizes to check
-		@return True if these actions can occur, False otherwise
-	"""
-	def checkAdditiveActions(self, gain, gfunc):
-		for g in gain:
-			if g.specIdx < len(self.species) and not self.species[g.specIdx].gfunc():
-				return False
-		return True
-
-	"""
-		TODO: check that a trait being placed isn't already on the species!!! aaaaaa
-		Check if an action from our external player would be a cheating move
-		Following conditions must pass:
-			- All card indexes acted on must exist in our hand and be unique 
-			- The highest species index referenced should exist after addition of new species boards
-			- Should only be able to replace trait cards that already exist (ie no adding of new trait cards)
-		@param action: the action the external player wishes to take
-		@return the action or, if it was cheating, False
-		Action4 -> Action4 or False
-	"""
-	def checkCheatAction(self, action):
-		if action is not False and (self.checkLegalCards(action.getAllCardIdcs()) 
-							   and self.checkLegalSpecies(action.getAllSpecIdcs(), len(action.BT))
-							   and self.checkTraitReplacement(action.RT, action.BT)
-							   and self.checkAdditiveActions(action.GP, Species.canGrowPopulation)
-							   and self.checkAdditiveActions(action.GB, Species.canGrowBody)):
-			return action
-		else:
-			return False
-
-	"""
-		Check that all species indexes passed correspond to species that
-		the player will own by the end of the action
-		Used to check for cheating 
-		@param specIdcs: indexes of the species the external player asked to modify
-		@param numBT: the number of BuyTrait actions being requested
-		@return True if moves are legal, False otherwise
-		ListOf(Nat) -> Boolean
-	"""
-	def checkLegalSpecies(self, specIdcs, numBT=0):
-		return not ((max(specIdcs) > (numBT + len(self.species) - 1)) or (min(specIdcs) < 0))
-
-	"""
-		Check that trait replacement uses legal cards and tries to replace existing traits
-		Used to check for cheating in Action4
-		@param RTs: the ReplaceTrait actions to check
-		@param BTs: the BuySpeciesBoards
-		@return True if moves are legal, False otherwise
-		ListOf(ReplaceTrait) -> Boolean
-	"""
-	def checkTraitReplacement(self, RTs, BTs):
-		for rt in RTs:
-			if (rt.oldTraitIdx < 0) or (rt.specIdx  > (len(self.species) + len(BTs) - 1)):
-				return False
-
-			traitLen = False
-			if rt.specIdx < len(self.species):
-				traitLen = len(self.species[rt.specIdx].traits)
-			elif rt.specIdx < (len(self.species) + len(BTs)):
-				traitLen = len(BTs[rt.specIdx - len(self.species) - 1].traitList)
-
-			if traitLen is False or rt.oldTraitIdx >= traitLen:
-				return False
-
-		return True 
-
-	"""
-		Check that the card indexes passed all correspond to cards we own
-		and that each index is unique
-		Used to check for cheating in an Action4
-		@param cardIdcs: the indexes of the cards the external player asked to use
-		@return True if the moves are legal, False otherwise
-		ListOf(Nat) -> Boolean
-	"""
-	def checkLegalCards(self, cardIdcs):
-		if len(cardIdcs) != len(set(cardIdcs)): # no duplicates
-			return False
-		if (max(cardIdcs) > (len(self.hand) - 1)) or min(cardIdcs) < 0: # only use cards we have
-			return False
-		return True
-
-	"""
-		Verify that this player can use their own chosen species to attack the other given species
-		@param defPlayer: PlayerState of the defending player
-		@param defIdx: index of the defending species
-		@param attIdx: index of the attacking species: should be one of our own
-		PlayerState, Nat, Nat -> Boolean
-	"""
-	def verifyAttack(self, defPlayer, attIdx, defIdx):
-		left, right = defPlayer.getNeighbors(defIdx)
-		return Species.isAttackable(defPlayer.species[defIdx], self.species[attIdx], left, right)
 
 
 	###### EQUALITY, PARSING, PRINTING, AND DISPLAYING
