@@ -5,18 +5,16 @@ import socket
 from client.proxyDealer import ProxyDealer
 from client.sillyPlayer import SillyPlayer
 
-HOST_IP = "127.0.0.1"
-HOST_PORT = 56789
 TIMEOUT = 30
 
 """
 	Create a socket for the given player and wait for an "ok" message from the server
-	Player -> Socket or False
+	Player, String, Nat -> Socket or False
 """
-def register(player):
+def register(player, ip, port):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.settimeout(TIMEOUT)
-	sock.connect((HOST_IP, HOST_PORT))
+	sock.connect((ip, port))
 	sock.sendall("ping")
 	message = sock.recv(1024)
 	if message == "ok":
@@ -26,16 +24,24 @@ def register(player):
 
 """
 	Create a ProxyPlayer with our strategy and connect to the server
-	Nat -> Void
+	Nat, String -> Void
 """
-def main(numPlayers):
+def main(port, ip):
 	player = SillyPlayer()
-	resp = register(player)
+	resp = register(player, ip, port)
 	if resp is not False:
 		dealerProxy = ProxyDealer(player, resp)
 	else:
-		print "Failed to connect to server at IP {}/port {}!".format(HOST_IP, HOST_PORT)
+		print "Failed to connect to server at IP {}/port {}!".format(ip, port)
 		quit()
 
 if __name__ == "__main__":
-	main(1)
+	if len(sys.argv) > 1:
+		if len(sys.argv) == 3:
+			ip = str(sys.argv[2])
+		else:
+			ip = "127.0.0.1"
+		main(int(sys.argv[1]), ip)
+	else:
+		print "Usage: ./main-client port <OPT: IP>"
+		quit()

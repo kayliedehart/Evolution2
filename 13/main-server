@@ -6,32 +6,32 @@ from server.playerState import PlayerState
 from server.proxyPlayer import ProxyPlayer
 import time
 
-HOST_IP = "127.0.0.1"
-HOST_PORT = 56789
 TIMEOUT = 30
 MIN_PLAYERS = 3
 MAX_PLAYERS = 8
 
 """
 	Create a socket and bind to the global port
-	Void -> Socket
+	String, Nat -> Socket
 """
-def setUpSock():
+def setUpSock(ip, port):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.bind((HOST_IP, HOST_PORT))
+	sock.bind((ip, port))
 	sock.listen(1)
 	sock.settimeout(TIMEOUT)
 	return sock
 
 """
-	Create a server that supports the given number of players
+	Create a server that supports the max. number of players
 	Then, wait for enough players to connect and run a game
-	Nat -> Void
+	Nat, String -> Void
 """
-def main(numPlayers):
-	sock = setUpSock()
+def main(port, ip):
+	sock = setUpSock(ip, port)
 	players = []
-	while len(players) < numPlayers: # TODO: time out when we haven't received enough players in a reasonable amt of time
+	startTime = time.time()
+
+	while (len(players) < MIN_PLAYERS) or ((time.time() - startTime > TIMEOUT) and (len(players) < MAX_PLAYERS)): 
 		conn, addr = sock.accept()
 		info = conn.recv(512)
 		conn.sendall("ok")
@@ -44,9 +44,12 @@ def main(numPlayers):
 
 
 if __name__ == "__main__":
-	if len(sys.argv) > 1 and int(sys.argv[1]) >= MIN_PLAYERS and int(sys.argv[1]) <= MAX_PLAYERS:
-		main(int(sys.argv[1]))
+	if len(sys.argv) > 1:
+		if len(sys.argv) == 3:
+			ip = str(sys.argv[2])
+		else:
+			ip = "127.0.0.1"
+		main(int(sys.argv[1]), ip)
 	else:
-		print "Usage: ./main-server N where N is the number of players for this game"
-		print "Number of players must be between {} and {} inclusive".format(MIN_PLAYERS, MAX_PLAYERS)
+		print "Usage: ./main-server port <OPT: IP>"
 		quit()
