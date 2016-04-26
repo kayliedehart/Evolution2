@@ -48,8 +48,8 @@ class ProxyDealer:
 		JsonArray -> Opt: JsonArray
 	"""
 	def delegateMessage(self, message):
-		if len(message) == 3:
-			if type(message[0]) == int and type(message[1]) == list and type(message[2]) == list: 
+		if len(message) == 4:
+			if type(message[0]) == int and type(message[1]) == int and type(message[2]) == list and type(message[3]) == list: 
 				self.start(message)
 		elif len(message) == 2:
 			if type(message[0]) == list and type(message[1]) == list: 

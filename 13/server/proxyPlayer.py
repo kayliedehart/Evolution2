@@ -35,11 +35,12 @@ class ProxyPlayer:
 		Get our own state at the end of step 1 of a game (new species/cards added)
 		SillyPlayer does nothing with this
 		@param curState: PlayerState representing us
-		PlayerState -> Void
+		@param wateringHole: the current state of the watering hole in dealer
+		PlayerState, Nat -> Void
 	"""
-	def start(self, curState):
+	def start(self, curState, wateringHole):
 		self.state = curState
-		self.sock.sendall(json.dumps(PlayerState.stateToJson(self.state)))
+		self.sock.sendall(json.dumps([wateringHole, PlayerState.stateToJson(self.state)]))
 
 	"""
 		Gets the response for a query from the client

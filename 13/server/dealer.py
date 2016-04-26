@@ -74,9 +74,9 @@ class Dealer:
 		Void -> Void
 	"""
 	def endGame(self):
-		scores = sorted([[player.num, player.getScore()] for player in self.players], key=lambda x: x[1], reverse=True)
+		scores = sorted([[player.num, player.getScore(), player.info] for player in self.players], key=lambda x: x[1], reverse=True)
 		for i in range(len(scores)):
-			print "{} player id: {} score: {}".format(i+1, scores[i][0], scores[i][1])
+			print "{} player id: {} score: {} info: {}".format(i+1, scores[i][0], scores[i][1], scores[i][2])
 		quit()
 
 
@@ -91,7 +91,7 @@ class Dealer:
 		for player in self.players:
 			spec = Species(0, 0, 1, [], 0) if player.hasNoSpecies() else False
 			self.distributeCards(player, player.numCardsNeeded())
-			player.start(spec)
+			player.start(spec, self.wateringHole)
 
 
 	###### STEPS 2 AND 3

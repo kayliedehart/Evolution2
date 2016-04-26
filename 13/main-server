@@ -9,6 +9,8 @@ import time
 HOST_IP = "127.0.0.1"
 HOST_PORT = 56789
 TIMEOUT = 30
+MIN_PLAYERS = 3
+MAX_PLAYERS = 8
 
 """
 	Create a socket and bind to the global port
@@ -31,9 +33,9 @@ def main(numPlayers):
 	players = []
 	while len(players) < numPlayers: # TODO: time out when we haven't received enough players in a reasonable amt of time
 		conn, addr = sock.accept()
-		ping = conn.recv(512)
+		info = conn.recv(512)
 		conn.sendall("ok")
-		player = PlayerState(len(players) + 1, 0, [], [], ProxyPlayer(conn))
+		player = PlayerState(len(players) + 1, 0, [], [], ProxyPlayer(conn), info)
 		players.append(player) 
 
 	time.sleep(1)
@@ -42,9 +44,9 @@ def main(numPlayers):
 
 
 if __name__ == "__main__":
-	if len(sys.argv) > 1 and int(sys.argv[1]) >= 3 and int(sys.argv[1]) <= 8:
+	if len(sys.argv) > 1 and int(sys.argv[1]) >= MIN_PLAYERS and int(sys.argv[1]) <= MAX_PLAYERS:
 		main(int(sys.argv[1]))
 	else:
 		print "Usage: ./main-server N where N is the number of players for this game"
-		print "Number of players must be between 3 and 8 inclusive"
+		print "Number of players must be between {} and {} inclusive".format(MIN_PLAYERS, MAX_PLAYERS)
 		quit()

@@ -11,6 +11,7 @@ class PlayerState:
 	foodbag = 0
 	species = []
 	hand = []
+	info = ""
 
 	""" 
 		Internal representation of a json player
@@ -19,14 +20,16 @@ class PlayerState:
 		@param species: A List of this player's Species boards
 		@param hand: A List of TraitCards in this player's hand (not on boards/haven't been traded in)
 		@param player: the external player with strategic functionality
-		Nat, Nat, ListOf(Species), ListOf(TraitCard), ProxyPlayer -> PlayerState
+		@param info: the info that the external player sends over
+		Nat, Nat, ListOf(Species), ListOf(TraitCard), ProxyPlayer, String -> PlayerState
 	"""
-	def __init__(self, id, bag, speciesList, cards, player=None):
+	def __init__(self, id, bag, speciesList, cards, player=None, info=""):
 		self.num = id
 		self.foodbag = bag
 		self.species = speciesList
 		self.hand = cards
 		self.player = player or SillyPlayer()
+		self.info = info
 
 
 	##### COMMUNICATION WITH EXTERNAL PLAYER
@@ -34,12 +37,13 @@ class PlayerState:
 	"""
 		start a game (step 1) -- if given a new species, add it, and inform external player of current state
 		@param spec: an OptSpecies (given if this player didn't already have a species; otherwise False)
-		OptSpecies -> Void
+		@param wateringHole: current state of the watering hole in the dealer
+		OptSpecies, Nat -> Void
 	"""
-	def start(self, spec):
+	def start(self, spec, wateringHole):
 		if spec is not False:
 			self.species.append(spec)
-		self.player.start(self)
+		self.player.start(self, wateringHole)
 
 	"""
 		Choose actions for watering hole tributes and trading and check for cheating
@@ -421,6 +425,7 @@ class PlayerState:
 		return True
 
 	"""
+		TODO: check that a trait being placed isn't already on the species!!! aaaaaa
 		Check if an action from our external player would be a cheating move
 		Following conditions must pass:
 			- All card indexes acted on must exist in our hand and be unique 
