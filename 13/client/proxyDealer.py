@@ -35,7 +35,7 @@ class ProxyDealer:
 				resp = self.delegateMessage(ourResp)
 				if resp is not "" and resp is not None:
 					self.sock.sendall(json.dumps(resp))
-			except ValueError as e:
+			except (socket.timeout, socket.error, ValueError) as e:
 				self.sock.close()
 				#print e
 				#print "Unexpected end of message"

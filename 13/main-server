@@ -6,7 +6,7 @@ from server.playerState import PlayerState
 from server.proxyPlayer import ProxyPlayer
 import time
 
-TIMEOUT = 30
+TIMEOUT = 15
 MIN_PLAYERS = 3
 MAX_PLAYERS = 8
 
@@ -31,7 +31,7 @@ def main(port, ip):
 	players = []
 	startTime = time.time()
 
-	while (len(players) < MIN_PLAYERS) or ((time.time() - startTime > TIMEOUT) and (len(players) < MAX_PLAYERS)): 
+	while (len(players) < MIN_PLAYERS) or ((time.time() - startTime < TIMEOUT) and (len(players) < MAX_PLAYERS)): 
 		conn, addr = sock.accept()
 		info = conn.recv(512)
 		conn.sendall("ok")

@@ -5,7 +5,7 @@ import socket
 from client.proxyDealer import ProxyDealer
 from client.sillyPlayer import SillyPlayer
 
-TIMEOUT = 30
+TIMEOUT = 60
 
 """
 	Create a socket for the given player and wait for an "ok" message from the server

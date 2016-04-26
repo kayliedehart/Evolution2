@@ -53,7 +53,7 @@ class ProxyPlayer:
 		time.sleep(.01) # avoid connection reset by peer problem
 		try:
 			resp = json.loads(self.sock.recv(MAX_JSON_SIZE))
-		except (socket.timeout, ValueError): # timeout or invalid json
+		except (socket.timeout, ValueError, socket.error): # timeout or invalid json
 			resp = constants.KICK_ME
 		return resp
 
