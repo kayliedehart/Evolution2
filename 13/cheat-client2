@@ -3,7 +3,7 @@
 import sys
 import socket
 from client.proxyDealer import ProxyDealer
-from client.sillyPlayer import SillyPlayer
+from client.cheatFeed import CheatFeed
 
 TIMEOUT = 60
 
