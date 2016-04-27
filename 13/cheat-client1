@@ -3,19 +3,18 @@
 import sys
 import socket
 from client.proxyDealer import ProxyDealer
-from client.cheatChoose import CheatChoose
+from client.sillyPlayer import SillyPlayer
 
-HOST_IP = "127.0.0.1"
-HOST_PORT = 56789
-TIMEOUT = 30
+TIMEOUT = 60
 
 """
-Player -> Socket or False
+	Create a socket for the given player and wait for an "ok" message from the server
+	Player, String, Nat -> Socket or False
 """
-def register(player):
+def register(player, ip, port):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.settimeout(TIMEOUT)
-	sock.connect((HOST_IP, HOST_PORT))
+	sock.connect((ip, port))
 	sock.sendall("ping")
 	message = sock.recv(1024)
 	if message == "ok":
@@ -24,20 +23,25 @@ def register(player):
 		return False
 
 """
-Nat -> Void
+	Create a ProxyPlayer with our strategy and connect to the server
+	Nat, String -> Void
 """
-def main(numPlayers):
+def main(port, ip):
 	player = CheatChoose()
-	resp = register(player)
+	resp = register(player, ip, port)
 	if resp is not False:
 		dealerProxy = ProxyDealer(player, resp)
 	else:
-		print "you failed"
+		print "Failed to connect to server at IP {}/port {}!".format(ip, port)
 		quit()
 
-	# TODO
-	#quit()
-
-
 if __name__ == "__main__":
-	main(1)
+	if len(sys.argv) > 1:
+		if len(sys.argv) == 3:
+			ip = str(sys.argv[2])
+		else:
+			ip = "127.0.0.1"
+		main(int(sys.argv[1]), ip)
+	else:
+		print "Usage: ./main-client port <OPT: IP>"
+		quit()
